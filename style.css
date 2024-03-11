@@ -1,0 +1,33 @@
+body{
+    background: rgb(126, 122, 122);
+}
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+form{
+    padding: 5rem 2rem 0 2rem;
+    flex-direction: column;
+}
+h1 {
+    text-align: center;
+    margin: 35px 0 20px 0 !important;
+}
+input{
+    padding: 10px 10px;
+}
+.reow{
+    letter-spacing: 2rem;
+}
+textarea{
+    margin-top: 1.2rem;
+    width: 416px;
+    height: 234px;
+    resize: none;
+}
+button{
+    display: flex;
+    align-items: center;
+    justify-content: center ;
+}
