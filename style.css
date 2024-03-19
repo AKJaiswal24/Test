@@ -1,0 +1,292 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color: gray;
+}
+:root{
+    --col:#fff;
+    --col2:#069e42;
+    --col3:#02B41a;
+}
+
+.headcontact{
+    background: var(--col2);
+    display: flex;
+    width: 100%;
+    flex-direction:row;
+    justify-content: space-between;
+    height: 40px;
+    color: var(--col);
+}
+.head{
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 90%;
+    padding: 2rem 6% ;
+    /* background: var(--bg-color); */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+.logo{
+    font-size: 2.5rem;
+    color: var(--col);
+    font-weight: 600;
+    cursor: default;
+}
+
+
+.menubar.active {
+    display: block;
+}
+
+
+.menubar a{
+    font-size: 1.5rem;
+    color: var(--col2);
+    margin-left: 2rem;
+    transition: 3s;
+}
+.menubar a:hover{
+    color: var(--col);
+}
+#menuicon{
+    font-size: 4rem;
+    color: var(--col);
+    display: none;
+}
+.sehead{
+    height: auto;
+    background: rgb(171, 170, 170);
+}
+
+.te{
+    text-align: center;
+}
+.headfooter{
+    margin-top: 5rem;
+    height: 150px;
+    background: var(--col3);
+    text-align: center;
+    padding: 50px 20px;
+}
+.headfooter p{
+    font-size: 40px;
+}
+.headfooter font{
+    font-size: 20px;
+}
+.comp{
+    overflow: hidden;
+    padding: 50px 0 0 0;
+    background: #fff;
+    white-space: nowrap;
+}
+
+.comp:hover .comp_slide{
+    animation-play-state: paused;
+}
+
+.comp_slide{
+    display: inline-block;
+    animation: 5s slide infinite linear;
+}
+.comp_slide i{
+    font-size: 5rem;
+    margin: 0 5rem;
+}
+
+@keyframes slide{
+    0%{
+        transform: translateX(0);
+    }
+    100%{
+        transform: translateX(-100% );
+    }
+}
+
+hr{
+    margin-top: 5rem;
+}
+.progress{
+    text-align: center;
+    margin-top: 5rem;
+    height: 400px;
+    color: var(--col);
+}
+.container{
+    width: 100%;
+    min-height: 150px;
+    background: var(--col3);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.p1{
+    font-size: 50px;
+}
+.card{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.card1{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-evenly;
+}
+img{
+    height: 200px;
+    
+}
+.innercard{
+    width: 500px;
+    padding: 10px;
+}
+.testimonials h4{
+    color: var(--col2);
+    padding-left: 50px;
+}
+.rev{
+    max-width: 1200px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit , minmax(300px,1fr));
+    gap: 2rem;
+    margin-bottom: 5rem;
+}
+.reviewbox{
+    height: 300px;
+    width: 300px;
+    border: 2px solid black;
+}
+.name{
+    display: flex;
+}
+.name img{
+    height: 50px;
+    border-radius: 50%;
+    background: #000101;
+    border: 2px solid black;
+}
+.name p{
+    margin-top: 20px;
+}
+.orfooter{
+    background: #000101;
+    color: var(--col);
+}
+.logof{
+    margin-left: 5rem;
+}
+.footcontainer{
+    display: flex;
+    flex-direction: row;
+}
+.orfooter h1{
+    margin-top: 2rem;
+}
+.contact{
+    margin-left: 5rem;
+    width: 200px;
+}
+.contact i{
+    font-size: 10px;
+    margin-top: 1rem;
+    color: var(--col3);
+}
+
+.up{
+    display: flex;
+    justify-content: right;
+}
+.up i{
+    background: var(--col3);
+    font-size: 2rem;
+    border-radius: 50%;
+    color: var(--col);
+    transition: all 0s ease;
+}
+.up i:hover{
+    box-shadow: 0 0 1rem var(--col2);
+}
+.important{
+    margin-left: 5rem;
+}
+.important li{
+    margin-top: 1rem;
+}
+.important li a{
+    color: var(--col);
+}
+.rights{
+    text-align: center;
+}
+
+
+@media (max-width: 1024px){
+    .head{
+        padding: 2rem 3%;
+    }
+}
+@media (max-width:800px){
+    #menuicon{
+        display: block;
+    }
+    .menubar{
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        padding: 1rem 3% ;
+        background-color:bisque;
+        border-top: .1rem solid rgba(0, 0, 0, .2);
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .2);
+        display: none;
+    }
+
+    .menubar a{
+        display: block;
+        font-size: 1.5rem;
+        margin: 2rem 0;
+    }
+    .logof{
+        margin-left: 1rem;
+    }
+    .contact{
+        margin-left: 1rem;
+    }
+    .important{
+    margin-left: 1rem;
+    }
+    h1{
+        font-size: 20px;
+    }
+}
+
+@media(max-width:660px){
+    .headfooter p{
+        font-size: 20px;
+    }
+    .headfooter font{
+        font-size: 15px;
+    }
+    .reviewbox{
+        width: 250px;
+        margin-left: 2rem;
+    }
+}
+@media (max-width:480px){
+    .container{
+        flex-direction: column;
+    }
+    .footcontainer{
+        flex-direction: column;
+    }
+}
