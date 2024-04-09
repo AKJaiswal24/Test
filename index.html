@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+</head>
+<body>
+    <nav class="nav">
+        <a><button class="bn632-hover bn20">Kavaya</button></a>
+    </nav>
+    <div class="container">
+        
+        <div id="slide">
+            <div class="item" style="background-image: url(image1.jpg);">
+                <div class="content">
+                    <button class="btn">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vero, ut minus magni quibusdam culpa iusto consequatur.</button>
+                </div>
+            </div>
+            <div class="item" style="background-image: url(image2.jpg);">
+                <div class="content">
+                    
+                    <button class="btn">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vero, ut minus magni quibusdam culpa iusto consequatur.</button>
+                </div>
+            </div>
+            <div class="item" style="background-image: url(image3.jpg);">
+                <div class="content">
+                    
+                    <button class="btn">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vero, ut minus magni quibusdam culpa iusto consequatur.</button>
+                </div>
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="prev"><i class="fa-solid fa-angle-left fa-2x"></i></button>
+            <button id="next"><i class="fa-solid fa-angle-right fa-2x"></i></button>
+        </div>
+    </div>
+<script>document.getElementById('next').onclick = function(){
+    let lists = document.querySelectorAll('.item');
+    document.getElementById('slide').appendChild(lists[0]);
+}
+document.getElementById('prev').onclick = function(){
+    let lists = document.querySelectorAll('.item');
+    document.getElementById('slide').prepend(lists[lists.length - 1]);
+}
+</script>
+</body>
+</html>
