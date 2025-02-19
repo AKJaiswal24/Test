@@ -2,50 +2,101 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <title>Online Voting System</title>
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+
+    <link rel="stylesheet" href="Style.css">
+
 </head>
 <body>
-    <nav class="nav">
-        <a href=""><button class="bn632-hover bn20">Happy Birthday Kavya</button></a>
+    <nav class="slidebar close">
+        <header>
+            <div class="image_text">
+                <span class="image">
+                    <img src="Myown.jpg" alt="">
+                </span>
+
+                <div class="text header_text">
+                    <span class="name">E-Voting</span>
+                    <!-- <span class="profession">Web developer</span> -->
+                </div>
+
+            </div>
+
+            <i class='bx bx-chevron-right toggle'></i>
+        </header>
+
+
+        <div class="menu_bar">
+            <div class="menu">
+                <li class="search_box">
+                    <i class='bx bx-search icon' ></i>
+                   <input type="search" placeholder="Search" id="">
+            </li>
+
+                <ul class="menu_links">
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bx-home icon' ></i>
+                            <span class="text nav_text">Home</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class="fa-solid fa-square-poll-vertical icon"></i>
+                            <span class="text nav_text">Vote Now</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class="fa-solid fa-bullhorn icon"></i>
+                            <span class="text nav_text">Announcement</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class="fa-solid fa-headset icon"></i>
+                            <span class="text nav_text">Customer Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="bottem_content">
+                <!-- <li class="">
+                    <a href="">
+                        <i class='bx bx-log-out icon'></i>
+                        <span class="text nav_text">Logout</span>
+                    </a>
+                </li> -->
+
+
+                <li class="mode">
+                <div class="moon_sun">
+                    <i class='bx bx-moon icon moon' ></i>
+                    <i class='bx bx-sun icon sun' ></i>
+                </div>
+                <span class="mode_text text">Dark Mode</span>
+
+                <div class="toggle_switch">
+                    <span class="switch"></span>
+                </div>
+
+            </li>
+        </div>
+        </div>
     </nav>
-    <div class="container">
-        
-        <div id="slide">
-            <div class="item" style="background-image: url(image2.jpg);">
-                <div class="content">
-                    <button class="btn">"I admire your resilience and strength; you always find a way to overcome challenges with grace."</button>
-                </div>
-            </div>
-            <div class="item" style="background-image: url(image3.jpg);">
-                <div class="content">
-                    
-                    <button class="btn">"Your passion and dedication to your goals are truly inspiring; you never give up on what you believe in."</button>
-                </div>
-            </div>
-            <div class="item" style="background-image: url(image1.jpg);">
-                <div class="content">
-                    
-                    <button class="btn">"You bring so much joy and laughter into my life; I'm grateful to have you as a part of it."</button>
-                </div>
-            </div>
-        </div>
-        <div class="buttons">
-            <button id="prev"><i class="fa-solid fa-angle-left fa-2x"></i></button>
-            <button id="next"><i class="fa-solid fa-angle-right fa-2x"></i></button>
-        </div>
-    </div>
-<script>document.getElementById('next').onclick = function(){
-    let lists = document.querySelectorAll('.item');
-    document.getElementById('slide').appendChild(lists[0]);
-}
-document.getElementById('prev').onclick = function(){
-    let lists = document.querySelectorAll('.item');
-    document.getElementById('slide').prepend(lists[lists.length - 1]);
-}
-</script>
+
+    <section class="front_img">
+        <img src="vote img.jpg" alt="">
+
+    <h1>hello </h1>
+    </section>
+
+    <script src="Script.js"></script>
 </body>
+   
 </html>
