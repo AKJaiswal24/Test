@@ -1,102 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<!-- Created by CodingLab |www.youtube.com/CodingLabYT-->
+<html lang="en" dir="ltr">
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Voting System</title>
-
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-
-    <link rel="stylesheet" href="Style.css">
-
-</head>
+    <title> Responsive Sidebar Menu  | CodingLab </title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Boxicons CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
 <body>
-    <nav class="slidebar close">
-        <header>
-            <div class="image_text">
-                <span class="image">
-                    <img src="Myown.jpg" alt="">
-                </span>
-
-                <div class="text header_text">
-                    <span class="name">E-Voting</span>
-                    <!-- <span class="profession">Web developer</span> -->
-                </div>
-
-            </div>
-
-            <i class='bx bx-chevron-right toggle'></i>
-        </header>
-
-
-        <div class="menu_bar">
-            <div class="menu">
-                <li class="search_box">
-                    <i class='bx bx-search icon' ></i>
-                   <input type="search" placeholder="Search" id="">
-            </li>
-
-                <ul class="menu_links">
-                    <li class="nav_links">
-                        <a href="#">
-                            <i class='bx bx-home icon' ></i>
-                            <span class="text nav_text">Home</span>
-                        </a>
-                    </li>
-                    <li class="nav_links">
-                        <a href="#">
-                            <i class="fa-solid fa-square-poll-vertical icon"></i>
-                            <span class="text nav_text">Vote Now</span>
-                        </a>
-                    </li>
-                    <li class="nav_links">
-                        <a href="#">
-                            <i class="fa-solid fa-bullhorn icon"></i>
-                            <span class="text nav_text">Announcement</span>
-                        </a>
-                    </li>
-                    <li class="nav_links">
-                        <a href="#">
-                            <i class="fa-solid fa-headset icon"></i>
-                            <span class="text nav_text">Customer Support</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="bottem_content">
-                <!-- <li class="">
-                    <a href="">
-                        <i class='bx bx-log-out icon'></i>
-                        <span class="text nav_text">Logout</span>
-                    </a>
-                </li> -->
-
-
-                <li class="mode">
-                <div class="moon_sun">
-                    <i class='bx bx-moon icon moon' ></i>
-                    <i class='bx bx-sun icon sun' ></i>
-                </div>
-                <span class="mode_text text">Dark Mode</span>
-
-                <div class="toggle_switch">
-                    <span class="switch"></span>
-                </div>
-
-            </li>
-        </div>
-        </div>
-    </nav>
-
-    <section class="front_img">
-        <img src="vote img.jpg" alt="">
-
-    <h1>hello </h1>
-    </section>
-
-    <script src="Script.js"></script>
+  <div class="sidebar">
+    <div class="logo-details">
+      <i class='bx bxl-c-plus-plus icon'></i>
+        <div class="logo_name">CodingLab</div>
+        <i class='bx bx-menu' id="btn" ></i>
+    </div>
+    <ul class="nav-list">
+      <li>
+          <i class='bx bx-search' ></i>
+         <input type="text" placeholder="Search...">
+         <span class="tooltip">Search</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-grid-alt'></i>
+          <span class="links_name">Dashboard</span>
+        </a>
+         <span class="tooltip">Dashboard</span>
+      </li>
+      <li>
+       <a href="#">
+         <i class='bx bx-user' ></i>
+         <span class="links_name">User</span>
+       </a>
+       <span class="tooltip">User</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-chat' ></i>
+         <span class="links_name">Messages</span>
+       </a>
+       <span class="tooltip">Messages</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-pie-chart-alt-2' ></i>
+         <span class="links_name">Analytics</span>
+       </a>
+       <span class="tooltip">Analytics</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-folder' ></i>
+         <span class="links_name">File Manager</span>
+       </a>
+       <span class="tooltip">Files</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-cart-alt' ></i>
+         <span class="links_name">Order</span>
+       </a>
+       <span class="tooltip">Order</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-heart' ></i>
+         <span class="links_name">Saved</span>
+       </a>
+       <span class="tooltip">Saved</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-cog' ></i>
+         <span class="links_name">Setting</span>
+       </a>
+       <span class="tooltip">Setting</span>
+     </li>
+     <li class="profile">
+         <div class="profile-details">
+           <img src="profile.jpg" alt="profileImg">
+           <div class="name_job">
+             <div class="name">Prem Shahi</div>
+             <div class="job">Web designer</div>
+           </div>
+         </div>
+         <i class='bx bx-log-out' id="log_out" ></i>
+     </li>
+    </ul>
+  </div>
+  <section class="home-section">
+      <div class="text">Dashboard</div>
+  </section>
+  <script>
+  let sidebar = document.querySelector(".sidebar");
+  let closeBtn = document.querySelector("#btn");
+  let searchBtn = document.querySelector(".bx-search");
+  closeBtn.addEventListener("click", ()=>{
+    sidebar.classList.toggle("open");
+    menuBtnChange();//calling the function(optional)
+  });
+  searchBtn.addEventListener("click", ()=>{ // Sidebar open when you click on the search iocn
+    sidebar.classList.toggle("open");
+    menuBtnChange(); //calling the function(optional)
+  });
+  // following are the code to change sidebar button(optional)
+  function menuBtnChange() {
+   if(sidebar.classList.contains("open")){
+     closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");//replacing the iocns class
+   }else {
+     closeBtn.classList.replace("bx-menu-alt-right","bx-menu");//replacing the iocns class
+   }
+  }
+  </script>
 </body>
-   
 </html>
