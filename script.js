@@ -1,14 +1,23 @@
-let menuIcon = document.querySelector('#menuicon');
-let navbar = document.querySelector('.menubar');
+  let sidebar = document.querySelector(".sidebar");
+  let closeBtn = document.querySelector("#btn");
+  let searchBtn = document.querySelector(".bx-search");
+  closeBtn.addEventListener("click", ()=>{
+    sidebar.classList.toggle("open");
+    menuBtnChange();
+  });
+  searchBtn.addEventListener("click", ()=>{ 
+    sidebar.classList.toggle("open");
+    menuBtnChange(); 
+  });
+  
+  function menuBtnChange() {
+    if(sidebar.classList.contains("open")){
+      closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+    }else {
+      closeBtn.classList.replace("bx-menu-alt-right","bx-menu");
+    }
+  }
 
-menuIcon.onclick = () => {
-    menuIcon.classList.toggle('fa-x');
-    navbar.classList.toggle('active')
-}
 
-    let header = document.querySelector('header')
-    header.classList.toggle('sticky',window.scrollY > 100);
-
-    
-    menuIcon.classList.remove('fa-x');
-    navbar.classList.remove('active')
+  const date = new Date();
+    document.getElementById('formattedDate').textContent = date.toLocaleDateString();
