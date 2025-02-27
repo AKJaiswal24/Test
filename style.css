@@ -190,6 +190,7 @@
 .sidebar.open ~ .home-section{
   left: 250px;
   width: calc(100% - 250px);
+  /* width: calc(100% - 30rem); */
 }
 .home-section .text{
   display: inline-block;
@@ -204,6 +205,10 @@
   justify-content: space-between;
   flex-direction: column;
   
+}
+.home-section img{
+  height: 20rem;
+  width: 30rem;
 }
 
 
@@ -434,6 +439,7 @@ span {
   justify-content: center;
 }
 .data1 input {
+  color: #000;
   outline: 0;
   border: 1px solid rgb(219, 213, 213);
   padding: 8px 14px;
@@ -481,7 +487,7 @@ span {
 }
 
 
-input {
+.inp input {
   color: var(--text-color);
   height: 4rem;
   width: 4rem;
@@ -510,6 +516,100 @@ input {
 }
 
 
+
+
+
+
+
+/*                        candidate page                                           */
+
+
+
+
+.cand_container img{
+  margin: 2px;
+  height: 4rem;
+  border-radius: 50%;
+}
+.candi{
+  background: lightblue;
+  height: 6rem;
+  border: 3px solid;
+  border-radius: 15px;
+  margin: 3rem 0;
+}
+
+button {
+  font-family: inherit;
+  font-size: 20px;
+  background: royalblue;
+  color: white;
+  height: 4rem;
+  width: 6rem;
+  padding: 0 .5rem;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 16px;
+  /* overflow: hidden; */
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+button span {
+  display: block;
+  margin-left: 0.3em;
+  transition: all 0.3s ease-in-out;
+}
+
+button i {
+  display: block;
+  transition: transform 0.3s ease-in-out;
+}
+
+button:hover .icon-wrapper {
+  animation: fly-1 0.6s ease-in-out infinite alternate;
+}
+
+button:hover i {
+  transform: translateX(1.2em) rotate(90deg) scale(1.1);
+}
+
+button:hover span {
+  transform: translateX(5em);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+@keyframes fly-1 {
+  from {
+    transform: translateY(0.1em);
+  }
+
+  to {
+    transform: translateY(-0.1em);
+  }
+}
+
+
+.align{
+  display: flex;
+  justify-content: space-between;
+  margin: 5px;
+}
+.party_nm{
+  margin: 20px 0 0 0 ;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+@media(max-width: 460px){
+  .party_nm{
+    margin: 5px;
+    font-size: 1.3rem;
+  }
+}
 
 
 

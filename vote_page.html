@@ -23,16 +23,33 @@
 <body>
     
     <div class="vote_now">
-        <form class="data1">
+        <form class="data1" id="data1">
             <div class="title">Title</div>
-            <input type="number" placeholder="Your Aadhaar" class="input" required>
+            <input type="number" placeholder="Your Aadhaar" id="aadhaar" class="input">
             <label for="">--OR--</label>
-            <input type="number" class="input" placeholder="Your Voter id" required>
-            <button class="user_verify">Submit</button>
+            <input type="number" class="input" id="voter_id" placeholder="Your Voter id">
+            <button class="user_verify" id="">Submit</button>
         </form>
 
     </div>
 
     <a href="otp.html">Next page</a>
 </body>
+    <script>
+    const form = document.getElementById('data1');
+    form.addEventListener('submit', (e) => {
+        const Aadhaar = document.getElementById('aadhaar').value;
+        const Voter = document.getElementById('voter_id').value;
+
+    if (Aadhaar === '' && Voter === '') {
+        alert('Either first name or last name must be filled.');
+        e.preventDefault();
+    } else if (Aadhaar !== '' && Voter !== '') {
+        alert('Only one of the fields can be filled.');
+        e.preventDefault();
+    }
+});
+
+    </script>
+
 </html>
