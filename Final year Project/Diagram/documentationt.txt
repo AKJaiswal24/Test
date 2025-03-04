@@ -1,0 +1,11 @@
+final year project
+
+
+
+MySQL
+
+aadhaar table
+
+mysql> create table aadhaar(num bigint(12),name varchar(50),mobile bigint(10),dob date,status int(1),otp int(4));
+mysql> insert into aadhaar values (707024005925,'Nupur Chaudhari',9137859377,'2003-12-22',0,5925);
+mysql> insert into aadhaar values (895960815199,'AKshay Maonj Jaiswal',7506168740,'2004-10-15',0,5199);
