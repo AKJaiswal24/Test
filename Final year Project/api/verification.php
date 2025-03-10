@@ -1,7 +1,5 @@
 <?php
 
-
-
 session_start();
 include("connect.php");
 
@@ -12,12 +10,12 @@ include("connect.php");
     $diff = date_diff(date_create($birth), date_create($today));
     $age = $diff->format('%y');
 
-    $status = $userdata["status"];
+    $vote_status = $userdata["vote_status"];
 
     if($age>18){
-        if($status == 0){
+        if($vote_status == 0){
             echo ' <script>
-        window.location = "../Candidate_page.html";
+        window.location = "candidate24.php";
         </script>';
         }
         else{
@@ -30,7 +28,7 @@ include("connect.php");
     }
 else{ 
     echo ' <script>
-        alert("You are not mature enough to vote");
+        alert("Invalid age to vote");
         window.location = "../index.html";
         </script>';
 }

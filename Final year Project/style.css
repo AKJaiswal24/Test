@@ -305,17 +305,10 @@ body {
 
 }
 
-.home-section img {
+.homeimg{
   height: 20rem;
   width: 30rem;
 }
-
-/* 
-@media(max-width: 60px){
-  .home-section img{
-    height: 320px;
-  }
-} */
 
 
 
@@ -644,7 +637,7 @@ span {
 
 
 
-.cand_container img {
+.cand_container .align img {
   margin: 2px;
   height: 4rem;
   border-radius: 50%;
@@ -748,4 +741,13 @@ span {
   .sidebar li .tooltip {
     display: none;
   }
+}
+
+
+@media (max-width:580px){
+  .homeimg{
+    /* height: 450px; */
+    width: 350px;
+  }
+  
 }
