@@ -1,21 +1,30 @@
+<?php
+session_start();
+include("api/connect.php");
+
+$result = $connect->query("SELECT * FROM candidate");
+$candidates = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$_SESSION['candidates'] = $candidates;
+
+$totalcandidate = $result->num_rows;
+
+?>
+
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>>Online Voting System</title>
 
-  <title>Online Voting System</title>
-  <link rel="icon" href="logo100.png" type="image/png">
-  <link rel="stylesheet" href="style.css">
-
-  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    
   <nav class="f_nam">
     <div class="con1">
       <img src="YCMOU logo.png" alt="">
@@ -58,7 +67,7 @@
         <span class="tooltip">Vote Now</span>
       </li>
       <li>
-        <a href="Announcement.html">
+        <a href="#">
           <i class="fa-solid fa-bullhorn icon"></i>
           <span class="links_name">Announcement</span>
         </a>
@@ -82,39 +91,30 @@
   </div>
 
 
-
-
-  <section class="home-section">
-
-    <h1 style="display: flex; align-items: center; justify-content: center;">YOUR vote matters</h1>
-    
-
-    <hr>
-
-    <marquee behavior="" direction="">
-      <h1 class="announce">Today is Voting Day for the State of Maharastra</h1>
-    </marquee>
-
-    <hr>
-    <div class="election_type">
-      <a href="form.html"><button class="btna">lok sabha</button></a>
-
-
-      <a href="form.html"><button class="btna" disabled>Vidhan sabnha</button></a>
-
-
-      <a href="form.html"><button class="btna" disabled>Nagar parishad</button></a>
-    </div>
-    <!-- <div class="votebtn">
-      <a href="vote_page.html"><button class="btnv">Vote Now</button></a>
-
-    </div> -->
-
-
-
-  </section>
-  <script src="script.js"></script>
+    <center>
+      <?php
+      if($_SESSION['candidates']){
+        for($i=0;$i<$totalcandidate;$i++){
+?>          
+        <form class="candidate_list"><div class="inner_contain">
+        <h1>Candidates <?php echo $i+1; ?> </h1>
+        <hr>
+        <div class="members">
+            <div class="scandidate ones">
+            <?php echo '<img src="party_icon/'.$candidates[$i]["party_img"] .' "class="cand_img"  >' ?>
+                <h4>Party Name:<?php echo $candidates[$i]["party_name"];?></h4>
+                <!-- <p>BCA</p> -->
+            </div>
+        </div>
+        </div>
+    </form>
+<?php
+        }
+      } 
+      ?>
+      </center>
+        <section>
+            
+          </section>
 </body>
-
 </html>
-

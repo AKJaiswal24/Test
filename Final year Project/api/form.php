@@ -2,7 +2,6 @@
 session_start();
 include("connect.php");
 
-
 $aadhaar = $_POST["aadhaarinp"];
 
 $check =mysqli_query($connect, " SELECT * FROM aadhaar WHERE aadhaar_no='$aadhaar' ");
@@ -15,9 +14,7 @@ if (mysqli_num_rows($check) > 0){
 
     echo ' <script>
     window.location = "../otppage.php";
-    </script>';
-
-    
+    </script>';    
 }
 
 else{
@@ -26,9 +23,5 @@ else{
     window.location = "../index.html";
     </script>';
 }
-
-
-
-
 
 ?>

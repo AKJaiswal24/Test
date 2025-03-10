@@ -42,7 +42,7 @@ if(!isset($_SESSION['userdata'])){
 
   <hr>
 <center>
-    <form action="api/otp.php" method="post" class="container">
+    <form action="api/otp.php" method="post" class="otpcontainer">
         <div class="content">
             <p>Enter opt</p>
             <div class="oneline">

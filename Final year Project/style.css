@@ -47,32 +47,7 @@ body {
   flex-direction: row;
 }
 
-/*          2ND SIDE BAR             */
-.sidebar2 {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 35rem;
-  width: 15rem;
-  background: var(--primary-color);
-  padding: 6px 14px;
-  z-index: 99;
-  transition: all 0.5s ease;
-}
 
-.hcontainer{
-  background-color: red;
-}
-
-@media (max-width: 900px) {
-  .sidebar2{
-    padding: 5px;
-    position: relative;
-    height: 300px;
-    width: 300px;
-    
-  }
-}
 
 
 /*               slide bar                 */
@@ -464,7 +439,7 @@ body {
 
 
 
-/*                                vote page                        */
+/*                                form page                        */
 
 
 
@@ -563,7 +538,7 @@ span {
 /*            otp   page                           */
 
 
-.container {
+.otpcontainer {
   height: 300px;
   width: 500px;
   background: var(--primary-color-hover);
@@ -579,7 +554,7 @@ span {
   gap: 20px;
 }
 
-.container p {
+.otpcontainer p {
   margin-top: .5rem;
   font-weight: bolder;
   color: var(--text-color);
@@ -728,6 +703,56 @@ span {
   }
 }
 
+
+
+/*                candidate list                 */
+
+
+.candidate_list{
+  background: var(--primary-color-hover);
+  border: 1px solid black;
+  border-radius: 15px;
+  width: 300px;
+  width: calc(100% -70px);
+  margin: 1rem;
+  padding: 20px;
+  box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.4);
+}
+/* .inner_contain{
+  width: 400px;
+} */
+
+.candidate_list h1{
+  text-align: center;
+}
+.candidate_list hr{
+  width: 10rem;
+  margin: 10px auto;
+}
+.candidate_list .members{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.scandidate{
+  margin: 8px;
+  transition: all .3s ease;
+  cursor: pointer;
+}
+.scandidate:hover{
+  transform: scale(1.1);
+}
+/* img{
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 10px;
+} */
+.candidate_list h4,p{
+  text-align: center;
+  font-size: 1rem;
+  margin: 7px;
+}
 
 
 

@@ -5,6 +5,9 @@ include("connect.php");
 $result = $connect->query("SELECT * FROM candidate");
 $candidates = mysqli_fetch_all($result, MYSQLI_ASSOC);
 $_SESSION['candidates'] = $candidates;
+
+$totalcandidate = $result->num_rows;
+
 ?>
 
 <!DOCTYPE html>
@@ -34,16 +37,19 @@ $_SESSION['candidates'] = $candidates;
     <div class="cand_container">
         <h1>Candidates</h1>
 
-        <?php foreach ($candidates as $candidate) { ?>
+        <?php 
+      if($_SESSION['candidates']){
+        for($i=0;$i<$totalcandidate;$i++){
+             ?>
             <form action="vote.php" method="post">
                 <div class="candi">
                     <div class="align">
-                        <img src="../party_icon/<?php echo $candidate["party_img"]; ?>" class="cand_img">
-                        <p class="party_nm">Party Name: <?php echo $candidate["party_name"]; ?></p>
-                        <p>Votes: <?php echo $candidate["total_vote"]; ?></p>
+                        <img src="../party_icon/<?php echo $candidates[$i]["party_img"]; ?>" class="cand_img">
+                        <p class="party_nm">Party Name: <?php echo $candidates[$i]["party_name"]; ?></p>
+                        <p>Votes: <?php echo $candidates[$i]["total_vote"]; ?></p>
 
-                        <input type="hidden" name="party_name" value="<?php echo $candidate["party_name"]; ?>">
-                        <input type="hidden" name="can_vote" value="<?php echo $candidate["total_vote"]; ?>">
+                        <input type="hidden" name="party_name" value="<?php echo $candidates[$i]["party_name"]; ?>">
+                        <input type="hidden" name="can_vote" value="<?php echo $candidates[$i]["total_vote"]; ?>">
 
                         <button type="submit" class="vote_btn">
                             <div class="icon-wrapper-1">
@@ -56,7 +62,7 @@ $_SESSION['candidates'] = $candidates;
                     </div>
                 </div>
             </form>   
-        <?php } ?>
+        <?php } } ?>
 
     </div>
 </body>
