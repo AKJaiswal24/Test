@@ -28,13 +28,6 @@ if(!isset($_SESSION['userdata'])){
 <body>
   <nav class="f_nam">
     <div class="con1">
-      <img src="YCMOU logo.png" alt="">
-      <h4>University name</h4>
-      <p>YCMOU</p>
-    </div>
-
-    
-    <div class="con2">
     <img src="logo.png" alt="">
     <p>Online Voting System</p>
     </div>

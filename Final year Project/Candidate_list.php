@@ -26,14 +26,8 @@ $totalcandidate = $result->num_rows;
 <body>
     
   <nav class="f_nam">
-    <div class="con1">
-      <img src="YCMOU logo.png" alt="">
-      <h4>University name</h4>
-      <p>YCMOU</p>
-    </div>
-
     
-    <div class="con2">
+    <div class="con1">
     <img src="logo.png" alt="">
     <p>Online Voting System</p>
     </div>
@@ -67,7 +61,7 @@ $totalcandidate = $result->num_rows;
         <span class="tooltip">Vote Now</span>
       </li>
       <li>
-        <a href="#">
+        <a href="Announcement.html">
           <i class="fa-solid fa-bullhorn icon"></i>
           <span class="links_name">Announcement</span>
         </a>
@@ -80,15 +74,16 @@ $totalcandidate = $result->num_rows;
         </a>
         <span class="tooltip">Candidate</span>
       </li>
-      <li>
+      <!-- <li>
         <a href="#">
           <i class="fa-solid fa-headset icon"></i>
           <span class="links_name">Customer Support</span>
         </a>
         <span class="tooltip">Customer Support</span>
-      </li>
+      </li> -->
     </ul>
   </div>
+
 
 
     <center>
@@ -96,12 +91,12 @@ $totalcandidate = $result->num_rows;
       if($_SESSION['candidates']){
         for($i=0;$i<$totalcandidate;$i++){
 ?>          
-        <form class="candidate_list"><div class="inner_contain">
+        <form class="candidate_list2"><div class="inner_contain">
         <h1>Candidates <?php echo $i+1; ?> </h1>
         <hr>
         <div class="members">
             <div class="scandidate ones">
-            <?php echo '<img src="party_icon/'.$candidates[$i]["party_img"] .' "class="cand_img"  >' ?>
+            <?php echo '<img src="party_icon/'.$candidates[$i]["party_img"] .' "class="cand_img" width="150px" >' ?>
                 <h4>Party Name:<?php echo $candidates[$i]["party_name"];?></h4>
                 <!-- <p>BCA</p> -->
             </div>

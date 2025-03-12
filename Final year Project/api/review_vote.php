@@ -18,7 +18,7 @@ $voted_candidate = $result->fetch_assoc();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="10;../index.html">
+    <!-- <meta http-equiv="refresh" content="10;../index.html"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vote Confirmation</title>
     <link rel="stylesheet" href="../style.css">
@@ -27,11 +27,6 @@ $voted_candidate = $result->fetch_assoc();
 <body>
     <nav class="f_nam">
         <div class="con1">
-            <img src="../YCMOU logo.png" alt="">
-            <h4>University Name</h4>
-            <p>YCMOU</p>
-        </div>
-        <div class="con2">
             <img src="../logo.png" alt="">
             <p>Online Voting System</p>
         </div>
@@ -48,7 +43,7 @@ $voted_candidate = $result->fetch_assoc();
         <hr>
         <div class="members">
             <div class="scandidate ones">
-            <img src="../party_icon/<?php echo $voted_candidate["party_img"]; ?>" class="cand_img">
+            <img src="../party_icon/<?php echo $voted_candidate["party_img"]; ?>" width="250px" class="cand_img">
             <p class="party_nm">You have voted for: <strong><?php echo $voted_candidate["party_name"]; ?></strong></p>
             </div>
         </div>

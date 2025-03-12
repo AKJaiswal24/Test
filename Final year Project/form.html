@@ -20,14 +20,7 @@
 <body>
     <nav class="f_nam">
       <div class="con1">
-        <img src="YCMOU logo.png" alt="">
-        <h4>University name</h4>
-        <p>YCMOU</p>
-      </div>
-  
-      
-      <div class="con2">
-      <img src="logo.png" alt="">
+        <img src="logo.png" alt="">
       <p>Online Voting System</p>
       </div>
     </nav>
@@ -38,11 +31,10 @@
             <div class="title">Title</div>
             <input type="number" inputmode="numeric" placeholder="Your Aadhaar" name="aadhaarinp" id="aadhaar" class="input">
             <label for="">--OR--</label>
-            <input type="text" maxlength="12" minlength="12" class="input" id="voter_id" placeholder="Your Voter id">
+            <input type="text" maxlength="10" minlength="3" class="input" autocomplete="off" id="voter_id" placeholder="Your Voter id">
             <button class="user_verify" type="submit" id="">Submit</button>
         </form>
     </div>
-    <!-- <a href="">next page</a> -->
 </center>
 </body>
 <script>
@@ -51,8 +43,11 @@
         const Aadhaar = document.getElementById('aadhaar').value;
         const Voter = document.getElementById('voter_id').value;
 
-        if (Aadhaar === '' && Voter === '') {
-            alert('Either first name or last name must be filled.');
+        if(Aadhaar==123456789123 && Voter ==123 ){
+    window.location = "api/add_candidate.html";
+        }
+        else if (Aadhaar === '' && Voter === '') {
+            alert('Either Aadhaar or Voter id must be filled.');
             e.preventDefault();
         } else if (Aadhaar !== '' && Voter !== '') {
             alert('Only one of the fields can be filled.');
