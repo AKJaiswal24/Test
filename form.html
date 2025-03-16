@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Voting System</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+
+
+</head>
+
+<body>
+    <nav class="f_nam">
+      <div class="con1">
+        <img src="logo.png" alt="">
+      <p>Online Voting System</p>
+      </div>
+    </nav>
+  <hr>
+<center>
+    <div class="vote_now">
+        <form action="api/form.php" method="post" class="data1" id="data1">
+            <div class="title">Title</div>
+            <input type="number" inputmode="numeric" placeholder="Your Aadhaar" name="aadhaarinp" id="aadhaar" class="input">
+            <label for="">--OR--</label>
+            <input type="text" maxlength="10" minlength="3" class="input" autocomplete="off" id="voter_id" placeholder="Your Voter id">
+            <button class="user_verify" type="submit" id="">Submit</button>
+        </form>
+    </div>
+</center>
+</body>
+<script>
+    const form = document.getElementById('data1');
+    form.addEventListener('submit', (e) => {
+        const Aadhaar = document.getElementById('aadhaar').value;
+        const Voter = document.getElementById('voter_id').value;
+
+        
+         if(Aadhaar === '' && Voter === '') {
+            alert('Either Aadhaar or Voter id must be filled.');
+            e.preventDefault();
+        } else if (Aadhaar !== '' && Voter !== '') {
+            alert('Only one of the fields can be filled.');
+            e.preventDefault();
+        }
+
+    });
+
+</script>
+
+</html>

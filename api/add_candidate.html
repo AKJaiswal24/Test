@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+
+    <nav class="f_nam">
+        <div class="con1">
+        <img src="../logo.png" alt="">
+        <p>Online Voting System</p>
+        </div>
+      </nav>
+    <hr>
+
+
+<!--     
+    <form action="add_candidate.php" method="POST" enctype="multipart/form-data">
+        <label>Party Name:</label>
+        <input type="text" name="party_name" required><br><br>
+    
+        <label>Party Image:</label>
+        <input type="file" name="party_img" accept="image/*" required><br><br>
+    
+        <button type="submit">Add Candidate</button>
+    </form> -->
+    <center>
+
+        <div class="vote_now">
+            <form action="add_candidate.php" method="post" enctype="multipart/form-data" class="data1" id="data1">
+                <div class="title">ADD Candidate</div>
+                <label>Party Name:</label>
+                <input type="text" name="party_name" required>
+
+                <label>Party Image:</label>
+                <input type="file" name="party_img" accept="image/*" required>
+                <button class="user_verify" type="submit" id="">Add</button>
+            </form>
+        </div>
+    </center>
+
+</body>
+</html>
