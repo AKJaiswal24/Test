@@ -26,7 +26,7 @@ if (mysqli_num_rows($check) > 0) {
 
 
     $_SESSION['userdata'] = $userdata;
-if($state==="Maharastra" ){
+if($state==="Maharashtra" ){
 
     echo ' <script>
     window.location = "../otppage.php";

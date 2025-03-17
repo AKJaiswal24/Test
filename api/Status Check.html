@@ -18,7 +18,7 @@
 <body>
     <nav class="f_nam">
       <div class="con1">
-        <img src="logo.png" alt="">
+        <img src="../logo.png" alt="">
       <p>Online Voting System</p>
       </div>
     </nav>
@@ -26,7 +26,7 @@
 <center>
     <div class="vote_now">
         <form action="Status Check.php" method="post" class="data1" id="data1">
-            <div class="title">Title</div>
+            <div class="title">Check Status</div>
             <input type="number" inputmode="numeric" placeholder="Your Aadhaar" name="aadhaarinp" id="aadhaar" class="input">
             <button class="user_verify" type="submit" id="">Submit</button>
         </form>
@@ -40,13 +40,9 @@
 
         
          if(Aadhaar === '' ) {
-            alert('Aadhaar no must be filled.');
+            alert('Aadhaar number must be filled.');
             e.preventDefault();
         }
-        //  else if (Aadhaar !== '') {
-        //     alert('Only one of the fields can be filled.');
-        //     e.preventDefault();
-        // }
 
     });
 
