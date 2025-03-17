@@ -5,7 +5,7 @@ include("connect.php");
 $aadhaar = $_POST["aadhaarinp"];
 
 if ($aadhaar == 123456789123) {
-    echo '<script> window.location = "add_candidate.html"  </script>';
+    echo '<script> window.location = "admin.html"  </script>';
 }
 
 $otp = rand(1000, 9999);
