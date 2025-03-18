@@ -37,7 +37,7 @@ $userdata = $_SESSION['userdata'];
     <center>
         <form action="api/otp.php" method="post" class="otpcontainer">
             <div class="content">
-                <p>Enter opt</p>
+                <p>Enter OTP</p>
                 <div class="oneline">
                     <p for="">Aadhaar:</p>
                     <p><?php echo $userdata["aadhaar_no"] ?></p>
