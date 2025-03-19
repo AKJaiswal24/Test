@@ -86,6 +86,7 @@ $totalcandidate = $result->num_rows;
 
 
 
+  <section class="home-section">
     <center>
       <?php
       if($_SESSION['candidates']){
@@ -108,8 +109,34 @@ $totalcandidate = $result->num_rows;
       } 
       ?>
       </center>
-        <section>
-            
-          </section>
+
+      
+    <footer>
+        <div class="frow">
+            <div class="col">
+                <img src="logo.png" class="logo" alt="" srcset="">
+                <h3>A easy and new way to vote </h3>
+            </div>
+            <div class="col">
+                <h3>Title<div class="underline"><span></span></div> </h3>
+                <h4>something</h4>
+                <p class="email_id">example1@gmail.com</p>
+                <h4>7506168740</h4>
+            </div>
+            <div class="col">
+                <h3>Contact us <div class="underline"><span></span></div> </h3>
+                <form action="">
+                    <i class='bx bx-envelope'></i>
+                    <input type="email" placeholder="Enter your mail id" required>
+                    <button type="submit"><i class='bx bxs-right-arrow-alt bx-fade-right'></i></button>
+                </form>
+            </div>
+        </div>
+        <hr>
+          <p class="rights">online voting system</p>
+    </footer>
+
+      
+  </section>
 </body>
 </html>

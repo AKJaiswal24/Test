@@ -250,7 +250,7 @@ body {
 .home-section {
   position: relative;
   background: var(--primary-color);
-  height: 100vh;
+  height: 87vh;
   top: 0;
   left: 83px;
   width: calc(100% - 100px);
@@ -797,14 +797,14 @@ footer {
   bottom: 2px;
   background: var(--text-color);
   color: var(--primary-color);
-  padding: 30px 0 0 50px;
+  padding: 20px;
   border-radius: 0 140px 0 140px;
   font-size: 13px;
   line-height: 20px;
 }
 .frow{
   width: 85%;
-  margin-left: 50px;
+  margin-left: 20px;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -817,10 +817,7 @@ footer {
 
 footer .logo{
   height: 70px;
-  margin-bottom: 15px;
-}
-.col p{
-  display: flex;
+  margin-bottom: 10px;
 }
 
 .col h3{
@@ -829,16 +826,16 @@ footer .logo{
   position: relative;
 }
 .email_id{
-  width: fit-content;
-  border-bottom: 1px solid #ccc;
+  width: 50px;
+  /* border-bottom: 1px solid #ccc; */
   margin: 20px 0;
 }
 footer form{
-  padding-bottom: 15px;
+  padding-bottom: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #ccc;
+  /* border-bottom: 1px solid #ccc; */
 }
 
 footer form .bx{
@@ -856,7 +853,7 @@ footer form input{
 
 footer form button{
   background: transparent;
-  border: 0;
+  border: 1px solid #ccc;
   outline: none;
   cursor: pointer;
 }
@@ -870,7 +867,7 @@ footer hr{
   width: 90%;
   border: 0;
   border-bottom: 1px solid #ccc;
-  margin: 20px;
+  margin: 0 20px;
 }
 
 .underline{
@@ -904,16 +901,16 @@ footer hr{
   }
 }
 
+
 @media (max-width:700px){
   footer{
-      bottom: unset;
+     margin-top: 2rem;
+     bottom: unset;
   }
   .col{
-      flex-basis: 100%;
+      flex-basis: 100%; 
   }
 }
-
-
 
 
 
