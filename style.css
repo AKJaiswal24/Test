@@ -700,7 +700,7 @@ span {
 @media(max-width: 460px) {
   .party_nm {
     margin: 5px;
-    font-size: 1.3rem;
+    font-size: 15px;
   }
 }
 
@@ -719,7 +719,7 @@ span {
   padding: 20px;
   box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.4);
 }
-/* .inner_contain{
+/* .member_contain{
   width: 400px;
 } */
 
@@ -755,17 +755,17 @@ span {
   margin: 7px;
 }
 
-.candidate_list2{
+/* .candidate_list2{
   background: var(--primary-color-hover);
   border: 1px solid black;
   border-radius: 15px;
   width: 200px;
   font-size: 10px;
-  margin: 2rem;
-  margin-left: 5rem;
-  padding: 20px;
+  margin: 1.2rem 0;
+  /* margin-left: 5rem; */
+  /* padding: 20px;
   box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.4);
-}
+} */ 
 
 
 
@@ -789,16 +789,16 @@ span {
 /*                        footer                         */
 
 
-
-footer {
+footer{
+  background: var(--text-color);
+  color: var(--primary-color);
+}
+.footer {
   width: 100%;
   position: absolute;
   border: solid #000;
   bottom: 2px;
-  background: var(--text-color);
-  color: var(--primary-color);
   padding: 20px;
-  border-radius: 0 140px 0 140px;
   font-size: 13px;
   line-height: 20px;
 }
@@ -903,6 +903,15 @@ footer hr{
 
 
 @media (max-width:700px){
+  .footer{
+     margin-top: 2rem;
+     bottom: unset;
+  }
+  .col{
+      flex-basis: 100%; 
+  }
+}
+@media (max-width:700px){
   footer{
      margin-top: 2rem;
      bottom: unset;
@@ -916,11 +925,13 @@ footer hr{
 
 
 
+
 @media (max-width: 420px) {
   .sidebar li .tooltip {
     display: none;
   }
 }
+
 
 
 @media (max-width:580px){

@@ -20,6 +20,29 @@ $totalcandidate = $result->num_rows;
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <style>
+    .candidate_list2{
+  background: var(--primary-color-hover);
+  border: 1px solid black;
+  border-radius: 15px;
+  width: 200px;
+  font-size: 10px;
+  margin: 1.2rem 0;
+  /* margin-left: 5rem; */
+  padding: 20px;
+  box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.4);
+}
+
+.scandidate{
+  margin: 8px;
+  transition: all .3s ease;
+  cursor: pointer;
+}
+.scandidate:hover{
+  transform: scale(1.1);
+}
+
+  </style>
     
     <link rel="stylesheet" href="style.css">
 </head>
@@ -84,10 +107,11 @@ $totalcandidate = $result->num_rows;
     </ul>
   </div>
 
-
-
+  
+  
   <section class="home-section">
     <center>
+
       <?php
       if($_SESSION['candidates']){
         for($i=0;$i<$totalcandidate;$i++){
@@ -108,11 +132,11 @@ $totalcandidate = $result->num_rows;
         }
       } 
       ?>
-      </center>
 
-      
+</center>
+
     <footer>
-        <div class="frow">
+    <div class="frow">
             <div class="col">
                 <img src="logo.png" class="logo" alt="" srcset="">
                 <h3>A easy and new way to vote </h3>
@@ -135,7 +159,6 @@ $totalcandidate = $result->num_rows;
         <hr>
           <p class="rights">online voting system</p>
     </footer>
-
       
   </section>
 </body>

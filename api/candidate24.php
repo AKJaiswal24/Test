@@ -42,7 +42,7 @@ $totalcandidate = $result->num_rows;
                         <div class="align">
                             <img src="../party_icon/<?php echo $candidates[$i]["party_img"]; ?>" class="cand_img">
                             <p class="party_nm">Party Name: <?php echo $candidates[$i]["party_name"]; ?></p>
-                            <p>Votes: <?php echo $candidates[$i]["total_vote"]; ?></p>
+                            <p style="display:none;">Votes: <?php echo $candidates[$i]["total_vote"]; ?></p>
 
                             <input type="hidden" name="party_name" value="<?php echo $candidates[$i]["party_name"]; ?>">
                             <input type="hidden" name="can_vote" value="<?php echo $candidates[$i]["total_vote"]; ?>">
@@ -62,6 +62,34 @@ $totalcandidate = $result->num_rows;
         } ?>
 
     </div>
+
+
+    <footer >
+    <div class="frow">
+        <div class="col">
+            <img src="../logo.png" class="logo" alt="" srcset="">
+            <h3>A easy and new way to vote </h3>
+        </div>
+        <div class="col">
+            <h3>Title<div class="underline"><span></span></div> </h3>
+            <h4>something</h4>
+            <p class="email_id">akshayjaiswal2004@gmail.com</p>
+            <h4>7506168740</h4>
+        </div>
+        <div class="col">
+            <h3>Contact us <div class="underline"><span></span></div> </h3>
+            <form action="">
+                <i class='bx bx-envelope'></i>
+                <input type="email" placeholder="Enter your mail id" required>
+                <button type="submit"><i class='bx bxs-right-arrow-alt bx-fade-right'></i></button>
+            </form>
+        </div>
+    </div>
+    <hr>
+    <p class="rights">online voting system</p>
+</footer>
+
+
 </body>
 
 </html>
