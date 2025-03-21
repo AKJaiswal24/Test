@@ -534,6 +534,33 @@ span {
   height: 50px;
 }
 
+.backbtn{
+  margin: 2rem 2rem 0 2rem  ;
+  height: 50px;
+  width: 100px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  font-size: 15px;
+  border: var(--text-color) solid;
+  border-radius: 15px;
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 600;
+}
+.backbtn i{
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.backbtn:hover{
+  border: var(--primary-color) solid;
+  background:var(--text-color) ;
+  color: var(--sd-txt-color);
+  transition: all 1s;
+}
+
+
 
 
 /*            otp   page                           */
