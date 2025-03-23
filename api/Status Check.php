@@ -9,6 +9,9 @@ $check = mysqli_query($connect, " SELECT * FROM voter_list WHERE aadhaar_no='$aa
 
     $userdata = mysqli_fetch_array($check);
 
+    $name =$userdata["name"];
+    $aadhaar =$userdata["aadhaar_no"];
+    $mobile =$userdata["mobile"];
     $statusis= $userdata["vote_status"];
 
     if($statusis == 1){
@@ -36,6 +39,22 @@ $check = mysqli_query($connect, " SELECT * FROM voter_list WHERE aadhaar_no='$aa
     </nav>
   <hr>
 
-    <?php echo $status; ?>
+  
+  <center>
+    
+    <div class="vote_now">
+      <form action="Status Check.php" method="post" class="data1" id="data1">
+        <div class="title">Status of </div>
+        <p>Name: <?php echo $name ?> </p>
+        <p>Addhaar no: <?php echo $aadhaar ?> </p>
+        <p>Mobile: <?php echo $mobile ?> </p>
+        <p>Vote Status: <?php echo $status; ?></p> 
+    </form>
+  </div>
+</center>
+  
+
+
+
 </body>
 </html>

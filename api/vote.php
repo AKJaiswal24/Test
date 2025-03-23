@@ -12,7 +12,10 @@ $aadhaar = $userdata['aadhaar_no'];
 $vote_status = $userdata['vote_status'];
 
 if ($vote_status == 1) {
-    die("You have already voted!");
+    echo ' <script>
+            alert("Your vote already exist")
+        window.location = "../index.html";
+        </script>';
 }
 
 if (!isset($_POST['party_name']) || !isset($_POST['can_vote'])) {
