@@ -70,7 +70,7 @@ $totalcandidate = $result->num_rows;
         <span class="tooltip">Search</span>
       </li>
       <li>
-        <a href="index.html">
+        <a href="index.php">
           <i class='bx bx-home'></i>
           <span class="links_name">Home</span>
         </a>
@@ -84,7 +84,7 @@ $totalcandidate = $result->num_rows;
         <span class="tooltip">Vote Now</span>
       </li>
       <li>
-        <a href="Note.html">
+        <a href="Note.php">
           <i class="fa-solid fa-bullhorn icon"></i>
           <span class="links_name">Note</span>
         </a>
@@ -122,7 +122,7 @@ $totalcandidate = $result->num_rows;
         <div class="members">
             <div class="scandidate ones">
             <?php echo '<img src="party_icon/'.$candidates[$i]["party_img"] .' "class="cand_img" width="150px" >' ?>
-                <h4>Party Name:<?php echo $candidates[$i]["party_name"];?></h4>
+                <h3>Party Name:<?php echo $candidates[$i]["party_name"];?></h3>
                 <!-- <p>BCA</p> -->
             </div>
         </div>
@@ -162,4 +162,5 @@ $totalcandidate = $result->num_rows;
       
   </section>
 </body>
+<script src="script.js"></script>
 </html>

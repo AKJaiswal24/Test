@@ -21,3 +21,25 @@ function menuBtnChange() {
 
 const date = new Date();
 document.getElementById('formattedDate').textContent = date.toLocaleDateString();
+
+
+
+//    to avoid goimg back
+window.history.pushState(null, "", location.href);
+window.onpopstate = function () {
+  window.history.pushState(null, "", location.href);
+};
+
+
+//  countdown
+let number = document.getElementById("number");
+let counter = 6;
+
+setInterval(() => {
+    if(counter ==0){
+        clearInterval();
+    }else{
+    counter -= 1;
+    number.innerHTML ="Redirecting to home page" +  counter ;
+    }
+},900  );

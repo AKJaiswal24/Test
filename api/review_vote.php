@@ -5,7 +5,7 @@ include("connect.php");
 if (!isset($_SESSION['userdata']['vote_status']) || $_SESSION['userdata']['vote_status'] != 1) {
     echo '<script>
             alert("You have not voted yet!");
-            window.location = "candidate_page.php"; 
+            window.location = "candidate24.php"; 
           </script>';
     exit();
 }
@@ -19,9 +19,14 @@ $voted_candidate = $result->fetch_assoc();
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="5;../index.html">
+    <meta http-equiv="refresh" content="5;../index.php">
+
+    <link rel="icon" href="../logo100.png" type="image/png">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vote Confirmation</title>
+
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <title>Online Voting System</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 
@@ -57,8 +62,24 @@ $voted_candidate = $result->fetch_assoc();
 
             <?php } ?>
         </center>
-        <a href="../index.html"><button class="vote_btn">Go to Home</button></a>
+        <div class="countdown"><p>Redirecting to home page :</p> <div id="countdown"></div></div>
+                <a href="../index.php"<button class="backbtn"><i class='bx bx-home'></i>Home Page</button></a>
+
     </div>
 </body>
+<script>
+
+let number = document.getElementById("countdown");
+let counter = 6;
+
+setInterval(() => {
+    if(counter ==0){
+        clearInterval();
+    }else{
+    counter -= 1;
+    number.innerHTML = counter ;
+    }
+},900  );
+</script>
 
 </html>

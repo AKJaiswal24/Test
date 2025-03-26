@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!isset($_SESSION['userdata'])) {
+    header("location: ../vote.html");
+}
+
 
 $userdata = $_SESSION['userdata'];
 
@@ -13,7 +17,7 @@ if ($otp == $userdata["otp"]) {
 } else {
     echo ' <script>
         alert("invalid otp");
-        window.location = "../index.html";
+        window.location = "../index.php";
         </script>';
 }
 

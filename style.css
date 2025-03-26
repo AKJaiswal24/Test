@@ -30,23 +30,19 @@ body {
   height: 5rem;
   margin: 5px;
 }
-.f_nam .con1{
+
+.f_nam .con1 {
   float: left;
   display: flex;
   flex-direction: row;
 }
-.f_nam .con1 p{
-  margin: 2rem;
-}
-.f_nam .con2 p{
-  margin: 2rem;
-}
-.f_nam .con2{
-  /* float: right; */
-  display: flex;
-  flex-direction: row;
-}
 
+.f_nam .con1 p {
+  margin: 2rem;
+  font-weight: 600;
+  display: flex;
+  flex-wrap: nowrap;
+}
 
 
 
@@ -250,7 +246,7 @@ body {
 .home-section {
   position: relative;
   background: var(--primary-color);
-  height: 87vh;
+  /* height: 100vh; */
   top: 0;
   left: 83px;
   width: calc(100% - 100px);
@@ -262,6 +258,7 @@ body {
   left: 250px;
   width: calc(100% -70px);
 }
+
 .sidebar.open~.f_bottom {
   left: 250px;
   width: calc(100% -70px);
@@ -281,9 +278,40 @@ body {
   align-items: center;
   justify-content: space-between;
   flex-direction: column;
-
+  margin-bottom: 5rem;
 }
 
+.dis .btna {
+  background: lightgray;
+  cursor: not-allowed;
+}
+
+.dis .btna:hover {
+  color: var(--text-color);
+}
+
+
+.home-section .livevotecan{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.livevote{
+  height: 100px;
+  width: 200px;
+  background: var(--primary-color-hover);
+  color: var(--text-color);
+  font-size: 40px;
+  /* border: solid var(); */
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+
+
+
+
+/*                            admin                                   */
 
 
 
@@ -534,30 +562,32 @@ span {
   height: 50px;
 }
 
-.backbtn{
-  margin: 2rem 2rem 0 2rem  ;
-  height: 50px;
-  width: 100px;
+.backbtn {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  padding: 10px 20px;
   font-size: 15px;
   border: var(--text-color) solid;
   border-radius: 15px;
   text-decoration: none;
   color: var(--text-color);
   font-weight: 600;
+  height: 50px;
+  width: 100px;
+  margin-bottom: 20px; 
 }
-.backbtn i{
+
+.backbtn i {
   font-size: 25px;
   font-weight: 500;
 }
 
-.backbtn:hover{
+.backbtn:hover {
   border: var(--primary-color) solid;
-  background:var(--text-color) ;
+  background: var(--text-color);
   color: var(--sd-txt-color);
-  transition: all 1s;
+  transition: all 0.3s ease;
 }
 
 
@@ -645,14 +675,15 @@ span {
   height: 4rem;
   border-radius: 50%;
 }
-.cand_container h1{
-  font-weight:300;
+
+.cand_container h1 {
+  font-weight: 300;
 }
 
 .candi {
   background: var(--primary-color-hover);
   height: 6rem;
-  border: 1px solid ;
+  border: 1px solid;
   border-radius: 15px;
   margin: 3rem 0;
 }
@@ -720,7 +751,7 @@ span {
 
 .party_nm {
   margin: 20px 0 0 0;
-  font-size:10px;
+  font-size: 10px;
   font-size: 1.5rem;
 }
 
@@ -736,7 +767,7 @@ span {
 /*                candidate list                 */
 
 
-.candidate_list{
+.candidate_list {
   background: var(--primary-color-hover);
   border: 1px solid black;
   border-radius: 15px;
@@ -746,37 +777,44 @@ span {
   padding: 20px;
   box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.4);
 }
+
 /* .member_contain{
   width: 400px;
 } */
 
-.candidate_list h1{
+.candidate_list h1 {
   text-align: center;
 }
-.candidate_list hr{
+
+.candidate_list hr {
   width: 10rem;
   margin: 10px auto;
 }
-.candidate_list .members{
+
+.candidate_list .members {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
 }
-.scandidate{
+
+.scandidate {
   margin: 8px;
   transition: all .3s ease;
   cursor: pointer;
 }
-.scandidate:hover{
+
+.scandidate:hover {
   transform: scale(1.1);
 }
+
 /* img{
   width: 80px;
   height: 80px;
   border-radius: 50%;
   margin: 10px;
 } */
-.candidate_list h4,p{
+.candidate_list h4,
+p {
   text-align: center;
   font-size: 1rem;
   margin: 7px;
@@ -790,18 +828,25 @@ span {
   font-size: 10px;
   margin: 1.2rem 0;
   /* margin-left: 5rem; */
-  /* padding: 20px;
+/* padding: 20px;
   box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.4);
-} */ 
+} */
 
 
+/*                      review vote                 */
+#countdown{
+  font-size: 3rem;
+}
 
-
-
-
-
-
-
+.countdown{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+}
+.countdown p{
+  margin-top: 20px;
+}
 
 
 
@@ -816,20 +861,21 @@ span {
 /*                        footer                         */
 
 
-footer{
+footer {
   background: var(--text-color);
   color: var(--primary-color);
 }
+
 .footer {
   width: 100%;
   position: absolute;
   border: solid #000;
-  bottom: 2px;
   padding: 20px;
   font-size: 13px;
   line-height: 20px;
 }
-.frow{
+
+.frow {
   width: 85%;
   margin-left: 20px;
   display: flex;
@@ -837,27 +883,30 @@ footer{
   align-items: flex-start;
   justify-content: space-between;
 }
-.col{
+
+.col {
   flex-basis: 25%;
   padding: 10px;
 }
 
-footer .logo{
+footer .logo {
   height: 70px;
   margin-bottom: 10px;
 }
 
-.col h3{
+.col h3 {
   width: fit-content;
   margin-bottom: 15px;
   position: relative;
 }
-.email_id{
+
+.email_id {
   width: 50px;
   /* border-bottom: 1px solid #ccc; */
   margin: 20px 0;
 }
-footer form{
+
+footer form {
   padding-bottom: 10px;
   display: flex;
   align-items: center;
@@ -865,12 +914,12 @@ footer form{
   /* border-bottom: 1px solid #ccc; */
 }
 
-footer form .bx{
+footer form .bx {
   font-size: 18px;
   margin-right: 10px;
 }
 
-footer form input{
+footer form input {
   width: 100%;
   background: transparent;
   color: #ccc;
@@ -878,26 +927,26 @@ footer form input{
   outline: none;
 }
 
-footer form button{
+footer form button {
   background: transparent;
   border: 1px solid #ccc;
   outline: none;
   cursor: pointer;
 }
 
-footer form button .bx{
+footer form button .bx {
   color: #ccc;
   font-size: 20px;
 }
 
-footer hr{
+footer hr {
   width: 90%;
   border: 0;
   border-bottom: 1px solid #ccc;
   margin: 0 20px;
 }
 
-.underline{
+.underline {
   width: 100%;
   height: 5px;
   background: #767676;
@@ -908,7 +957,7 @@ footer hr{
   overflow: hidden;
 }
 
-.underline span{
+.underline span {
   width: 15px;
   height: 100%;
   background: var(--sd-txt-color);
@@ -919,32 +968,36 @@ footer hr{
   animation: moving 2s linear infinite;
 }
 
-@keyframes moving{
-  0%{
-      left: -20px;
+@keyframes moving {
+  0% {
+    left: -20px;
   }
-  100%{
-      left: 100%;
+
+  100% {
+    left: 100%;
   }
 }
 
 
-@media (max-width:700px){
-  .footer{
-     margin-top: 2rem;
-     bottom: unset;
+@media (max-width:700px) {
+  .footer {
+    margin-top: 2rem;
+    bottom: unset;
   }
-  .col{
-      flex-basis: 100%; 
+
+  .col {
+    flex-basis: 100%;
   }
 }
-@media (max-width:700px){
-  footer{
-     margin-top: 2rem;
-     bottom: unset;
+
+@media (max-width:700px) {
+  footer {
+    margin-top: 2rem;
+    bottom: unset;
   }
-  .col{
-      flex-basis: 100%; 
+
+  .col {
+    flex-basis: 100%;
   }
 }
 
@@ -961,10 +1014,10 @@ footer hr{
 
 
 
-@media (max-width:580px){
-  .homeimg{
+@media (max-width:580px) {
+  .homeimg {
     /* height: 450px; */
     width: 350px;
   }
-  
+
 }

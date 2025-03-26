@@ -2,6 +2,11 @@
 session_start();
 include("connect.php");
 
+if (!isset($_SESSION['userdata'])) {
+    header("location: ../vote.html");
+}
+
+
 $result = $connect->query("SELECT * FROM candidate");
 $candidates = mysqli_fetch_all($result, MYSQLI_ASSOC);
 $_SESSION['candidates'] = $candidates;
@@ -17,7 +22,11 @@ $totalcandidate = $result->num_rows;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Online Voting System</title>
+    
+    <link rel="icon" href="../logo100.png" type="image/png">
+
     <link rel="stylesheet" href="../style.css">
+    
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
@@ -64,30 +73,32 @@ $totalcandidate = $result->num_rows;
     </div>
 
 
-    <footer >
-    <div class="frow">
-        <div class="col">
-            <img src="../logo.png" class="logo" alt="" srcset="">
-            <h3>A easy and new way to vote </h3>
+    <footer>
+        <div class="frow">
+            <div class="col">
+                <img src="../logo.png" class="logo" alt="" srcset="">
+                <h3>A easy and new way to vote </h3>
+            </div>
+            <div class="col">
+                <h3>Title<div class="underline"><span></span></div>
+                </h3>
+                <h4>something</h4>
+                <p class="email_id">akshayjaiswal2004@gmail.com</p>
+                <h4>7506168740</h4>
+            </div>
+            <div class="col">
+                <h3>Contact us <div class="underline"><span></span></div>
+                </h3>
+                <form action="">
+                    <i class='bx bx-envelope'></i>
+                    <input type="email" placeholder="Enter your mail id" required>
+                    <button type="submit"><i class='bx bxs-right-arrow-alt bx-fade-right'></i></button>
+                </form>
+            </div>
         </div>
-        <div class="col">
-            <h3>Title<div class="underline"><span></span></div> </h3>
-            <h4>something</h4>
-            <p class="email_id">akshayjaiswal2004@gmail.com</p>
-            <h4>7506168740</h4>
-        </div>
-        <div class="col">
-            <h3>Contact us <div class="underline"><span></span></div> </h3>
-            <form action="">
-                <i class='bx bx-envelope'></i>
-                <input type="email" placeholder="Enter your mail id" required>
-                <button type="submit"><i class='bx bxs-right-arrow-alt bx-fade-right'></i></button>
-            </form>
-        </div>
-    </div>
-    <hr>
-    <p class="rights">online voting system</p>
-</footer>
+        <hr>
+        <p class="rights">online voting system</p>
+    </footer>
 
 
 </body>

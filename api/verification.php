@@ -2,6 +2,9 @@
 
 session_start();
 include("connect.php");
+if (!isset($_SESSION['userdata'])) {
+    header("location: ../vote.html");
+}
 
 
 $userdata = $_SESSION['userdata'];
@@ -16,18 +19,19 @@ if ($age > 18) {
     if ($vote_status == 0) {
         echo ' <script>
         window.location = "candidate24.php";
+        // window.location = "voter_details.php";
         </script>';
     } else {
         echo ' <script>
             alert("Your vote already exist")
-        window.location = "../index.html";
+        window.location = "../index.php";
         </script>';
     }
 
 } else {
     echo ' <script>
         alert("Invalid age to vote");
-        window.location = "../index.html";
+        window.location = "../index.php";
         </script>';
 }
 

@@ -14,7 +14,7 @@ $vote_status = $userdata['vote_status'];
 if ($vote_status == 1) {
     echo ' <script>
             alert("Your vote already exist")
-        window.location = "../index.html";
+        window.location = "../index.php";
         </script>';
 }
 

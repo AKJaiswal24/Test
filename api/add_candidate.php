@@ -19,7 +19,7 @@ move_uploaded_file($_FILES["party_img"]["tmp_name"], $path);
     } else {
         echo ' <script>
         alert("Failed to add candidate");
-        window.location = "add_candidate.html";
+        window.location = "../index.php";
         </script>'; 
 }
 
