@@ -1,19 +1,53 @@
+<?php
+// include("api/connect.php");
+
+// $today = date("y-m-d");
+// echo $today;
+// echo $today;
+
+// $query=mysqli_query($connect,"SELECT * FROM election_dates WHERE Date='$today' ");
+// $checkfetch = mysqli_fetch_array($query);
+// $statevote = $checkfetch['State'];
+// echo $statevote;
+?>
+
+<?php
+include("api/connect.php");
+
+$aadhaar = $_POST["aadhaarinp"];
+
+
+$check = mysqli_query($connect, " SELECT * FROM voter_list WHERE aadhaar_no='$aadhaar' ");
+
+
+$userdata = mysqli_fetch_array($check);
+
+$name = $userdata["name"];
+$aadhaar = $userdata["aadhaar_no"];
+$mobile = $userdata["mobile"];
+$voter_id =$userdata["voter_id"];
+$ward_no= $userdata["ward_no"];
+$polling_area=$userdata["polling_area"];
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Online Voting System</title>
-
-  <link rel="stylesheet" href="style.css">
 
   <link rel="icon" href="logo100.png" type="image/png">
+
+  <link rel="stylesheet" href="style.css">
 
   <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 
+  <title>Online Voting System</title>
 </head>
 
 <body>
@@ -25,9 +59,6 @@
     </div>
   </nav>
   <hr>
-
-
-  
 
   
   <div class="sidebar">
@@ -87,70 +118,24 @@
   </div>
 
 
-
   <section class="home-section">
 
-    <center style="margin-top:25px">
-      <?php
-      session_start();
-      include("api/connect.php");
+  <center>
 
-      $result = mysqli_query($connect, "SELECT * FROM election_dates");
+    <div class="vote_now">
+      <form action="" method="post" class="data1" id="data1">
+        <div class="title">Know Your details</div>
+        <p>Name: <?php echo $name ?> </p>
+        <p>Addhaar no: <?php echo $aadhaar ?> </p>
+        <p>Voter id: <?php echo $voter_id ?> </p>
+        <p>Mobile: <?php echo $mobile ?> </p>
+        <p>Ward no: <?php echo $ward_no ?> </p>
+        <p>Polling area: <?php echo $polling_area ?> </p>
 
-      $ele_dates = mysqli_fetch_all($result, MYSQLI_ASSOC);
-      $_SESSION['ele_dates'] = $ele_dates;
-
-
-      if (!empty($_SESSION['ele_dates'])) {
-        echo "<table>
-            <tr style='padding:20px;'>
-                <th style='padding: 15px 20px;border:1px black solid;'>State</th>
-                <th style='padding: 15px 20px;border:1px black solid;'>Date</th>
-            </tr>";
-
-        foreach ($_SESSION['ele_dates'] as $ele_date) {
-          echo "<tr style='padding:20px;'>
-                <td style='padding: 15px 20px;border:1px black solid;'>" . $ele_date['State'] . "</td>
-                <td style='padding: 15px 20px;border:1px black solid;'>" . $ele_date['Date'] . "</td>
-              </tr>";
-        }
-
-        echo "</table>";
-      } else {
-        echo "No election date data found.";
-      }
-      ?>
-
-    </center>
-    <footer style="margin-top: 2rem;" class="footer">
-      <div class="frow">
-        <div class="col">
-          <img src="logo.png" class="logo" alt="" srcset="">
-          <h3>A easy and new way to vote </h3>
-        </div>
-        <div class="col">
-          <h3>Title<div class="underline"><span></span></div>
-          </h3>
-          <h4>something</h4>
-          <p class="email_id">example1@gmail.com</p>
-          <h4>7506168740</h4>
-        </div>
-        <div class="col">
-          <h3>Contact us <div class="underline"><span></span></div>
-          </h3>
-          <form action="">
-            <i class='bx bx-envelope'></i>
-            <input type="email" placeholder="Enter your mail id" required>
-            <button type="submit"><i class='bx bxs-right-arrow-alt bx-fade-right'></i></button>
-          </form>
-        </div>
-      </div>
-      <hr>
-      <p class="rights">online voting system</p>
-    </footer>
-  </section>
-
-  <script src="script.js"></script>
+      </form>
+    </div>
+  </center>
+</section>
 </body>
 
 </html>

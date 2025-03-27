@@ -66,6 +66,13 @@
         </a>
         <span class="tooltip">Candidate</span>
       </li>
+      <li>
+        <a href="voter_details.html">
+        <i class='bx bx-detail'></i>
+          <span class="links_name">Details</span>
+        </a>
+        <span class="tooltip">Details</span>
+      </li>
       <!-- <li>
         <a href="#">
           <i class="fa-solid fa-headset icon"></i>
@@ -91,15 +98,24 @@
 
         $today1 = date("d-m-y");
         $today = date("y-m-d");
+        // $today = "2025-03-29";
 
         $result = mysqli_query($connect, "SELECT SUM(total_vote) AS total_votes FROM candidate;");
 
         $fetch = mysqli_fetch_array($result);
         $totalcandidatevote = $fetch["total_votes"];
         echo $totalcandidatevote;
+
         $query = mysqli_query($connect, "SELECT * FROM election_dates WHERE Date='$today' ");
         $checkfetch = mysqli_fetch_array($query);
-        $statevote = $checkfetch['State'];
+
+        if ($checkfetch == NULL) {
+          $ann= "No Election's Today";
+        }else{
+          $statevote = $checkfetch['State'];
+          $ann="Today $today1 is Lok Sabha election for the state of $statevote ";
+        }
+
 
         ?>
       </button>
@@ -107,8 +123,7 @@
     <hr>
 
     <marquee behavior="" direction="">
-      <h1 class="announce">Today(<?php echo $today1; ?>) is Lok Sabha election for the state of
-        <?php echo $statevote; ?> </h1>
+      <h1 class="announce"><?php echo $ann ?></h1>
     </marquee>
 
     <hr>
