@@ -3,7 +3,7 @@
 session_start();
 include("connect.php");
 if (!isset($_SESSION['userdata'])) {
-    header("location: ../vote.html");
+    header("location: ../form.html");
 }
 
 

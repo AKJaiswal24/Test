@@ -1,20 +1,25 @@
 <?php
 require '../connect.php';
 
-
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+table{
+    border-collapse: collapse;
+}
+td,th{
+    border: 1px solid black;
+}
+</style>
 </head>
 <body>
     <h1>Voter list</h1>
-    <table border="1">
+    <table>
         <tr>
             <td>#</td>
             <td>Aadhaar no</td>
@@ -27,6 +32,7 @@ require '../connect.php';
             <td>Polling Area</td>
             <td>State</td>
             <td>Party Name</td>
+            <td>Voting Time</td>
         </tr>
         <?php
         $i=1;
@@ -46,13 +52,14 @@ require '../connect.php';
             <td><?php echo $row["polling_area"]; ?></td>
             <td><?php echo $row["state"]; ?></td>
             <td><?php echo $row["party_name"]; ?></td>
+            <td><?php echo $row["vote_time"]; ?></td>
         </tr>
         <?php endforeach; ?>
     </table>
     <hr>
     <hr>
     <h1>Candidate</h1>
-<table border="1">
+<table>
     <tr>
         <th>Party Name</th>
         <th>Votes</th>
@@ -68,8 +75,6 @@ require '../connect.php';
     </tr>
     <?php endforeach; ?>
 </table>
-
-
 
 </body>
 </html>

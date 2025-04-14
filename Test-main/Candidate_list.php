@@ -16,6 +16,8 @@ $totalcandidate = $result->num_rows;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>>Online Voting System</title>
+    
+    <link rel="icon" href="logo100.png" type="image/png">
 
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
     
@@ -28,7 +30,6 @@ $totalcandidate = $result->num_rows;
   width: 200px;
   font-size: 10px;
   margin: 1.2rem 0;
-  /* margin-left: 5rem; */
   padding: 20px;
   box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.4);
 }
@@ -119,30 +120,36 @@ $totalcandidate = $result->num_rows;
 
   
   
-  <section class="home-section">
-    <center>
+  
+  <div class="griding">
 
-      <?php
+    <?php
       if($_SESSION['candidates']){
         for($i=0;$i<$totalcandidate;$i++){
-?>          
-        <form class="candidate_list2"><div class="inner_contain">
-        <h1>Candidates <?php echo $i+1; ?> </h1>
-        <hr>
-        <div class="members">
-            <div class="scandidate ones">
-            <?php echo '<img src="party_icon/'.$candidates[$i]["party_img"] .' "class="cand_img" width="150px" >' ?>
-                <h3>Party Name:<?php echo $candidates[$i]["party_name"];?></h3>
-            </div>
-        </div>
-        </div>
-    </form>
+          ?>
+
+<section class="home-section">
+  <center>
+    
+    <form class="candidate_list2"><div class="inner_contain">
+      <h1>Candidates <?php echo $i+1; ?> </h1>
+    <hr>
+    <div class="members">
+      <div class="scandidate ones">
+        <?php echo '<img src="party_icon/'.$candidates[$i]["party_img"] .' "class="cand_img" width="150px" >' ?>
+        <h3>Party Name:<?php echo $candidates[$i]["party_name"];?></h3>
+      </div>
+    </div>
+  </div>
+</form>
+</center>
+</section>
 <?php
         }
       } 
       ?>
 
-</center>
+</div>
 
 <div style="height: 250px;"></div>
 
@@ -169,7 +176,6 @@ $totalcandidate = $result->num_rows;
       <p class="rights">online voting system</p>
     </footer>
       
-  </section>
 </body>
 <script src="script.js"></script>
 </html>

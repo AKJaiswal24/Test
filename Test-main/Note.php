@@ -92,39 +92,61 @@
     <center style="margin-top:25px">
       <h2>State Election Dates</h2>
       <?php
-      session_start();
+      // session_start();
       include("api/connect.php");
+?>
+      <table>
+      <thead>
+          <tr>
+              <th>State</th>
+              <th>Date</th>
+              <th>Type</th>
+          </tr>
+      </thead>
+      <tbody id="order-list">
+          
+<?php
+$rows = mysqli_query($connect, "SELECT * FROM election_dates");
 
-      $result = mysqli_query($connect, "SELECT * FROM election_dates");
-
-      $ele_dates = mysqli_fetch_all($result, MYSQLI_ASSOC);
-      $_SESSION['ele_dates'] = $ele_dates;
-
-
-      if (!empty($_SESSION['ele_dates'])) {
-        echo "<table>
-            <tr style='padding:20px;'>
-                <th style='padding: 15px 20px;border:1px black solid;'>State</th>
-                <th style='padding: 15px 20px;border:1px black solid;'>Date</th>
-            </tr>";
-
-        foreach ($_SESSION['ele_dates'] as $ele_date) {
-          echo "<tr style='padding:20px;'>
-                <td style='padding: 15px 20px;border:1px black solid;'>" . $ele_date['State'] . "</td>
-                <td style='padding: 15px 20px;border:1px black solid;'>" . $ele_date['Date'] . "</td>
-              </tr>";
-        }
-
-        echo "</table>";
-      } else {
-        echo "No election date data found.";
-      }
-      ?>
+foreach($rows as $row):
+?>
+<tr>
+  <td><?php echo $row["State"]; ?></td>
+  <td><?php echo $row["date"]; ?></td>
+  <td><?php echo $row["type"]; ?></td>
+</tr>
+<?php endforeach; ?>
+      </tbody>
+  </table>
 
     </center>
 
     <div style="height: 250px;"></div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </section>
 
 
     <footer class="footer">
@@ -148,7 +170,6 @@
       <hr>
       <p class="rights">online voting system</p>
     </footer>
-  </section>
 
   <script src="script.js"></script>
 </body>

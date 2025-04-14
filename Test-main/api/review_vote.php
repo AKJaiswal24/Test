@@ -2,6 +2,10 @@
 session_start();
 include("connect.php");
 
+if (!isset($_SESSION['userdata'])) {
+    header("location: ../form.html");
+}
+
 if (!isset($_SESSION['userdata']['vote_status']) || $_SESSION['userdata']['vote_status'] != 1) {
     echo '<script>
             alert("You have not voted yet!");
@@ -63,7 +67,7 @@ $voted_candidate = $result->fetch_assoc();
             <?php } ?>
         </center>
         <div class="countdown"><p>Redirecting to home page in :</p> <div id="countdown"></div></div>
-                <a href="../index.php"<button class="backbtn"><i class='bx bx-home'></i>Home Page</button></a>
+                <a href="../logout.php"<button class="backbtn"><i class='bx bx-home'></i>Home Page</button></a>
 
     </div>
 </body>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['userdata'])) {
-    header("location: ../vote.html");
+    header("location: ../form.html");
 }
 
 $userdata = $_SESSION['userdata'];

@@ -14,6 +14,7 @@ $aadhaar = $userdata["aadhaar_no"];
 $mobile = $userdata["mobile"];
 $statusis = $userdata["vote_status"];
 $party_name = $userdata["party_name"];
+$vtime= $userdata["vote_time"];
 
 if ($statusis == 1) {
   $status = '<button style="background:lightgreen;width:100px; color:black; font-weight:800; height: 50px; border-radius: 10px;" disabled>Voted</button>';
@@ -48,13 +49,14 @@ if ($statusis == 1) {
   <center>
 
     <div class="vote_now">
-      <form action="" method="post" class="data1" id="data1">
+      <form method="post" class="data1" id="data1">
         <div class="title">Status of </div>
         <p>Name: <?php echo $name ?> </p>
         <p>Addhaar no: <?php echo $aadhaar ?> </p>
         <p>Mobile: <?php echo $mobile ?> </p>
         <p>Vote Status: <?php echo $status; ?></p>
         <p>Voted To: <?php echo $party_name; ?></p>
+        <p>Voted Time: <?php echo $vtime; ?></p>
       </form>
     </div>
   </center>

@@ -122,7 +122,8 @@ $polling_area=$userdata["polling_area"];
       </form>
     </div>
   </center>
-
+</section>
+  
   <footer class="footer">
       <div class="frow">
         <div class="col">
@@ -147,7 +148,6 @@ $polling_area=$userdata["polling_area"];
 
 
 
-</section>
 </body>
-
+<script src="script.js"></script>
 </html>

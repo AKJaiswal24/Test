@@ -3,7 +3,7 @@ session_start();
 include("connect.php");
 
 if (!isset($_SESSION['userdata'])) {
-    header("location: ../vote.html");
+    header("location: ../form.html");
 }
 
 
@@ -71,7 +71,7 @@ $totalcandidate = $result->num_rows;
         } ?>
 
     </div>
-    <div class="blankspace"></div>
+    <div style="height: 200px;"></div>
 
 
     <footer class="footer">

@@ -98,7 +98,7 @@
 
         $today1 = date("d-m-y");
         $today = date("y-m-d");
-        // $today = "2025-03-29";
+        // $today = "2025-04-05";
 
         $result = mysqli_query($connect, "SELECT SUM(total_vote) AS total_votes FROM candidate;");
 
@@ -106,14 +106,17 @@
         $totalcandidatevote = $fetch["total_votes"];
         echo $totalcandidatevote;
 
-        $query = mysqli_query($connect, "SELECT * FROM election_dates WHERE Date='$today' ");
+        $query = mysqli_query($connect, "SELECT * FROM election_dates WHERE date='$today' ");
         $checkfetch = mysqli_fetch_array($query);
-
+        
+        
         if ($checkfetch == NULL) {
           $ann= "No Election's Today";
+          $election_type = "?";
         }else{
+          $election_type =$checkfetch["type"];
           $statevote = $checkfetch['State'];
-          $ann="Today $today1 is Lok Sabha election for the state of $statevote ";
+          $ann="Today $today1 is $election_type election for the state of $statevote ";
         }
 
 
@@ -128,19 +131,18 @@
 
     <hr>
     <div class="election_type">
-      <a href="form.html"><button class="btna">Lok Sabha</button></a>
+      <a href="form.html"><button class="btna" > <?php  echo $election_type; ?> </button></a>
 
-
-      <a href="form.html" class="dis"><button class="btna" disabled>Vidhan Sabha</button></a>
-
-
-      <a href="form.html" class="dis"><button class="btna" disabled>Nagar Parishad</button></a>
     </div>
 
-    <div class="blankspace"></div>
+    <div style="height:200px"></div>
+    
+  </section>
 
 
-    <footer class="footer">
+
+
+  <footer class="footer">
       <div class="frow">
         <div class="col">
           <img src="logo.png" class="logo" alt="" srcset="">
@@ -153,17 +155,19 @@
           <h4>1234567890</h4>
         </div>
         <div class="col">
-          <!-- <h3>
-            <div class="underline"><span></span></div>
-          </h3> -->
+          <h3>About us <div class="underline"><span></span></div>
+          <a href="about.html"><h3>OVS</h3></a>
+          </h3>
         </div>
       </div>
       <hr>
       <p class="rights">online voting system</p>
     </footer>
 
+    <div class="support">
+  <a href="tel:7506168740"><i class='bx bx-support'></i></a>
+  </div>
 
-  </section>
 
 
 
