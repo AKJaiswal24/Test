@@ -1,40 +1,19 @@
-<?php
-include("api/connect.php");
-
-$aadhaar = $_POST["aadhaarinp"];
-
-
-$check = mysqli_query($connect, " SELECT * FROM voter_list WHERE aadhaar_no='$aadhaar' ");
-
-
-$userdata = mysqli_fetch_array($check);
-
-$name = $userdata["name"];
-$aadhaar = $userdata["aadhaar_no"];
-$mobile = $userdata["mobile"];
-$voter_id =$userdata["voter_id"];
-$ward_no= $userdata["ward_no"];
-$polling_area=$userdata["polling_area"];
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="icon" href="logo100.png" type="image/png">
+  <title>Online Voting System</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <link rel="icon" href="logo100.png" type="image/png">
 
   <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 
-  <title>Online Voting System</title>
 </head>
 
 <body>
@@ -46,6 +25,9 @@ $polling_area=$userdata["polling_area"];
     </div>
   </nav>
   <hr>
+
+
+  
 
   
   <div class="sidebar">
@@ -105,26 +87,47 @@ $polling_area=$userdata["polling_area"];
   </div>
 
 
+
   <section class="home-section">
+    <center style="margin-top:25px">
+      <h2>State Election Dates</h2>
+      <?php
+      // session_start();
+      include("api/connect.php");
+?>
+      <table>
+      <thead>
+          <tr>
+              <th>State</th>
+              <th>Date</th>
+              <th>Type</th>
+          </tr>
+      </thead>
+      <tbody id="order-list">
+          
+<?php
+$rows = mysqli_query($connect, "SELECT * FROM election_dates");
 
-  <center>
+foreach($rows as $row):
+?>
+<tr>
+  <td><?php echo $row["State"]; ?></td>
+  <td><?php echo $row["date"]; ?></td>
+  <td><?php echo $row["type"]; ?></td>
+</tr>
+<?php endforeach; ?>
+      </tbody>
+  </table>
 
-    <div class="vote_now">
-      <form action="" method="post" class="data1" id="data1">
-        <div class="title">Know Your details</div>
-        <p>Name: <?php echo $name ?> </p>
-        <p>Addhaar no: <?php echo $aadhaar ?> </p>
-        <p>Voter id: <?php echo $voter_id ?> </p>
-        <p>Mobile: <?php echo $mobile ?> </p>
-        <p>Ward no: <?php echo $ward_no ?> </p>
-        <p>Polling area: <?php echo $polling_area ?> </p>
+    </center>
 
-      </form>
-    </div>
-  </center>
-</section>
-  
-<footer class="footer">
+    <div style="height: 250px;"></div>
+
+
+  </section>
+
+
+  <footer class="footer">
     <div class="frow">
       <div class="col">
         <img src="logo.png" class="logo" alt="" srcset="">
@@ -146,8 +149,7 @@ $polling_area=$userdata["polling_area"];
     <p class="rights">online voting system</p>
   </footer>
 
-
-
+  <script src="script.js"></script>
 </body>
-<script src="script.js"></script>
+
 </html>

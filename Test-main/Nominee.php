@@ -1,51 +1,65 @@
 <?php
+session_start();
 include("api/connect.php");
 
-$aadhaar = $_POST["aadhaarinp"];
+$result = $connect->query("SELECT * FROM candidate");
+$candidates = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$_SESSION['candidates'] = $candidates;
 
-
-$check = mysqli_query($connect, " SELECT * FROM voter_list WHERE aadhaar_no='$aadhaar' ");
-
-
-$userdata = mysqli_fetch_array($check);
-
-$name = $userdata["name"];
-$aadhaar = $userdata["aadhaar_no"];
-$mobile = $userdata["mobile"];
-$voter_id =$userdata["voter_id"];
-$ward_no= $userdata["ward_no"];
-$polling_area=$userdata["polling_area"];
-
+$totalcandidate = $result->num_rows;
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>>Online Voting System</title>
+    
+    <link rel="icon" href="logo100.png" type="image/png">
 
-  <link rel="icon" href="logo100.png" type="image/png">
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <style>
+    .candidate_list2{
+  background: var(--primary-color-hover);
+  border: 1px solid black;
+  border-radius: 15px;
+  width: 200px;
+  font-size: 10px;
+  margin: 1.2rem 0;
+  padding: 20px;
+  box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.4);
+}
 
-  <link rel="stylesheet" href="style.css">
+.scandidate{
+  margin: 8px;
+  transition: all .3s ease;
+  cursor: pointer;
+}
+.scandidate:hover{
+  transform: scale(1.1);
+}
 
-  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-
-  <title>Online Voting System</title>
+  </style>
+    
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
+    
   <nav class="f_nam">
+    
     <div class="con1">
-      <img src="logo.png" alt="">
-      <p>Online Voting System</p>
+    <img src="logo.png" alt="">
+    <p>Online Voting System</p>
     </div>
   </nav>
+
   <hr>
+
+
 
   
   <div class="sidebar">
@@ -104,26 +118,41 @@ $polling_area=$userdata["polling_area"];
     </ul>
   </div>
 
-
-  <section class="home-section">
-
-  <center>
-
-    <div class="vote_now">
-      <form action="" method="post" class="data1" id="data1">
-        <div class="title">Know Your details</div>
-        <p>Name: <?php echo $name ?> </p>
-        <p>Addhaar no: <?php echo $aadhaar ?> </p>
-        <p>Voter id: <?php echo $voter_id ?> </p>
-        <p>Mobile: <?php echo $mobile ?> </p>
-        <p>Ward no: <?php echo $ward_no ?> </p>
-        <p>Polling area: <?php echo $polling_area ?> </p>
-
-      </form>
-    </div>
-  </center>
-</section>
   
+  <p style="font-size:30px; font-weight: 400; ">Nominee</p> 
+  <div class="griding">
+
+    <?php
+      if($_SESSION['candidates']){
+        for($i=0;$i<$totalcandidate;$i++){
+          ?>
+
+<section class="home-section">
+  <center>
+    
+    <form class="candidate_list2"><div class="inner_contain">
+      <h1>Nominee <?php echo $i+1; ?> </h1>
+    <hr>
+    <div class="members">
+      <div class="scandidate ones">
+        <?php echo '<img src="party_icon/'.$candidates[$i]["party_img"] .' "class="cand_img" width="150px" >' ?>
+        <h3>Party Name:<?php echo $candidates[$i]["party_name"];?></h3>
+      </div>
+    </div>
+  </div>
+</form>
+</center>
+</section>
+<?php
+        }
+      } 
+      ?>
+
+</div>
+
+<div style="height: 250px;"></div>
+
+
 <footer class="footer">
     <div class="frow">
       <div class="col">
@@ -145,9 +174,7 @@ $polling_area=$userdata["polling_area"];
     <hr>
     <p class="rights">online voting system</p>
   </footer>
-
-
-
+      
 </body>
 <script src="script.js"></script>
 </html>

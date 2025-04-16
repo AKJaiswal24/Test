@@ -31,10 +31,18 @@ if (mysqli_num_rows($check) > 0) {
 
     $_SESSION['userdata'] = $userdata;
     if ($state === "$statevote") {
-
-        echo ' <script>
+        $mobile = $userdata['mobile'];
+        echo $mobile;
+        if ($mobile == NULL) {
+            echo '<script>  
+            alert("Your mobile number is not linked");
+            window.location ="mobile.html";
+            </script>';
+        } else {
+            echo ' <script>
     window.location = "../otppage.php";
     </script>';
+        }
     } else {
         echo ' <script>
         alert("Your state dont have election");

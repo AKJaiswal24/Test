@@ -53,18 +53,18 @@
         <span class="tooltip">Vote Now</span>
       </li>
       <li>
-        <a href="Note.php">
+        <a href="announcement.php">
           <i class="fa-solid fa-bullhorn icon"></i>
-          <span class="links_name">Note</span>
+          <span class="links_name">Announcement</span>
         </a>
-        <span class="tooltip">Note</span>
+        <span class="tooltip">Announcement</span>
       </li>
       <li>
-        <a href="Candidate_list.php">
+        <a href="Nominee.php">
           <i class="fa-solid fa-person"></i>
-          <span class="links_name">Candidate</span>
+          <span class="links_name">Nominee</span>
         </a>
-        <span class="tooltip">Candidate</span>
+        <span class="tooltip">Nominee</span>
       </li>
       <li>
         <a href="voter_details.html">
