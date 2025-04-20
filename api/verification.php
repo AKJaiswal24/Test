@@ -3,7 +3,8 @@
 session_start();
 include("connect.php");
 if (!isset($_SESSION['userdata'])) {
-    header("location: ../vote.html");
+    header("location: ../form.html");
+    exit();
 }
 
 
@@ -19,7 +20,6 @@ if ($age > 18) {
     if ($vote_status == 0) {
         echo ' <script>
         window.location = "candidate24.php";
-        // window.location = "voter_details.php";
         </script>';
     } else {
         echo ' <script>

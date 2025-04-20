@@ -2,6 +2,11 @@
 session_start();
 include("connect.php");
 
+if (!isset($_SESSION['userdata'])) {
+    header("location: ../form.html");
+    exit();
+}
+
 if (!isset($_SESSION['userdata']['vote_status']) || $_SESSION['userdata']['vote_status'] != 1) {
     echo '<script>
             alert("You have not voted yet!");
@@ -19,7 +24,7 @@ $voted_candidate = $result->fetch_assoc();
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="5;../index.php">
+    <meta http-equiv="refresh" content="11;../index.php">
 
     <link rel="icon" href="../logo100.png" type="image/png">
 
@@ -62,15 +67,15 @@ $voted_candidate = $result->fetch_assoc();
 
             <?php } ?>
         </center>
-        <div class="countdown"><p>Redirecting to home page :</p> <div id="countdown"></div></div>
-                <a href="../index.php"<button class="backbtn"><i class='bx bx-home'></i>Home Page</button></a>
+        <div class="countdown"><p>Redirecting to home page in :</p> <div id="countdown"></div></div>
+                <a href="../logout.php" class="backbtn"><i class='bx bx-home'></i>Home Page</a>
 
     </div>
 </body>
 <script>
 
 let number = document.getElementById("countdown");
-let counter = 6;
+let counter = 12;
 
 setInterval(() => {
     if(counter ==0){

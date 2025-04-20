@@ -5,16 +5,14 @@ include("connect.php");
 $aadhaar = $_POST["aadhaarinp"];
 $voter_id = $_POST["voterinp"];
 // $today = date("y-m-d");
-$today = "2025-03-29";
+$today = "2025-04-05";
 
 
-if ($aadhaar == 123456789123) {
+if ($voter_id === "admins0024") {
     echo '<script> window.location = "admin.html"  </script>';
 }
 
 $otp = rand(1000, 9999);
-// echo $otp . "<br>";
-
 
 $update = mysqli_query($connect, "UPDATE voter_list SET otp = $otp WHERE aadhaar_no='$aadhaar' OR voter_id='$voter_id'");
 
@@ -30,15 +28,22 @@ if (mysqli_num_rows($check) > 0) {
     $userdata = mysqli_fetch_array($check);
 
     $state = $userdata["state"];
-    // echo $state;
-
 
     $_SESSION['userdata'] = $userdata;
     if ($state === "$statevote") {
-
-        echo ' <script>
+        $mobile = $userdata['mobile'];
+        // echo $mobile;
+        if ($mobile == NULL || $mobile == 0) {
+            echo '<script>  
+            alert("Your mobile number is not linked");
+            window.location ="mobile.html";
+            </script>';
+        } else {
+            echo ' <script>
+    // window.location = "../sendotpsms.php";
     window.location = "../otppage.php";
     </script>';
+        }
     } else {
         echo ' <script>
         alert("Your state dont have election");

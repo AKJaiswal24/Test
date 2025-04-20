@@ -1,54 +1,31 @@
-<?php
-include("api/connect.php");
-
-$aadhaar = $_POST["aadhaarinp"];
-
-
-$check = mysqli_query($connect, " SELECT * FROM voter_list WHERE aadhaar_no='$aadhaar' ");
-
-
-$userdata = mysqli_fetch_array($check);
-
-$name = $userdata["name"];
-$aadhaar = $userdata["aadhaar_no"];
-$mobile = $userdata["mobile"];
-$voter_id =$userdata["voter_id"];
-$ward_no= $userdata["ward_no"];
-$polling_area=$userdata["polling_area"];
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="icon" href="logo100.png" type="image/png">
+    <title>Online Voting System</title>
 
-  <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo100.png" type="image/png">
 
-  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 
-  <title>Online Voting System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 </head>
-
 <body>
 
-  <nav class="f_nam">
-    <div class="con1">
-      <img src="logo.png" alt="">
-      <p>Online Voting System</p>
-    </div>
-  </nav>
-  <hr>
 
-  
-  <div class="sidebar">
+    <nav class="f_nam">
+        <div class="con1">
+          <img src="logo.png" alt="">
+          <p>Online Voting System</p>
+        </div>
+      </nav>
+<hr>
+
+      <div class="sidebar">
     <div class="logo-details">
       <div class="logo_name">Online Voting</div>
       <i class='bx bx-menu' id="btn"></i>
@@ -104,27 +81,42 @@ $polling_area=$userdata["polling_area"];
     </ul>
   </div>
 
+    
+    <main>
+        <div class="title">
+            <h1>About Us</h1>
+        </div>
+        <hr>
+        <h2>Who We Are</h2>
+        <p>
+            We're a group of students driven by the idea that technology can be a powerful force for positive change.
+            This Online Voting System is the result of our collaborative efforts during an academic project, born from the vision of transforming traditional voting into a more secure, transparent, and accessible digital experience.
+        </p>
 
-  <section class="home-section">
+        <h2>Our Mission</h2>
+        <p>
+            Our mission is simple: <strong>modernize the voting process</strong>. By harnessing the power of technology, we aim to eliminate manual errors, combat voting fraud,
+            and make participation easier—no matter where users are.
+        </p>
 
-  <center>
+        <h2>Real-World Impact</h2>
+        <p>
+            This platform isn’t just a school project—it’s a prototype for real-world impact. Whether it’s used for college elections,
+            internal organizational votes, or even local government polls, our system is designed with scalability, fairness, and user convenience in mind.
+        </p>
 
-    <div class="vote_now">
-      <form action="" method="post" class="data1" id="data1">
-        <div class="title">Know Your details</div>
-        <p>Name: <?php echo $name ?> </p>
-        <p>Addhaar no: <?php echo $aadhaar ?> </p>
-        <p>Voter id: <?php echo $voter_id ?> </p>
-        <p>Mobile: <?php echo $mobile ?> </p>
-        <p>Ward no: <?php echo $ward_no ?> </p>
-        <p>Polling area: <?php echo $polling_area ?> </p>
+        <h2>Our Vision</h2>
+        <p>
+            At the heart of this project is a belief in <strong>innovation with purpose</strong>. We're committed to creating practical solutions that empower communities and
+            pave the way for a smarter, digital-first democracy.
+        </p>
+    </main>
 
-      </form>
-    </div>
-  </center>
-</section>
-  
-<footer class="footer">
+    
+  <div class="" style="height:200px"></div>
+
+
+  <footer class="footer">
     <div class="frow">
       <div class="col">
         <img src="logo.png" class="logo" alt="" srcset="">
@@ -145,8 +137,6 @@ $polling_area=$userdata["polling_area"];
     <hr>
     <p class="rights">online voting system</p>
   </footer>
-
-
 
 </body>
 <script src="script.js"></script>

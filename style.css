@@ -50,12 +50,12 @@ body {
 .sidebar {
   position: fixed;
   left: 0;
-  top: auto;
-  height: 100%;
+  top: 80px;
+  height: auto;
   width: 78px;
   background: var(--primary-color);
   padding: 6px 14px;
-  z-index: 99;
+  z-index: 98;
   transition: all 0.5s ease;
 }
 
@@ -307,11 +307,27 @@ body {
   margin-bottom: 20px;
 }
 
+@media(max-width:800px){
+  .sidebar .nav-list{
+    display:none;
+  }
+  .sidebar.open .nav-list{
+    display: block;
+  }
+}
+
+@media (max-width: 420px) {
+  .sidebar li .tooltip {
+    display: none;
+  }
+  .sidebar{
+    top: 110px;
+  }
+}
 
 
 
 
-/*                            admin                                   */
 
 
 
@@ -326,6 +342,7 @@ body {
   text-transform: uppercase;
   text-decoration: none;
   border: 2px solid #000;
+  border-radius: 15px;
   padding: 10px 20px;
   color: var(--text-color);
   font-size: 17px;
@@ -358,6 +375,23 @@ body {
   background: var(--text-color);
   width: 160%;
 }
+/*                            admin                                   */
+
+.btnv{
+  background: var(--text-color);
+  color: var(--primary-color);
+  height: 55px;
+  width: 200px;
+  margin: 20px;
+  border-radius: 10px;
+  transition: .5s ease;
+}
+.btnv:hover{
+  transform: scale(1.2);
+}
+
+
+
 
 .votebtn {
   display: flex;
@@ -366,113 +400,9 @@ body {
   flex-direction: column;
 }
 
-.btnv {
-  position: relative;
-  margin: 1.5rem;
-  padding: 10px 22px;
-  border-radius: 6px;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  background-color: #0077ff;
-  transition: all 0.2s ease;
-}
-
-.btnv:active {
-  transform: scale(0.96);
-}
-
-.btnv:before,
-.btnv:after {
-  position: absolute;
-  content: "";
-  width: 150%;
-  left: 50%;
-  height: 100%;
-  transform: translateX(-50%);
-  z-index: -1000;
-  background-repeat: no-repeat;
-}
-
-.btnv:hover:before {
-  top: -70%;
-  background-image: radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, transparent 20%, #0077ff 20%, transparent 30%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, transparent 10%, #0077ff 15%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%);
-  background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%,
-    10% 10%, 18% 18%;
-  background-position: 50% 120%;
-  animation: greentopBubbles 0.6s ease;
-}
-
-@keyframes greentopBubbles {
-  0% {
-    background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%,
-      40% 90%, 55% 90%, 70% 90%;
-  }
-
-  50% {
-    background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%,
-      50% 50%, 65% 20%, 90% 30%;
-  }
-
-  100% {
-    background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%,
-      50% 40%, 65% 10%, 90% 20%;
-    background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
-  }
-}
-
-.btnv:hover::after {
-  bottom: -70%;
-  background-image: radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, transparent 10%, #0077ff 15%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%),
-    radial-gradient(circle, #0077ff 20%, transparent 20%);
-  background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 20% 20%, 18% 18%;
-  background-position: 50% 0%;
-  animation: greenbottomBubbles 0.6s ease;
-}
-
-@keyframes greenbottomBubbles {
-  0% {
-    background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%,
-      70% -10%, 70% 0%;
-  }
-
-  50% {
-    background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%,
-      105% 0%;
-  }
-
-  100% {
-    background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%,
-      110% 10%;
-    background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
-  }
-}
-
-
-
-
-
-
 
 
 /*                                form page                        */
-
-
-
-
 
 
 
@@ -488,12 +418,12 @@ body {
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  transform: skew(-21deg);
+  transform: skew(0deg);
   border: 3px solid var(--primary-color-hover);
 }
 
-/* 
-span {
+
+/* span {
   display: inline-block;
   transform: skew(21deg);
 } */
@@ -593,7 +523,7 @@ span {
   font-weight: 600;
   height: 50px;
   width: 100px;
-  margin-bottom: 20px; 
+  margin-bottom: 20px 0; 
 }
 
 .backbtn i {
@@ -608,11 +538,33 @@ span {
   transition: all 0.3s ease;
 }
 
+/*             About                                */
+
+main {
+  max-width: 800px;
+  margin: 40px auto;
+  background-color: white;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+
+
+main p {
+  line-height: 1.6;
+}
+
+
 
 
 
 /*            otp   page                           */
 
+.highlight_txt{
+  color: #000;
+  font-size: 20px;
+  font-weight: 500;
+}
 
 .otpcontainer {
   height: 300px;
@@ -633,7 +585,7 @@ span {
 .otpcontainer p {
   margin-top: .5rem;
   font-weight: bolder;
-  color: var(--text-color);
+  /* color: var(--text-color); */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -668,6 +620,7 @@ span {
   width: 6rem;
   height: 2rem;
   font-size: 20px;
+  transform: skew(0deg);
   margin: .8rem;
 }
 
@@ -682,11 +635,12 @@ span {
 
 
 
-
 /*                        candidate page                                           */
 
 
-
+.cand_container form{
+  width: 800px;
+}
 
 .cand_container .align img {
   margin: 2px;
@@ -774,6 +728,14 @@ span {
 }
 
 @media(max-width: 460px) {
+  .cand_container form{
+    width: 100%;
+  }
+  .candi{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  }
   .party_nm {
     margin: 5px;
     font-size: 15px;
@@ -784,6 +746,13 @@ span {
 
 /*                candidate list                 */
 
+.griding{
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit , minmax(300px,1fr));
+  gap: 2rem;
+}
 
 .candidate_list {
   background: var(--primary-color-hover);
@@ -867,9 +836,28 @@ p {
 }
 
 
+/*               note                            */
+table {
+  width: 400px;
+  border-collapse: collapse;
+}
 
+th, td {
+  border: 3px solid var(--text-color);
+  padding: 10px;
+  text-align: center;
+}
 
+th {
+  background: var(--text-color);
+  color: var(--primary-color-hover);
+}
 
+@media(max-width:400px){
+  table{
+    width: 250px;
+  }
+}
 
 
 
@@ -878,15 +866,16 @@ p {
 
 /*                        footer                         */
 
-
 footer {
   background: var(--text-color);
   color: var(--primary-color);
+  z-index: 100;
 }
 
 .footer {
   width: 100%;
-  position: absolute;
+  position: fixed;
+  bottom: 2px;
   border: solid #000;
   padding: 20px;
   font-size: 13px;
@@ -905,6 +894,16 @@ footer {
 .col {
   flex-basis: 25%;
   padding: 10px;
+}
+.col a{
+  color: var(--primary-color);
+  text-decoration: none;
+}
+.col a:hover{
+  color: var(--sd-txt-color);
+}
+.col a h3{
+  margin-top: 20px;
 }
 
 footer .logo {
@@ -986,6 +985,33 @@ footer hr {
   animation: moving 2s linear infinite;
 }
 
+
+/*          customer support              */
+
+
+
+
+
+
+.support{
+  position: sticky;
+  display: flex;
+  justify-content: right;
+  z-index: 500;
+  bottom: 10px;
+}
+.support i{
+  background: var(--primary-color-hover);
+  font-size: 3rem;
+  height: 50px;
+  border-radius: 20px;
+  color: var(--text-color);
+}
+
+
+
+
+
 @keyframes moving {
   0% {
     left: -20px;
@@ -1001,6 +1027,7 @@ footer hr {
   .footer {
     margin-top: 2rem;
     bottom: unset;
+    position: unset;
   }
 
   .col {
@@ -1024,22 +1051,3 @@ footer hr {
 }
 }
 
-
-
-
-
-@media (max-width: 420px) {
-  .sidebar li .tooltip {
-    display: none;
-  }
-}
-
-
-
-@media (max-width:580px) {
-  .homeimg {
-    /* height: 450px; */
-    width: 350px;
-  }
-
-}

@@ -3,7 +3,8 @@ session_start();
 include("connect.php");
 
 if (!isset($_SESSION['userdata'])) {
-    header("location: ../vote.html");
+    header("location: ../form.html");
+    exit();
 }
 
 
@@ -39,6 +40,7 @@ $totalcandidate = $result->num_rows;
     </nav>
     <hr>
 
+    <center>
     <div class="cand_container">
         <h1>Candidates</h1>
 
@@ -67,38 +69,35 @@ $totalcandidate = $result->num_rows;
                         </div>
                     </div>
                 </form>
-            <?php }
+                <?php }
         } ?>
 
+</div>
+</center>
+    <div style="height: 200px;"></div>
+
+
+    <footer class="footer">
+    <div class="frow">
+      <div class="col">
+        <img src="../logo.png" class="logo" alt="" srcset="">
+        <h3>A easy and new way to vote </h3>
+      </div>
+      <div class="col">
+        <h3>Contact us <div class="underline"><span></span></div>
+        </h3>
+        <p class="email_id">example1@gmail.com</p>
+        <h4>1234567890</h4>
+      </div>
+      <div class="col">
+        <h3>About us <div class="underline"><span></span></div>
+        <a href="../about.html"><h3>OVS</h3></a>
+        </h3>
+      </div>
     </div>
-
-
-    <footer>
-        <div class="frow">
-            <div class="col">
-                <img src="../logo.png" class="logo" alt="" srcset="">
-                <h3>A easy and new way to vote </h3>
-            </div>
-            <div class="col">
-                <h3>Title<div class="underline"><span></span></div>
-                </h3>
-                <h4>something</h4>
-                <p class="email_id">akshayjaiswal2004@gmail.com</p>
-                <h4>7506168740</h4>
-            </div>
-            <div class="col">
-                <h3>Contact us <div class="underline"><span></span></div>
-                </h3>
-                <form action="">
-                    <i class='bx bx-envelope'></i>
-                    <input type="email" placeholder="Enter your mail id" required>
-                    <button type="submit"><i class='bx bxs-right-arrow-alt bx-fade-right'></i></button>
-                </form>
-            </div>
-        </div>
-        <hr>
-        <p class="rights">online voting system</p>
-    </footer>
+    <hr>
+    <p class="rights">online voting system</p>
+  </footer>
 
 
 </body>

@@ -2,7 +2,8 @@
 
 session_start();
 if (!isset($_SESSION['userdata'])) {
-    header("location: ../vote.html");
+    header("location: ../form.html");
+    exit();
 }
 
 
@@ -11,8 +12,7 @@ $userdata = $_SESSION['userdata'];
 $otp = $_POST["otpnm"];
 
 if ($otp == $userdata["otp"]) {
-    echo ' <script>
-        window.location = "verification.php";
+    echo ' <script>window.location = "verification.php";
         </script>';
 } else {
     echo ' <script>

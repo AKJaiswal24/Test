@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Online Voting System</title>
 
-  <link rel="icon" href="logo100.png" type="image/png">
-
   <link rel="stylesheet" href="style.css">
+
+  <link rel="icon" href="logo100.png" type="image/png">
 
   <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 
@@ -18,15 +17,19 @@
 </head>
 
 <body>
+
   <nav class="f_nam">
     <div class="con1">
       <img src="logo.png" alt="">
       <p>Online Voting System</p>
     </div>
   </nav>
-
   <hr>
 
+
+  
+
+  
   <div class="sidebar">
     <div class="logo-details">
       <div class="logo_name">Online Voting</div>
@@ -85,91 +88,66 @@
 
 
 
-
   <section class="home-section">
+    <center style="margin-top:25px">
+      <h2>State Election Dates</h2>
+      <?php
+      // session_start();
+      include("api/connect.php");
+?>
+      <table>
+      <thead>
+          <tr>
+              <th>State</th>
+              <th>Date</th>
+              <th>Type</th>
+          </tr>
+      </thead>
+      <tbody id="order-list">
+          
+<?php
+$rows = mysqli_query($connect, "SELECT * FROM election_dates");
 
-    <h1 style="display: flex; align-items: center; justify-content: center;">Your Vote Matters</h1>
-    <p>Total votes given </p>
-    <div class="livevotecan">
-      <button class="livevote" disabled="disabled">
-        <?php
+foreach($rows as $row):
+?>
+<tr>
+  <td><?php echo $row["State"]; ?></td>
+  <td><?php echo $row["date"]; ?></td>
+  <td><?php echo $row["type"]; ?></td>
+</tr>
+<?php endforeach; ?>
+      </tbody>
+  </table>
 
-        include("api/connect.php");
+    </center>
 
-        $today1 = date("d-m-y");
-        $today = date("y-m-d");
-        // $today = "2025-04-05";
-
-        $result = mysqli_query($connect, "SELECT SUM(vote_status) AS total_votes FROM voter_list;");
-
-        $fetch = mysqli_fetch_array($result);
-        $totalcandidatevote = $fetch["total_votes"];
-        echo $totalcandidatevote;
-
-        $query = mysqli_query($connect, "SELECT * FROM election_dates WHERE date='$today' ");
-        $checkfetch = mysqli_fetch_array($query);
-        
-        
-        if ($checkfetch == NULL) {
-          $ann= "No Election's Today";
-          $election_type = "?";
-        }else{
-          $election_type =$checkfetch["type"];
-          $statevote = $checkfetch['State'];
-          $ann="Today $today1 is $election_type election for the state of $statevote ";
-        }
+    <div style="height: 250px;"></div>
 
 
-        ?>
-      </button>
-    </div>
-    <hr>
-
-    <marquee behavior="" direction="">
-      <h1 class="announce"><?php echo $ann ?></h1>
-    </marquee>
-
-    <hr>
-    <div class="election_type">
-      <a href="form.html"><button class="btna" > <?php  echo $election_type; ?> </button></a>
-
-    </div>
-
-    <div style="height:200px"></div>
-    
   </section>
 
 
-
-
   <footer class="footer">
-      <div class="frow">
-        <div class="col">
-          <img src="logo.png" class="logo" alt="" srcset="">
-          <h3>A easy and new way to vote </h3>
-        </div>
-        <div class="col">
-          <h3>Contact us <div class="underline"><span></span></div>
-          </h3>
-          <p class="email_id">example1@gmail.com</p>
-          <h4>1234567890</h4>
-        </div>
-        <div class="col">
-          <h3>About us <div class="underline"><span></span></div>
-          <a href="about.html"><h3>OVS</h3></a>
-          </h3>
-        </div>
+    <div class="frow">
+      <div class="col">
+        <img src="logo.png" class="logo" alt="" srcset="">
+        <h3>A easy and new way to vote </h3>
       </div>
-      <hr>
-      <p class="rights">online voting system</p>
-    </footer>
-
-    <div class="support">
-  <a href="tel:1234567890"><i class='bx bx-support'></i></a>
-  </div>
-
-
-
+      <div class="col">
+        <h3>Contact us <div class="underline"><span></span></div>
+        </h3>
+        <p class="email_id">example1@gmail.com</p>
+        <h4>1234567890</h4>
+      </div>
+      <div class="col">
+        <h3>About us <div class="underline"><span></span></div>
+        <a href="about.html"><h3>OVS</h3></a>
+        </h3>
+      </div>
+    </div>
+    <hr>
+    <p class="rights">online voting system</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
