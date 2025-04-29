@@ -89,7 +89,7 @@
   <section class="home-section">
 
     <h1 style="display: flex; align-items: center; justify-content: center;">Your Vote Matters</h1>
-    <p>Total votes given </p>
+    <p style="text-align: center;">Total votes given </p>
     <div class="livevotecan">
       <button class="livevote" disabled="disabled">
         <?php

@@ -377,6 +377,27 @@ body {
 }
 /*                            admin                                   */
 
+
+/* .votebtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+} */
+.adminbtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.inner_admin{
+  max-width: 450px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit , minmax(200px,1fr));
+  gap: 2rem;
+}
+
 .btnv{
   background: var(--text-color);
   color: var(--primary-color);
@@ -391,14 +412,6 @@ body {
 }
 
 
-
-
-.votebtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
 
 
 
@@ -468,6 +481,9 @@ body {
   border: var(--sd-txt-color);
   background: var(--primary-color-hover);
   padding: 20px;
+}
+.data1 p{
+  text-align: start;
 }
 
 .data1 .title {
@@ -800,11 +816,16 @@ main p {
   border-radius: 50%;
   margin: 10px;
 } */
-.candidate_list h4,
-p {
-  text-align: center;
+.candidate_list h4{
+  text-align: start;
   font-size: 1rem;
   margin: 7px;
+}
+
+
+p{
+  font-size: 1rem;
+  text-align: center;
 }
 
 /* .candidate_list2{
@@ -1010,6 +1031,10 @@ footer hr {
 
 
 
+
+.spaceblank{
+  height: 200px;
+}
 
 
 @keyframes moving {

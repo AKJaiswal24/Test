@@ -53,10 +53,10 @@ $totalcandidate = $result->num_rows;
                         <div class="align">
                             <img src="../party_icon/<?php echo $candidates[$i]["party_img"]; ?>" class="cand_img">
                             <p class="party_nm">Party Name: <?php echo $candidates[$i]["party_name"]; ?></p>
-                            <p style="display:none;">Votes: <?php echo $candidates[$i]["total_vote"]; ?></p>
+                            <!-- <p style="display:none;">Votes: <?php # echo $candidates[$i]["total_vote"]; ?></p> -->
 
                             <input type="hidden" name="party_name" value="<?php echo $candidates[$i]["party_name"]; ?>">
-                            <input type="hidden" name="can_vote" value="<?php echo $candidates[$i]["total_vote"]; ?>">
+                            <!-- <input type="hidden" name="can_vote" value="<?php # echo $candidates[$i]["total_vote"]; ?>"> -->
 
                             <button type="submit" class="vote_btn">
                                 <div class="icon-wrapper-1">

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("api/connect.php");
+include("connect.php");
 
 $result = $connect->query("SELECT * FROM candidate");
 $candidates = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -17,7 +17,7 @@ $totalcandidate = $result->num_rows;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>>Online Voting System</title>
     
-    <link rel="icon" href="logo100.png" type="image/png">
+    <link rel="icon" href="../logo100.png" type="image/png">
 
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
     
@@ -45,14 +45,14 @@ $totalcandidate = $result->num_rows;
 
   </style>
     
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     
   <nav class="f_nam">
     
     <div class="con1">
-    <img src="logo.png" alt="">
+    <img src="../logo.png" alt="">
     <p>Online Voting System</p>
     </div>
   </nav>
@@ -62,64 +62,7 @@ $totalcandidate = $result->num_rows;
 
 
   
-  <div class="sidebar">
-    <div class="logo-details">
-      <div class="logo_name">Online Voting</div>
-      <i class='bx bx-menu' id="btn"></i>
-    </div>
-    <ul class="nav-list">
-      <li>
-        <i class='bx bx-search'></i>
-        <input type="text" placeholder="Search...">
-        <span class="tooltip">Search</span>
-      </li>
-      <li>
-        <a href="index.php">
-          <i class='bx bx-home'></i>
-          <span class="links_name">Home</span>
-        </a>
-        <span class="tooltip">Home</span>
-      </li>
-      <li>
-        <a href="form.html">
-          <i class="fa-solid fa-square-poll-vertical"></i>
-          <span class="links_name">Vote Now</span>
-        </a>
-        <span class="tooltip">Vote Now</span>
-      </li>
-      <li>
-        <a href="announcement.php">
-          <i class="fa-solid fa-bullhorn icon"></i>
-          <span class="links_name">Announcement</span>
-        </a>
-        <span class="tooltip">Announcement</span>
-      </li>
-      <li>
-        <a href="Nominee.php">
-          <i class="fa-solid fa-person"></i>
-          <span class="links_name">Nominee</span>
-        </a>
-        <span class="tooltip">Nominee</span>
-      </li>
-      <li>
-        <a href="voter_details.html">
-        <i class='bx bx-detail'></i>
-          <span class="links_name">Details</span>
-        </a>
-        <span class="tooltip">Details</span>
-      </li>
-      <!-- <li>
-        <a href="#">
-          <i class="fa-solid fa-headset icon"></i>
-          <span class="links_name">Customer Support</span>
-        </a>
-        <span class="tooltip">Customer Support</span>
-      </li> -->
-    </ul>
-  </div>
-
-  
-  <p style="font-size:30px; font-weight: 400; ">Nominee</p> 
+  <p style="font-size:30px; font-weight: 400; ">Result</p> 
   <div class="griding" style="margin-left: 100px;">
 
     <?php
@@ -135,10 +78,10 @@ $totalcandidate = $result->num_rows;
     <hr>
     <div class="members">
       <div class="scandidate ones">
-        <?php echo '<img src="party_icon/'.$candidates[$i]["party_img"] .' "class="cand_img" width="150px" >' ?>
+        <?php echo '<img src="../party_icon/'.$candidates[$i]["party_img"] .' "class="cand_img" width="150px" >' ?>
         <h3>Party Name:<?php $nmparty =  $candidates[$i]["party_name"]; echo $nmparty; ?></h3>
-
-
+        <p class="highlight_txt">vote = <?php $query =mysqli_fetch_assoc( mysqli_query($connect,
+        "SELECT COUNT(*) AS count FROM voter_list WHERE party_name = '$nmparty' ")); echo $query['count']; ?></p>
       </div>
     </div>
   </div>
@@ -158,7 +101,7 @@ $totalcandidate = $result->num_rows;
 <footer class="footer">
     <div class="frow">
       <div class="col">
-        <img src="logo.png" class="logo" alt="" srcset="">
+        <img src="../logo.png" class="logo" alt="" srcset="">
         <h3>A easy and new way to vote </h3>
       </div>
       <div class="col">
@@ -169,7 +112,7 @@ $totalcandidate = $result->num_rows;
       </div>
       <div class="col">
         <h3>About us <div class="underline"><span></span></div>
-        <a href="about.html"><h3>OVS</h3></a>
+        <a href="../about.html"><h3>OVS</h3></a>
         </h3>
       </div>
     </div>

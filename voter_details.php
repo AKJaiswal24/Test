@@ -12,9 +12,9 @@ $userdata = mysqli_fetch_array($check);
 $name = $userdata["name"];
 $aadhaar = $userdata["aadhaar_no"];
 $mobile = $userdata["mobile"];
-$voter_id =$userdata["voter_id"];
-$ward_no= $userdata["ward_no"];
-$polling_area=$userdata["polling_area"];
+$voter_id = $userdata["voter_id"];
+$ward_no = $userdata["ward_no"];
+$polling_area = $userdata["polling_area"];
 
 
 ?>
@@ -35,6 +35,12 @@ $polling_area=$userdata["polling_area"];
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 
   <title>Online Voting System</title>
+  <style>
+    .oneline {
+      display: flex;
+      flex-direction: row;
+    }
+  </style>
 </head>
 
 <body>
@@ -47,7 +53,7 @@ $polling_area=$userdata["polling_area"];
   </nav>
   <hr>
 
-  
+
   <div class="sidebar">
     <div class="logo-details">
       <div class="logo_name">Online Voting</div>
@@ -89,7 +95,7 @@ $polling_area=$userdata["polling_area"];
       </li>
       <li>
         <a href="voter_details.html">
-        <i class='bx bx-detail'></i>
+          <i class='bx bx-detail'></i>
           <span class="links_name">Details</span>
         </a>
         <span class="tooltip">Details</span>
@@ -107,24 +113,39 @@ $polling_area=$userdata["polling_area"];
 
   <section class="home-section">
 
-  <center>
+    <center>
 
-    <div class="vote_now">
-      <form action="" method="post" class="data1" id="data1">
-        <div class="title">Know Your details</div>
-        <p>Name: <?php echo $name ?> </p>
-        <p>Addhaar no: <?php echo $aadhaar ?> </p>
-        <p>Voter id: <?php echo $voter_id ?> </p>
-        <p>Mobile: <?php echo $mobile ?> </p>
-        <p>Ward no: <?php echo $ward_no ?> </p>
-        <p>Polling area: <?php echo $polling_area ?> </p>
+      <div class="vote_now">
+        <form action="" method="post" class="data1" id="data1">
+          <div class="title">Know Your details</div>
+          <div class="oneline">
+            <p>Name: <span class="highlight_txt"> <?php echo $name ?></span></p>
+          </div>
+          <div class="oneline">
+            <p>Addhaar no: <span class="highlight_txt"> <?php echo $aadhaar ?> </span></p>
+          </div>
+          <div class="oneline">
+            <p>Voter id: <span class="highlight_txt"><?php echo $voter_id ?></span> </p>
+          </div>
+          <div class="oneline">
+            <p>Mobile: <span class="highlight_txt"> <?php echo $mobile ?> </span> </p>
+          </div>
+          <div class="oneline">
+            <p>Ward no: <span class="highlight_txt"> <?php echo $ward_no ?> </span> </p>
+          </div>
+          <div class="oneline">
+            <p>Polling area: <span class="highlight_txt"> <?php echo $polling_area ?></span> </p>
+          </div>
 
-      </form>
-    </div>
-  </center>
-</section>
+        </form>
+      </div>
+      <div style="height:250px"></div>
+    </center>
+  </section>
+
+
   
-<footer class="footer">
+  <footer class="footer">
     <div class="frow">
       <div class="col">
         <img src="logo.png" class="logo" alt="" srcset="">
@@ -138,7 +159,9 @@ $polling_area=$userdata["polling_area"];
       </div>
       <div class="col">
         <h3>About us <div class="underline"><span></span></div>
-        <a href="about.html"><h3>OVS</h3></a>
+          <a href="about.html">
+            <h3>OVS</h3>
+          </a>
         </h3>
       </div>
     </div>
@@ -150,4 +173,5 @@ $polling_area=$userdata["polling_area"];
 
 </body>
 <script src="script.js"></script>
+
 </html>

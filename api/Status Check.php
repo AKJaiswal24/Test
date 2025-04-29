@@ -14,7 +14,7 @@ $aadhaar = $userdata["aadhaar_no"];
 $mobile = $userdata["mobile"];
 $statusis = $userdata["vote_status"];
 $party_name = $userdata["party_name"];
-$vtime= $userdata["vote_time"];
+$vtime = $userdata["vote_time"];
 
 if ($statusis == 1) {
   $status = '<button style="background:lightgreen;width:100px; color:black; font-weight:800; height: 50px; border-radius: 10px;" disabled>Voted</button>';
@@ -51,17 +51,30 @@ if ($statusis == 1) {
     <div class="vote_now">
       <form method="post" class="data1" id="data1">
         <div class="title">Status of </div>
-        <p>Name: <?php echo $name ?> </p>
-        <p>Addhaar no: <?php echo $aadhaar ?> </p>
-        <p>Mobile: <?php echo $mobile ?> </p>
-        <p>Vote Status: <?php echo $status; ?></p>
-        <p>Voted To: <?php echo $party_name; ?></p>
-        <p>Voted Time: <?php echo $vtime; ?></p>
+        <div class="oneline">
+          <p>Name: <span class="highlight_txt"> <?php echo $name ?> </span></p>
+        </div>
+        <div class="oneline">
+          <p>Addhaar no: <span class="highlight_txt"> <?php echo $aadhaar ?> </span></p>
+        </div>
+        <div class="oneline">
+          <p>Mobile: <span class="highlight_txt"> <?php echo $mobile ?> </span></p>
+        </div>
+        <div class="oneline">
+          <p>Vote Status: <span class="highlight_txt"> <?php echo $status; ?></span></p>
+        </div>
+        <div class="oneline">
+          <p>Voted To: <span class="highlight_txt"> <?php echo $party_name; ?></span></p>
+        </div>
+        <div class="oneline">
+          <p>Voted Time: <span class="highlight_txt"> <?php echo $vtime; ?></span></p>
+        </div>
       </form>
     </div>
   </center>
+  <div style="height:200px"></div>
   <center><a href="Status check.html" class="backbtn"><i class='bx bx-left-arrow-alt'></i>Back</a></center>
-  
+
 
 
   <footer class="footer">
@@ -78,7 +91,9 @@ if ($statusis == 1) {
       </div>
       <div class="col">
         <h3>About us <div class="underline"><span></span></div>
-        <a href="../about.html"><h3>OVS</h3></a>
+          <a href="../about.html">
+            <h3>OVS</h3>
+          </a>
         </h3>
       </div>
     </div>
