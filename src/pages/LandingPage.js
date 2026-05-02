@@ -142,7 +142,7 @@ useEffect(() => {
 
   {menuOpen && (
     <div className="dropdown">
-      <p onClick={() => navigate("/my-rentals")}>
+      <p onClick={() => navigate("/orders")}>
         Order History
       </p>
 
@@ -295,7 +295,7 @@ useEffect(() => {
             <h4>Services</h4>
             <p>Rent Equipment</p>
             <p>List Your Product</p>
-            <p>Pricing</p>
+            <p>Deliv Chain</p>
           </div>
 
           <div>
