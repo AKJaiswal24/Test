@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Start2Rent
 
 Start2Rent is split into two apps:
@@ -30,3 +31,6 @@ Frontend runs on `http://localhost:3000`.
 ## Environment
 
 Frontend uses `REACT_APP_API_BASE_URL` (see `frontend/.env`).
+=======
+# Test
+>>>>>>> 2785fbbc936c87d5645c8bfe6a6547d10fc37593
