@@ -1,22 +1,41 @@
 const express = require("express");
 const router = express.Router();
 const Cart = require("../models/Cart");
+const requireAuth = require("../middleware/requireAuth");
+
+const assertSelf = (req, res, userId) => {
+  const authUserId = req.user?.id;
+  if (!authUserId) {
+    res.status(401).json({ message: "Unauthorized" });
+    return false;
+  }
+
+  if (userId && String(userId) !== String(authUserId)) {
+    res.status(403).json({ message: "Forbidden" });
+    return false;
+  }
+
+  return true;
+};
 
 // =======================
 // ADD TO CART
 // =======================
-router.post("/add", async (req, res) => {
+router.post("/add", requireAuth, async (req, res) => {
   try {
     const { userId, productId, selectedPlan } = req.body;
+    if (!assertSelf(req, res, userId)) return;
+
+    const authUserId = req.user.id;
 
     if (!selectedPlan || !selectedPlan.price || !selectedPlan.durationLabel) {
       return res.status(400).json({ message: "Invalid plan data" });
     }
 
-    let cart = await Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId: authUserId });
 
     if (!cart) {
-      cart = new Cart({ userId, items: [] });
+      cart = new Cart({ userId: authUserId, items: [] });
     }
 
     // match product + plan
@@ -51,9 +70,11 @@ router.post("/add", async (req, res) => {
 // =======================
 // GET CART
 // =======================
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", requireAuth, async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId: req.params.userId })
+    if (!assertSelf(req, res, req.params.userId)) return;
+
+    const cart = await Cart.findOne({ userId: req.user.id })
       .populate("items.productId");
 
     res.json(cart || { items: [] });
@@ -66,11 +87,12 @@ router.get("/:userId", async (req, res) => {
 // =======================
 // REMOVE ITEM
 // =======================
-router.post("/remove", async (req, res) => {
+router.post("/remove", requireAuth, async (req, res) => {
   try {
     const { userId, productId, duration } = req.body;
+    if (!assertSelf(req, res, userId)) return;
 
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId: req.user.id });
     if (!cart) return res.json({ items: [] });
 
     cart.items = cart.items.filter(
@@ -93,11 +115,12 @@ router.post("/remove", async (req, res) => {
 // =======================
 // UPDATE QUANTITY
 // =======================
-router.post("/update", async (req, res) => {
+router.post("/update", requireAuth, async (req, res) => {
   try {
     const { userId, productId, type, duration } = req.body;
+    if (!assertSelf(req, res, userId)) return;
 
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId: req.user.id });
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 
     const item = cart.items.find(
@@ -134,15 +157,12 @@ router.post("/update", async (req, res) => {
 // =======================
 // CLEAR CART
 // =======================
-router.post("/clear", async (req, res) => {
+router.post("/clear", requireAuth, async (req, res) => {
   try {
     const { userId } = req.body;
+    if (!assertSelf(req, res, userId)) return;
 
-    if (!userId) {
-      return res.status(400).json({ message: "Missing userId" });
-    }
-
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId: req.user.id });
     if (!cart) return res.json({ items: [] });
 
     cart.items = [];

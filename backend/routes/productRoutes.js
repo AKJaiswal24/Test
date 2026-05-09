@@ -3,6 +3,8 @@ const router = express.Router();
 const Product = require("../models/Product");
 const Order = require("../models/Order");
 const pricing = require("../utils/pricing");
+const requireAuth = require("../middleware/requireAuth");
+const requireLender = require("../middleware/requireLender");
 
 const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -111,7 +113,7 @@ router.get("/categories", async (req, res) => {
 });
 
 // ADD PRODUCT
-router.post("/add", async (req, res) => {
+router.post("/add", requireAuth, requireLender, async (req, res) => {
   try {
     const {
       name,
@@ -123,10 +125,19 @@ router.post("/add", async (req, res) => {
       userId,
     } = req.body;
 
+    const authUserId = req.user?.id;
+    if (!authUserId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    if (userId && String(userId) !== String(authUserId)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     // 🔥 VALIDATION
-    if (!name || !category || !userId || !monthlyRent) {
+    if (!name || !category || !monthlyRent) {
       return res.status(400).json({
-        message: "Missing required fields: name, category, userId, monthlyRent",
+        message: "Missing required fields: name, category, monthlyRent",
       });
     }
 
@@ -152,7 +163,7 @@ router.post("/add", async (req, res) => {
       deposit: deposit ? Number(deposit) : 0,
       monthlyRent: Number(monthlyRent),
       images,
-      userId,
+      userId: authUserId,
     });
 
     await product.save();
@@ -290,9 +301,18 @@ router.get("/:id", async (req, res) => {
 });
 
 // DELETE ONE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, requireLender, async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    if (String(product.userId) !== String(req.user?.id)) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    await Product.findByIdAndDelete(id);
     res.json({ message: "Deleted" });
   } catch (err) {
     res.status(500).json({ message: "Delete failed" });
@@ -300,17 +320,26 @@ router.delete("/:id", async (req, res) => {
 });
 
 // UPDATE ONE
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAuth, requireLender, async (req, res) => {
   try {
     const { id } = req.params;
     const { userId, monthlyRent, ...updateData } = req.body;
+
+    const authUserId = req.user?.id;
+    if (!authUserId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    if (userId && String(userId) !== String(authUserId)) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
 
     const product = await Product.findById(id);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    if (product.userId.toString() !== userId) {
+    if (String(product.userId) !== String(authUserId)) {
       return res.status(403).json({ message: "Not authorized" });
     }
 
@@ -334,8 +363,12 @@ router.put("/:id", async (req, res) => {
 });
 
 // GET ALL BY LENDER ID
-router.get("/lender/:userId", async (req, res) => {
+router.get("/lender/:userId", requireAuth, requireLender, async (req, res) => {
   try {
+    if (String(req.params.userId) !== String(req.user?.id)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     const products = await Product.find({
       userId: req.params.userId,
     });

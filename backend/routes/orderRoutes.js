@@ -5,6 +5,7 @@ const router = express.Router();
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
+const requireAuth = require("../middleware/requireAuth");
 
 const IST_OFFSET_MS = 330 * 60 * 1000; // IST = UTC + 05:30 (no DST)
 const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
@@ -125,12 +126,17 @@ const addDurationYmd = (ymd, duration) => {
 // =======================
 // CREATE ORDER
 // =======================
-router.post("/create", async (req, res) => {
+router.post("/create", requireAuth, async (req, res) => {
   try {
     const { userId, items, deliveryDate, deliveryAddress } = req.body;
 
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const authUserId = req.user?.id;
+    if (!authUserId || !mongoose.Types.ObjectId.isValid(authUserId)) {
       return res.status(400).json({ message: "Invalid userId" });
+    }
+
+    if (userId && String(userId) !== String(authUserId)) {
+      return res.status(403).json({ message: "Forbidden" });
     }
 
     if (!deliveryDate || !isValidDeliveryDate(deliveryDate)) {
@@ -279,7 +285,7 @@ router.post("/create", async (req, res) => {
     const grandTotal = rentTotal + depositTotal + transport + platformCharge + insurance;
 
     const order = new Order({
-      userId,
+      userId: authUserId,
       items: orderItems,
       rentTotal,
       depositTotal,
@@ -303,7 +309,7 @@ router.post("/create", async (req, res) => {
     await order.populate("items.productId");
 
     // Best-effort: clear cart after order success
-    await Cart.updateOne({ userId: String(userId) }, { $set: { items: [] } });
+    await Cart.updateOne({ userId: String(authUserId) }, { $set: { items: [] } });
 
     res.json(order);
   } catch (err) {
@@ -315,11 +321,15 @@ router.post("/create", async (req, res) => {
 // =======================
 // GET USER ORDERS
 // =======================
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", requireAuth, async (req, res) => {
   try {
     const { userId } = req.params;
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid userId" });
+    }
+
+    if (String(userId) !== String(req.user?.id)) {
+      return res.status(403).json({ message: "Forbidden" });
     }
 
     const orders = await Order.find({ userId }).populate("items.productId").sort({ createdAt: -1 });
@@ -346,7 +356,7 @@ router.get("/:userId", async (req, res) => {
 // =======================
 // EXTEND RENTAL (PER ITEM)
 // =======================
-router.post("/extend", async (req, res) => {
+router.post("/extend", requireAuth, async (req, res) => {
   try {
     const { orderId, itemId, selectedPlan } = req.body;
 
@@ -372,6 +382,10 @@ router.post("/extend", async (req, res) => {
 
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ message: "Order not found" });
+
+    if (String(order.userId) !== String(req.user?.id)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
 
     const item = order.items.id(itemId);
     if (!item) return res.status(404).json({ message: "Item not found" });

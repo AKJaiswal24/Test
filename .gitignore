@@ -10,7 +10,7 @@ Thumbs.db
 node_modules/
 build/
 dist/
-.tmp-build/
+.tmp-build*/
 .eslintcache
 .env
 .env.local

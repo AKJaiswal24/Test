@@ -6,6 +6,7 @@ const multer = require("multer");
 
 const Lender = require("../models/Lender");
 const User = require("../models/User");
+const requireAuth = require("../middleware/requireAuth");
 
 // Configure multer for file upload
 const storage = multer.diskStorage({
@@ -27,19 +28,24 @@ const upload = multer({ storage: storage });
 // ===============================
 // ➕ REGISTER AS LENDER
 // ===============================
-router.post("/register", async (req, res) => {
+router.post("/register", requireAuth, async (req, res) => {
   try {
     const { userId, businessName, phone, address, city, pincode, aadhaarCardUrl } = req.body;
 
+    if (!req.user?.id) return res.status(401).json({ message: "Unauthorized" });
+    if (userId && String(userId) !== String(req.user.id)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     // 🔥 VALIDATION
-    if (!userId || !businessName || !phone) {
+    if (!req.user?.id || !businessName || !phone) {
       return res.status(400).json({
         message: "Missing required fields",
       });
     }
 
     // 🔥 CHECK IF ALREADY EXISTS
-    const existing = await Lender.findOne({ userId });
+    const existing = await Lender.findOne({ userId: req.user.id });
 
     if (existing) {
       return res.status(400).json({
@@ -48,7 +54,7 @@ router.post("/register", async (req, res) => {
     }
 
     const lender = new Lender({
-      userId,
+      userId: req.user.id,
       businessName,
       phone,
       address,
@@ -59,7 +65,7 @@ router.post("/register", async (req, res) => {
     await lender.save();
 
     // Update user's isLender flag
-    await User.findByIdAndUpdate(userId, { isLender: true });
+    await User.findByIdAndUpdate(req.user.id, { isLender: true });
 
     res.json({
       message: "Registered successfully",
@@ -77,7 +83,7 @@ router.post("/register", async (req, res) => {
 // ===============================
 // 📤 UPLOAD AADHAAR CARD
 // ===============================
-router.post("/upload-aadhaar", upload.single("aadhaarCard"), async (req, res) => {
+router.post("/upload-aadhaar", requireAuth, upload.single("aadhaarCard"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
@@ -95,8 +101,12 @@ router.post("/upload-aadhaar", upload.single("aadhaarCard"), async (req, res) =>
 // ===============================
 // 🔍 CHECK IF USER IS LENDER
 // ===============================
-router.get("/check/:userId", async (req, res) => {
+router.get("/check/:userId", requireAuth, async (req, res) => {
   try {
+    if (String(req.params.userId) !== String(req.user?.id)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     const lender = await Lender.findOne({
       userId: req.params.userId,
     });
@@ -115,8 +125,12 @@ router.get("/check/:userId", async (req, res) => {
 // ===============================
 // 📄 GET LENDER DETAILS
 // ===============================
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", requireAuth, async (req, res) => {
   try {
+    if (String(req.params.userId) !== String(req.user?.id)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     const lender = await Lender.findOne({
       userId: req.params.userId,
     });
