@@ -183,15 +183,16 @@ router.post("/create", requireAuth, async (req, res) => {
         return res.status(400).json({ message: "Unable to compute return date" });
       }
 
-      // Check for conflicting ongoing orders
+      // Check for conflicting ongoing orders for THIS product item (use per-item returnDate)
       const conflicting = await Order.find({
-        "items.productId": product._id,
         status: "Ongoing",
-        $or: [
-          { deliveryDate: { $lte: deliveryDate }, returnDate: { $gt: deliveryDate } },
-          { deliveryDate: { $gt: deliveryDate }, deliveryDate: { $lte: returnDate } },
-          { deliveryDate: { $lte: deliveryDate }, returnDate: { $gte: returnDate } }
-        ]
+        deliveryDate: { $lt: returnDate },
+        items: {
+          $elemMatch: {
+            productId: product._id,
+            returnDate: { $gt: deliveryDate },
+          },
+        },
       });
 
       if (conflicting.length > 0) {
@@ -404,6 +405,30 @@ router.post("/extend", requireAuth, async (req, res) => {
     const newReturnDate = addDurationYmd(prevReturnDate, duration);
     if (!newReturnDate) {
       return res.status(400).json({ message: "Unable to compute returnDate" });
+    }
+
+    // Prevent extension conflicts with other bookings for the same product
+    const extensionConflict = await Order.findOne({
+      _id: { $ne: order._id },
+      status: "Ongoing",
+      deliveryDate: { $lt: newReturnDate },
+      items: {
+        $elemMatch: {
+          productId: product._id,
+          returnDate: { $gt: prevReturnDate },
+        },
+      },
+    }).select("_id deliveryDate returnDate");
+
+    if (extensionConflict) {
+      return res.status(409).json({
+        message: "Cannot extend: conflicts with another booking for this product.",
+        conflict: {
+          orderId: extensionConflict._id,
+          deliveryDate: extensionConflict.deliveryDate,
+          returnDate: extensionConflict.returnDate,
+        },
+      });
     }
 
     item.returnDate = newReturnDate;

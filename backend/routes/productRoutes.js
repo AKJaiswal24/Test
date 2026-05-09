@@ -248,27 +248,16 @@ router.post("/check-availability", async (req, res) => {
         continue;
       }
 
-      // Check for conflicting orders
+      // Check for conflicting ongoing orders for THIS product item (use per-item returnDate)
       const conflictingOrders = await Order.find({
-        "items.productId": product._id,
         status: "Ongoing",
-        $or: [
-          // Existing order starts before or during requested delivery
-          {
-            deliveryDate: { $lte: deliveryDate },
-            returnDate: { $gt: deliveryDate }
+        deliveryDate: { $lt: returnDate },
+        items: {
+          $elemMatch: {
+            productId: product._id,
+            returnDate: { $gt: deliveryDate },
           },
-          // Existing order starts during rental period
-          {
-            deliveryDate: { $gt: deliveryDate },
-            deliveryDate: { $lte: returnDate }
-          },
-          // Existing order completely wraps requested period
-          {
-            deliveryDate: { $lte: deliveryDate },
-            returnDate: { $gte: returnDate }
-          }
-        ]
+        },
       });
 
       if (conflictingOrders.length > 0) {
