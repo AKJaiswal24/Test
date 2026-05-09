@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 import "../styles/lender.css";
@@ -30,17 +30,25 @@ function BecomeLender() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Handle redirects AFTER hooks are declared
-  if (isLender) {
-    navigate("/my-listings", { replace: true });
-    return null; // Temporary null during redirect
-  }
+  useEffect(() => {
+    if (isLender) {
+      navigate("/my-listings", { replace: true });
+    }
+  }, [isLender, navigate]);
 
   if (!user) {
     return (
       <div className="lender-page">
         <h2>Please login first</h2>
         <button onClick={() => navigate("/login")}>Go to Login</button>
+      </div>
+    );
+  }
+
+  if (isLender) {
+    return (
+      <div className="lender-page">
+        <h2>Redirecting...</h2>
       </div>
     );
   }
