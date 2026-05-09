@@ -13,49 +13,67 @@ function LandingPage() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const popularProducts = products.filter((p) => p.isPopular);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [cartCount, setCartCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
-// hamburger
-useEffect(() => {
-  const handleClickOutside = () => {
-    setMenuOpen(false);
-  };
+  // FETCH CATEGORIES DYNAMICALLY FROM BACKEND
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/api/products/categories");
+        const apiCategories = response.data.categories || [];
+        setCategories(apiCategories);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setCategories(["All", "Cleaning", "Power Tools", "Kitchen Machines", "Construction",
+          "Electronics", "Vehicles", "Lighting", "Machinery", "Equipment",
+          "Audio Visual", "Medical Equipment", "Sports & Fitness", "Garden & Outdoor",
+          "Party Supplies", "Baby & Kids", "Office Equipment", "Tools & Hardware",
+          "Photography", "Musical Instruments"]);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+    fetchCategories();
+  }, []);
 
-  if (menuOpen) {
-    window.addEventListener("click", handleClickOutside);
-  }
+  // hamburger
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setMenuOpen(false);
+    };
 
-  return () => {
-    window.removeEventListener("click", handleClickOutside);
-  };
-}, [menuOpen]);
+    if (menuOpen) {
+      window.addEventListener("click", handleClickOutside);
+    }
 
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   // cart 
-useEffect(() => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (!storedUser) return;
 
-  if (!user) return;
+    const fetchCart = () => {
+      api
+        .get(`/api/cart/${storedUser._id}`)
+        .then((res) => setCartCount(res.data?.items?.length || 0))
+        .catch(() => setCartCount(0));
+    };
 
-  const fetchCart = () => {
-    api
-      .get(`/api/cart/${user._id}`)
-      .then((res) => setCartCount(res.data?.items?.length || 0))
-      .catch(() => setCartCount(0));
-  };
+    fetchCart();
+    window.addEventListener("cartUpdated", fetchCart);
 
-  fetchCart();
-
-  // 🔥 listen for updates
-  window.addEventListener("cartUpdated", fetchCart);
-
-  return () => {
-    window.removeEventListener("cartUpdated", fetchCart);
-  };
-
-}, []);
+    return () => {
+      window.removeEventListener("cartUpdated", fetchCart);
+    };
+  }, []);
 
   // LOAD USER
   useEffect(() => {
@@ -67,6 +85,7 @@ useEffect(() => {
 
   // FETCH PRODUCTS
   useEffect(() => {
+    setLoading(true);
     api
       .get("/api/products")
       .then((res) => setProducts(Array.isArray(res.data) ? res.data : []))
@@ -82,122 +101,140 @@ useEffect(() => {
     navigate("/login");
   };
 
-  // CATEGORY LIST
-  const categories = [
-    "All",
-    "Cleaning",
-    "Power Tools",
-    "Kitchen Machines",
-    "Construction",
-    "Electronics",
-    "Vehicles",
-    "Lighting",
-    "Machinery",
-    "Equipment",
-  ];
+  // SEARCH HANDLER
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  // CATEGORY CLICK HANDLER
+  const handleCategoryClick = (cat) => {
+    setSelectedCategory(cat);
+    if (cat === "All") {
+      navigate("/");
+    } else {
+      navigate(`/category/${cat}`);
+    }
+  };
+
+  // FILTERED PRODUCTS FOR "ALL" CATEGORY DISPLAY
+  const displayedProducts = selectedCategory === "All"
+    ? products
+    : products.filter((p) => 
+        p.category && p.category.toLowerCase() === selectedCategory.toLowerCase()
+      );
+
+  // Calculate isLender from user object
+  const isLender = user?.isLender === true;
 
   return (
     <div className="container">
       {/* NAVBAR */}
       <div className="navbar">
-        <img src={logo} alt="logo" className="logo-img" />
-
-        <input
-          type="text"
-          placeholder="Search for tools, machines..."
-          className="search"
+        <img 
+          src={logo} 
+          alt="logo" 
+          className="logo-img" 
+          onClick={() => navigate("/")}
         />
 
-      <div className="nav-actions">
+        <form onSubmit={handleSearch} className="search-form">
+          <input
+            type="text"
+            placeholder="Search tools, machines, equipment..."
+            className="search-main"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button type="submit" className="search-btn-main">🔍</button>
+        </form>
 
-  {user ? (
-    <>
-      {/* USER NAME */}
-      <span className="user-name">Hi, {user.name}</span>
+        <div className="nav-actions">
+          {user ? (
+            <>
+              <span className="user-name">Hi, {user.name}</span>
 
-      {/* CART */}
-      <div
-        className="cart"
-        onClick={() => navigate("/cart")}
-      >
-        🛒 <span className="cart-count">{cartCount}</span>
+              <div className="cart" onClick={() => navigate("/cart")}>
+                🛒 <span className="cart-count">{cartCount}</span>
+              </div>
+
+              <div
+                className="menu-container"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(!menuOpen);
+                }}
+              >
+                ☰
+
+                {menuOpen && (
+                  <div className="dropdown">
+                    <p onClick={() => navigate("/orders")}>Order History</p>
+                    {isLender && (
+                      <p onClick={() => navigate("/my-listings")}>My Listings</p>
+                    )}
+                    <p onClick={handleLogout}>Logout</p>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <button className="signin" onClick={() => navigate("/login")}>
+              Sign In
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* HAMBURGER */}
-<div
-  className="menu-container"
-  onClick={(e) => {
-    e.stopPropagation(); // prevent closing immediately
-    setMenuOpen(!menuOpen);
-  }}
->
-  ☰
-
-  {menuOpen && (
-    <div className="dropdown">
-      <p onClick={() => navigate("/orders")}>
-        Order History
-      </p>
-
-
-{localStorage.getItem("isLender") && (
-  <p onClick={() => navigate("/my-listings")}>
-    My Listings
-  </p>
-)}
-      <p onClick={handleLogout}>
-        Logout
-      </p>
-    </div>
-  )}
-</div>
-    </>
-  ) : (
-    <button
-      className="signin"
-      onClick={() => navigate("/login")}
-    >
-      Sign In
-    </button>
-  )}
-
-</div>
+      {/* HERO SECTION */}
+      <div className="hero-section">
+        <div className="hero-content">
+          <h1 className="hero-title">Rent Anything. Anytime. Anywhere.</h1>
+          <p className="hero-subtitle">
+            Find tools, equipment, and machines for rent near you
+          </p>
+        </div>
       </div>
 
-      {/* HERO + CATEGORY SECTION */}
+      {/* CATEGORY SECTION */}
       <div className="category-section">
-        {/* LEFT IMAGE */}
         <div className="category-left">
           <div className="image-card">
- <img src={hero} alt="hero" className="hero-img" />
-            <button className="image-btn">Explore Rentals →</button>
+            <img src={hero} alt="hero" className="hero-img" />
+            <button 
+              className="image-btn"
+              onClick={() => navigate("/category/All")}
+            >
+              Explore Rentals →
+            </button>
           </div>
         </div>
 
-        {/* RIGHT */}
         <div className="category-right">
           <h2 className="category-title">
             Explore <span>our Top Categories</span>
           </h2>
 
           <div className="category-grid">
-            {categories.map((cat, i) => (
-<div
-  className={`category-card-new ${
-    selectedCategory === cat ? "active" : ""
-  }`}
-  key={i}
-  onClick={() => {
-    setSelectedCategory(cat); // optional (for UI highlight)
-    navigate(`/category/${cat}`); // 🔥 important
-  }}
->
-  <img
-    src="https://cdn-icons-png.flaticon.com/128/1046/1046857.png"
-    alt="icon"
-  />
-  <p>{cat}</p>
-</div>
+            {(isLoadingCategories ? ["Loading..."] : ["All", ...categories]).map((cat, i) => (
+              <div
+                className={`category-card-new ${
+                  selectedCategory === cat ? "active" : ""
+                }`}
+                key={i}
+                onClick={() => handleCategoryClick(cat)}
+              >
+                <img
+                  src={`https://cdn-icons-png.flaticon.com/128/${1046857 + (i % 5)}/1046${857 + (i % 5)}.png`}
+                  alt="icon"
+                  onError={(e) => {
+                    e.target.src = "https://cdn-icons-png.flaticon.com/128/1046/1046857.png";
+                  }}
+                />
+                <p>{cat}</p>
+              </div>
             ))}
           </div>
 
@@ -205,80 +242,59 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* PRODUCTS */}
-      {/* <div className="products">
+      {/* PRODUCTS SECTION - SHOWS WHEN "ALL" IS SELECTED */}
+      {selectedCategory === "All" && (
+        <div className="products">
+          <h2 className="section-title">Most Popular Rentals 🔥</h2>
 
-        <h2 className="section-title">
-          {selectedCategory === "All"
-            ? "All Rentals"
-            : selectedCategory}
-        </h2>
-
-        <div className="product-grid">
-
-          {loading ? (
-            <p>Loading...</p>
-          ) : filteredProducts.length > 0 ? (
-            filteredProducts.map((item) => (
-              <div className="product-card-new" key={item._id}>
-                <img src={item.image || item.images?.[0]} alt={item.name} />
-                <h4>{item.name}</h4>
-                <p className="price">₹{item.price}/day</p>
-                <button className="rent-btn">Explore</button>
-              </div>
-            ))
-          ) : (
-            <p>No products found</p>
-          )}
-
-        </div>
-      </div> */}
-
-      <div className="products">
-        <h2 className="section-title">Most Popular Rentals 🔥</h2>
-
-        <div className="product-grid">
-          {loading ? (
-            <div className="skeleton"></div>
-          ) : popularProducts.length > 0 ? (
-            popularProducts.map((item) => (
-              <div className="product-card-new" key={item._id}>
-                <img src={item.image || item.images?.[0]} alt={item.name} />
-                <h4>{item.name}</h4>
-                <p className="price">₹{item.price}/day</p>
-
-                <span className="badge">Popular</span>
-
-                <button
-                  className="rent-btn"
+          <div className="product-grid">
+            {loading ? (
+              <div className="skeleton"></div>
+            ) : displayedProducts.length > 0 ? (
+              displayedProducts.map((item) => (
+                <div 
+                  className="product-card-new" 
+                  key={item._id}
                   onClick={() => navigate(`/product/${item._id}`)}
                 >
-                  Explore
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>No popular products found</p>
-          )}
+                  <img src={item.image || item.images?.[0]} alt={item.name} />
+                  <h4>{item.name}</h4>
+                  <p className="price">
+                    ₹{item.pricing?.daily || item.monthlyRent || 0}
+                    <span style={{ fontSize: "12px", color: "#666" }}>/day</span>
+                  </p>
+                  <span className="badge">Popular</span>
+                  <button
+                    className="rent-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/${item._id}`);
+                    }}
+                  >
+                    Explore
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p>No products found</p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* FOOTER */}
       <div className="footer">
-    <div className="footer-top">
-<div className="brandnm">
-
-  <img src={logo} alt="logo" className="footer-logo" />
-  <h2>Start2Rent</h2>
-</div>
-
-  <p>Rent anything. Anytime. Anywhere.</p>
-
-</div>
+        <div className="footer-top">
+          <div className="brandnm">
+            <img src={logo} alt="logo" className="footer-logo" />
+            <h2>Start2Rent</h2>
+          </div>
+          <p>Rent anything. Anytime. Anywhere.</p>
+        </div>
         <div className="footer-links">
           <div>
             <h4>Company</h4>
-            <p>About Us</p>
+            <p onClick={() => navigate("/")}>About Us</p>
             <p>Careers</p>
             <p>Blog</p>
           </div>
@@ -293,9 +309,7 @@ useEffect(() => {
           <div>
             <h4>Services</h4>
             <p>Rent Equipment</p>
-            <li onClick={() => navigate("/become-lender")}>
-  List Your Product
-</li>
+            <p onClick={() => navigate("/add-product")}>List Your Product</p>
             <p>Delivery Chain</p>
           </div>
 

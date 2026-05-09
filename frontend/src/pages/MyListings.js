@@ -76,14 +76,33 @@ function MyListings() {
         <p>Loading...</p>
       ) : errorMessage ? (
         <p>{errorMessage}</p>
-      ) : products.length > 0 ? (
+      ) : (
         <div className="grid">
+          {/* Add New Product Card */}
+          <div
+            className="card add-product-card"
+            onClick={() => navigate("/add-product")}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                navigate("/add-product");
+              }
+            }}
+          >
+            <div className="add-icon">+</div>
+            <h3>Add New Product</h3>
+            <p>List a new item for rent</p>
+          </div>
+
+          {/* Existing Product Cards */}
           {products.map((item) => (
             <div className="card" key={item._id}>
               <img src={item.image || item.images?.[0]} alt="product" />
               <h3>{item.name}</h3>
               <p className="category">{item.category}</p>
-              <p className="price">₹{item.pricing?.[0]?.price}</p>
+              {/* Show monthly price from pre-calculated pricing object */}
+              <p className="price">₹{item.pricing?.monthly?.toLocaleString('en-IN') || item.monthlyRent?.toLocaleString('en-IN')}</p>
 
               <div className="actions">
                 <button className="edit" onClick={() => handleEdit(item._id)}>
@@ -96,8 +115,6 @@ function MyListings() {
             </div>
           ))}
         </div>
-      ) : (
-        <p>No products listed yet 😕</p>
       )}
     </div>
   );

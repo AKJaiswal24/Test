@@ -1,5 +1,5 @@
-/* Add Product Page Styles */
-.add-product-container {
+/* Edit Product Page Styles */
+.edit-product-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 40px 20px;
@@ -8,7 +8,7 @@
   align-items: flex-start;
 }
 
-.add-product-card {
+.edit-product-card {
   background: white;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
@@ -31,7 +31,7 @@
 
 /* Header */
 .card-header {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
   color: white;
   padding: 30px 40px;
   display: flex;
@@ -68,10 +68,6 @@
   border-radius: 8px;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
-  border: none;
-  cursor: pointer;
-  font-size: inherit;
-  font-family: inherit;
 }
 
 .back-link:hover {
@@ -131,7 +127,7 @@
 
 .section-title {
   font-size: 20px;
-  color: #059669;
+  color: #1e3a8a;
   margin: 0 0 8px 0;
   font-weight: 700;
   display: flex;
@@ -187,20 +183,14 @@
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #10b981;
+  border-color: #3b82f6;
   background: white;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
   color: #9ca3af;
-}
-
-/* Loading state for select */
-.form-group select.loading {
-  opacity: 0.7;
-  cursor: wait;
 }
 
 .form-group textarea {
@@ -239,9 +229,9 @@
 
 .image-input-group input:focus {
   outline: none;
-  border-color: #10b981;
+  border-color: #3b82f6;
   background: white;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 .image-input-group input.has-value {
@@ -317,9 +307,9 @@
 
 .price-input-wrapper input:focus {
   outline: none;
-  border-color: #10b981;
+  border-color: #3b82f6;
   background: white;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 /* Action Buttons */
@@ -348,13 +338,13 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -403,11 +393,11 @@
   gap: 20px;
 }
 
-.spinner-large {
+.spinner {
   width: 50px;
   height: 50px;
   border: 4px solid #e5e7eb;
-  border-top-color: #059669;
+  border-top-color: #1e3a8a;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -417,9 +407,30 @@
   font-size: 16px;
 }
 
+/* Empty/Error States */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  color: #374151;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  color: #6b7280;
+  margin: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
-  .add-product-container {
+  .edit-product-container {
     padding: 20px 10px;
   }
 
@@ -472,9 +483,5 @@
 
   .section-title {
     font-size: 18px;
-  }
-
-  .back-link {
-    align-self: flex-start;
   }
 }

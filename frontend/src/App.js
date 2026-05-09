@@ -12,6 +12,7 @@ import AddProduct from "./pages/AddProduct";
 import LenderRoute from "./components/LenderRoute";
 import MyListings from "./pages/MyListings";
 import EditProduct from "./pages/EditProduct";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             </LenderRoute>
           }
         />
+        <Route path="/search" element={<SearchPage />} />
       </Routes>
     </Router>
   );

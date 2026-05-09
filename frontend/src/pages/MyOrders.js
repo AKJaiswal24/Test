@@ -191,31 +191,39 @@ function MyOrders() {
                           </button>
                         </div>
 
-                        {isExtendOpen ? (
-                          <div className="extend-box">
-                            <div className="extend-title">Choose extension plan</div>
-                            <div className="extend-plans">
-                              {(product?.pricing || []).map((plan, idx) => (
-                                <button
-                                  key={`${itemId || idx}_${plan.duration}_${plan.price}`}
-                                  type="button"
-                                  className="plan-btn"
-                                  onClick={() =>
-                                    handleExtend({
-                                      orderId: order._id,
-                                      itemId,
-                                      selectedPlan: { duration: plan.duration, price: plan.price },
-                                    })
-                                  }
-                                  disabled={isExtending}
-                                >
-                                  <span className="plan-duration">{plan.duration}</span>
-                                  <span className="plan-price">₹{plan.price}</span>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        ) : null}
+{isExtendOpen ? (
+                           <div className="extend-box">
+                             <div className="extend-title">Choose extension plan</div>
+                             <div className="extend-plans">
+                               {Object.entries(product?.pricing || {}).map(([key, price]) => {
+                                 const duration = key === "daily" ? "Daily" : 
+                                   key === "weekly" ? "Weekly" : 
+                                   key === "monthly" ? "Monthly" : 
+                                   key === "3_months" ? "3 Months" : 
+                                   key === "6_months" ? "6 Months" : 
+                                   key === "12_months" ? "12 Months" : key;
+                                 return (
+                                   <button
+                                     key={`${itemId}_${key}_${price}`}
+                                     type="button"
+                                     className="plan-btn"
+                                     onClick={() =>
+                                       handleExtend({
+                                         orderId: order._id,
+                                         itemId,
+                                         selectedPlan: { duration, price: Number(price) },
+                                       })
+                                     }
+                                     disabled={isExtending}
+                                   >
+                                     <span className="plan-duration">{duration}</span>
+                                     <span className="plan-price">₹{price}</span>
+                                   </button>
+                                 );
+                               })}
+                             </div>
+                           </div>
+                         ) : null}
                       </div>
                     </div>
                   );

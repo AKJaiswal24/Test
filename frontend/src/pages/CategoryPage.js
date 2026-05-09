@@ -13,18 +13,24 @@ function CategoryPage() {
   useEffect(() => {
     setLoading(true);
 
-    api
-      .get("/api/products")
-      .then((res) => {
-        // filter by category (case-insensitive)
-        const data = Array.isArray(res.data) ? res.data : [];
-        const filtered = data.filter(
-          (p) =>
-            p.category &&
-            p.category.toLowerCase() === categoryName.toLowerCase()
-        );
+    // For "All" category, fetch all products
+    // Otherwise, use the new search endpoint with category filter
+    const endpoint = categoryName === "All" 
+      ? "/api/products"
+      : `/api/products?category=${encodeURIComponent(categoryName)}`;
 
-        setProducts(filtered);
+    api
+      .get(endpoint)
+      .then((res) => {
+        // For "All", just show all products
+        // For specific category, the backend already filters
+        if (categoryName !== "All") {
+          const data = Array.isArray(res.data) ? res.data : [];
+          setProducts(data);
+        } else {
+          const data = Array.isArray(res.data) ? res.data : [];
+          setProducts(data);
+        }
         setLoading(false);
       })
       .catch(() => {
@@ -55,10 +61,8 @@ function CategoryPage() {
               <h4>{item.name}</h4>
 
               <p className="price">
-                ₹
-                {item.price ||
-                  item.pricePerMonth ||
-                  item.pricing?.[0]?.price}
+                ₹{item.pricing?.daily || item.monthlyRent || 0}
+                <span style={{ fontSize: "12px", color: "#666" }}>/day</span>
               </p>
             </div>
           ))

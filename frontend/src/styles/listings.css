@@ -13,6 +13,13 @@
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12);
 }
 
 .card img {
@@ -46,6 +53,7 @@
   border-radius: 6px;
   cursor: pointer;
   flex: 1;
+  transition: background 0.2s ease;
 }
 
 .edit {
@@ -56,6 +64,7 @@
   border-radius: 6px;
   cursor: pointer;
   flex: 1;
+  transition: background 0.2s ease;
 }
 
 .edit:hover {
@@ -64,4 +73,101 @@
 
 .delete:hover {
   background: #dc2626;
+}
+
+/* Add Product Card */
+.add-product-card {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px dashed #3b82f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.add-product-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.add-product-card:hover::before {
+  transform: translateX(100%);
+}
+
+.add-product-card:hover {
+  border-color: #1e40af;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+  transform: translateY(-6px);
+}
+
+.add-product-card:focus {
+  outline: none;
+  border-color: #1e40af;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.add-icon {
+  font-size: 48px;
+  font-weight: 300;
+  color: #3b82f6;
+  line-height: 1;
+  margin-bottom: 12px;
+  transition: transform 0.2s ease;
+}
+
+.add-product-card:hover .add-icon {
+  transform: scale(1.1) rotate(90deg);
+}
+
+.add-product-card h3 {
+  margin: 0 0 8px 0;
+  color: #1e40af;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.add-product-card p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Responsive Grid */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+  
+  .card {
+    padding: 12px;
+  }
+  
+  .card img {
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .listings-page {
+    padding: 20px 15px;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/client";
+import { getDurationOptions } from "../utils/pricing";
 import "../styles/product.css";
 
 function ProductDetails() {
@@ -13,6 +14,19 @@ function ProductDetails() {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
+  // Helper: Convert pricing object to array for rendering
+  const getPricingArray = (product) => {
+    if (!product) return [];
+    const pricing = product.pricing || {};
+    const options = getDurationOptions();
+    
+    return options.map(opt => ({
+      duration: opt.value,
+      durationLabel: opt.label,
+      price: pricing[opt.value] || 0,
+    }));
+  };
+
   // 🔥 FETCH PRODUCT
   useEffect(() => {
     api
@@ -21,16 +35,15 @@ function ProductDetails() {
         setProduct(res.data);
         setMainImage(res.data?.image || res.data?.images?.[0] || "");
 
-        // ✅ DEFAULT PLAN (optional)
-        if (res.data.pricing?.length > 0) {
+        // ✅ DEFAULT PLAN (pick monthly or first available)
+        const pricingOptions = getPricingArray(res.data);
+        const defaultOption = pricingOptions.find(p => p.duration === 'monthly') || pricingOptions[0];
+        
+        if (defaultOption) {
           setSelectedPlan({
-            duration: res.data.pricing[0].duration,
-            price: res.data.pricing[0].price,
-          });
-        } else {
-          setSelectedPlan({
-            duration: "Per Day",
-            price: res.data.price,
+            duration: defaultOption.duration,
+            price: defaultOption.price,
+            durationLabel: defaultOption.durationLabel,
           });
         }
       })
@@ -117,27 +130,60 @@ function ProductDetails() {
         <div className="plan-section">
           <h3>Select Plan</h3>
 
-          {(product.pricing?.length > 0
-            ? product.pricing
-            : [{ duration: "Per Day", price: product.price }]
-          ).map((plan, i) => (
-            <div
-              key={i}
-              className={`plan-card ${
-                selectedPlan?.duration === plan.duration ? "active" : ""
-              }`}
-              onClick={() =>
-                setSelectedPlan({
-                  duration: plan.duration,
-                  price: plan.price,
-                })
-              }
-            >
-              <p>{plan.duration}</p>
-              <h4>₹{plan.price}</h4>
-            </div>
-          ))}
+          {(() => {
+            const pricingOptions = getPricingArray(product);
+            return pricingOptions.map((plan, i) => (
+              <div
+                key={i}
+                className={`plan-card ${
+                  selectedPlan?.duration === plan.duration ? "active" : ""
+                }`}
+                onClick={() =>
+                  setSelectedPlan({
+                    duration: plan.duration,
+                    price: plan.price,
+                    durationLabel: plan.durationLabel,
+                  })
+                }
+              >
+                <p>{plan.durationLabel}</p>
+                <h4>₹{plan.price.toLocaleString('en-IN')}</h4>
+              </div>
+            ));
+          })()}
         </div>
+
+        {/* Deposit Info */}
+        {product?.deposit > 0 && (
+          <div className="deposit-info">
+            <span>💰 Security Deposit: ₹{product.deposit.toLocaleString('en-IN')} (Refundable)</span>
+          </div>
+        )}
+
+        {/* SELECTED PLAN SUMMARY */}
+        {selectedPlan && (
+          <div className="selected-plan-summary">
+            <h3>Rental Summary</h3>
+            <div className="summary-row">
+              <span>Plan:</span>
+              <strong>{selectedPlan.durationLabel}</strong>
+            </div>
+            <div className="summary-row">
+              <span>Rent:</span>
+              <strong>₹{selectedPlan.price.toLocaleString('en-IN')}</strong>
+            </div>
+            {product?.deposit > 0 && (
+              <div className="summary-row">
+                <span>Security Deposit:</span>
+                <strong>₹{product.deposit.toLocaleString('en-IN')}</strong>
+              </div>
+            )}
+            <div className="summary-row total">
+              <span>Total Payable:</span>
+              <strong>₹{(selectedPlan.price + (product?.deposit || 0)).toLocaleString('en-IN')}</strong>
+            </div>
+          </div>
+        )}
 
         {/* BREAKDOWN */}
         {selectedPlan && (

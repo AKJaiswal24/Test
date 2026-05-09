@@ -250,10 +250,6 @@ function CartPage() {
 
                     <div className="cart-meta">
                       <div className="cart-meta-row">
-                        <span className="cart-meta-label">Unit</span>
-                        <span className="cart-meta-value">₹{unitPrice}</span>
-                      </div>
-                      <div className="cart-meta-row">
                         <span className="cart-meta-label">Total</span>
                         <span className="cart-meta-strong">₹{lineTotal}</span>
                       </div>

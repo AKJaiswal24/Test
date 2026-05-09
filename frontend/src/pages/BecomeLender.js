@@ -17,15 +17,24 @@ function BecomeLender() {
 
   const isLender = user?.isLender === true;
 
-  // Move hooks to top level to avoid conditional calls
-  const [step, setStep] = useState(1);
+  // Move ALL hooks to top level to avoid conditional calls
   const [form, setForm] = useState({
+    aadhaarCard: null,
+    aadhaarCardUrl: "",
     businessName: "",
     phone: "",
     address: "",
     city: "",
     pincode: "",
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle redirects AFTER hooks are declared
+  if (isLender) {
+    navigate("/my-listings", { replace: true });
+    return null; // Temporary null during redirect
+  }
 
   if (!user) {
     return (
@@ -36,20 +45,60 @@ function BecomeLender() {
     );
   }
 
-  if (isLender) {
-    // Redirect to my-listings to manage/edit products
-    navigate("/my-listings", { replace: true });
-    return null; // Temporary null to avoid rendering anything during redirect
-  }
+  const handleAadhaarChange = (e) => {
+    if (e.target.files[0]) {
+      setForm(prev => ({
+        ...prev,
+        aadhaarCard: e.target.files[0],
+        aadhaarCardUrl: URL.createObjectURL(e.target.files[0])
+      }));
+    }
+  };
 
-  const next = () => setStep((s) => s + 1);
-  const back = () => setStep((s) => Math.max(1, s - 1));
+  const handleChange = (e) => {
+    setForm(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!form.aadhaarCard) {
+      alert("Please upload your Aadhaar card");
+      return;
+    }
+
+    if (!form.businessName || !form.phone || !form.address) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
     try {
+      // First upload the Aadhaar card
+      const formData = new FormData();
+      formData.append("aadhaarCard", form.aadhaarCard);
+      
+      const uploadResponse = await api.post("/api/lender/upload-aadhaar", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      
+      const aadhaarCardUrl = uploadResponse.data.url;
+      
+      // Then register as lender
       await api.post("/api/lender/register", {
         userId: user._id,
-        ...form,
+        businessName: form.businessName,
+        phone: form.phone,
+        address: form.address,
+        city: form.city,
+        pincode: form.pincode,
+        aadhaarCardUrl: aadhaarCardUrl,
       });
 
       // Update user object with isLender flag
@@ -59,49 +108,93 @@ function BecomeLender() {
       alert("You're now a lender!");
       navigate("/add-product");
     } catch (error) {
-      const message = error?.response?.data?.message || "Failed";
+      const message = error?.response?.data?.message || "Failed to register as lender";
       alert(message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="lender-page">
       <h1>Become a Lender</h1>
-
-      {step === 1 ? (
-        <div>
+      <p>Register to start renting out your products</p>
+      
+      <form onSubmit={handleSubmit} className="lender-form">
+        <div className="form-group">
+          <label>Aadhaar Card Image</label>
           <input
-            placeholder="Business Name"
+            type="file"
+            accept="image/*"
+            onChange={handleAadhaarChange}
+            required
+          />
+          {form.aadhaarCardUrl && (
+            <img src={form.aadhaarCardUrl} alt="Aadhaar Card Preview" className="preview-img" />
+          )}
+        </div>
+        
+        <div className="form-group">
+          <label>Business Name</label>
+          <input
+            type="text"
+            name="businessName"
             value={form.businessName}
-            onChange={(e) => setForm((prev) => ({ ...prev, businessName: e.target.value }))}
+            onChange={handleChange}
+            placeholder="Enter your business name"
+            required
           />
-          <button onClick={next}>Next</button>
         </div>
-      ) : null}
-
-      {step === 2 ? (
-        <div>
+        
+        <div className="form-group">
+          <label>Phone Number</label>
           <input
-            placeholder="Phone"
+            type="tel"
+            name="phone"
             value={form.phone}
-            onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
+            onChange={handleChange}
+            placeholder="Enter your phone number"
+            required
           />
-          <button onClick={back}>Back</button>
-          <button onClick={next}>Next</button>
         </div>
-      ) : null}
-
-      {step === 3 ? (
-        <div>
-          <input
-            placeholder="Address"
+        
+        <div className="form-group">
+          <label>Address</label>
+          <textarea
+            name="address"
             value={form.address}
-            onChange={(e) => setForm((prev) => ({ ...prev, address: e.target.value }))}
+            onChange={handleChange}
+            placeholder="Enter your address"
+            required
           />
-          <button onClick={back}>Back</button>
-          <button onClick={handleSubmit}>Submit</button>
         </div>
-      ) : null}
+        
+        <div className="form-group">
+          <label>City</label>
+          <input
+            type="text"
+            name="city"
+            value={form.city}
+            onChange={handleChange}
+            placeholder="Enter your city"
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Pincode</label>
+          <input
+            type="text"
+            name="pincode"
+            value={form.pincode}
+            onChange={handleChange}
+            placeholder="Enter your pincode"
+          />
+        </div>
+        
+        <button type="submit" disabled={isSubmitting} className="submit-btn">
+          {isSubmitting ? "Registering..." : "Register as Lender"}
+        </button>
+      </form>
     </div>
   );
 }

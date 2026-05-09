@@ -56,3 +56,45 @@
   color: gray;
   margin-top: 5px;
 }
+
+/* Address Box */
+.address-box {
+  margin: 15px 0;
+}
+
+.address-box h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+.address-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.address-box input:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .checkout-layout {
+    flex-direction: column;
+  }
+
+  .checkout-items,
+  .checkout-summary {
+    flex: none;
+  }
+
+  .checkout-page {
+    padding: 15px;
+  }
+}

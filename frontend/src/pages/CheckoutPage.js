@@ -10,6 +10,7 @@ import {
   isValidDeliveryDate,
 } from "../utils/dateYmdIst";
 import { parsePlanDuration } from "../utils/plan";
+import { getDurationOptions } from "../utils/pricing";
 
 const getMsUntilNextIstMidnight = () => {
   const IST_OFFSET_MS = 330 * 60 * 1000;
@@ -33,12 +34,28 @@ const getMsUntilNextIstMidnight = () => {
 const getItemImageUrl = (product) =>
   product?.image || product?.images?.[0] || product?.thumbnail || "";
 
+// Helper: derive durationLabel from duration value (fallback for old cart items)
+const getDurationLabelFromValue = (duration) => {
+  const options = getDurationOptions();
+  const match = options.find(opt => opt.value === duration);
+  return match?.label || "";
+};
+
 function CheckoutPage() {
   const navigate = useNavigate();
 
   const [cartItems, setCartItems] = useState([]);
   const [isInsuranceSelected, setIsInsuranceSelected] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState("");
+  
+  // Address state
+  const [address, setAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    pincode: "",
+    phone: "",
+  });
 
   const [minDeliveryDate, setMinDeliveryDate] = useState(() => getTomorrowIstYmd());
   const [isLoadingCart, setIsLoadingCart] = useState(false);
@@ -140,42 +157,45 @@ function CheckoutPage() {
     const computedGrandTotal =
       computedRentTotal + computedDepositTotal + transport + platformCharge + computedInsurance;
 
-    let latestReturnDate = "";
+let latestReturnDate = "";
 
-    const payloadItems = validItems.map((item) => {
-      const productId = item.productId._id;
-      const quantity = Number(item.quantity);
+       const payloadItems = validItems.map((item) => {
+         const productId = item.productId._id;
+         const quantity = Number(item.quantity);
+   
+         // Fallback: derive durationLabel from duration if missing (for old cart items)
+         const durationLabel = item?.selectedPlan?.durationLabel 
+           || getDurationLabelFromValue(item?.selectedPlan?.duration) 
+           || "";
+         const planPrice = item?.selectedPlan?.price;
+         const unitPrice = Number.isFinite(Number(planPrice)) ? Number(planPrice) : 0;
+   
+         const parsedDuration = parsePlanDuration(durationLabel);
 
-      const durationLabel = item?.selectedPlan?.duration || "";
-      const planPrice = item?.selectedPlan?.price;
-      const unitPrice = Number.isFinite(Number(planPrice)) ? Number(planPrice) : 0;
+         let returnDate = "";
+         if (deliveryDate && parsedDuration) {
+           returnDate =
+             parsedDuration.unit === "day"
+               ? addDaysYmd(deliveryDate, parsedDuration.value)
+               : addMonthsYmd(deliveryDate, parsedDuration.value);
+         }
 
-      const parsedDuration = parsePlanDuration(durationLabel);
+         if (returnDate && (!latestReturnDate || returnDate > latestReturnDate)) {
+           latestReturnDate = returnDate;
+         }
 
-      let returnDate = "";
-      if (deliveryDate && parsedDuration) {
-        returnDate =
-          parsedDuration.unit === "day"
-            ? addDaysYmd(deliveryDate, parsedDuration.value)
-            : addMonthsYmd(deliveryDate, parsedDuration.value);
-      }
-
-      if (returnDate && (!latestReturnDate || returnDate > latestReturnDate)) {
-        latestReturnDate = returnDate;
-      }
-
-      return {
-        productId,
-        quantity,
-        basePlan: {
-          durationLabel,
-          unitPrice,
-          durationUnit: parsedDuration?.unit || "",
-          durationValue: parsedDuration?.value || 0,
-        },
-        returnDate,
-      };
-    });
+         return {
+           productId,
+           quantity,
+           basePlan: {
+             durationLabel,
+             unitPrice,
+             durationUnit: parsedDuration?.unit || "",
+             durationValue: parsedDuration?.value || 0,
+           },
+           returnDate,
+         };
+       });
 
     return {
       rentTotal: computedRentTotal,
@@ -226,6 +246,12 @@ function CheckoutPage() {
       return;
     }
 
+    // Validate address
+    if (!address.street || !address.city || !address.state || !address.pincode || !address.phone) {
+      alert("Please fill in all address fields");
+      return;
+    }
+
     const isDateValid = validateDeliveryDateOrAlert(deliveryDate);
     if (!isDateValid) return;
 
@@ -244,9 +270,33 @@ function CheckoutPage() {
       return;
     }
 
+    // Check product availability
+    try {
+      const availabilityResponse = await api.post("/api/products/check-availability", {
+        items: orderItems.map(item => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          durationLabel: item.basePlan.durationLabel
+        })),
+        deliveryDate
+      });
+
+      if (!availabilityResponse.data.available) {
+        const reasons = (availabilityResponse.data.unavailable || [])
+          .map(u => `${u.productId ? 'Product ID: ' + u.productId.substring(0,8) + '...' : ''} ${u.reason || 'Unavailable'}`)
+          .join('\n');
+        alert(`Some products are not available for the selected dates:\n\n${reasons}\n\nPlease adjust your delivery date or remove unavailable items.`);
+        return;
+      }
+    } catch (err) {
+      console.error("Availability check failed:", err);
+      alert("Failed to check product availability. Please try again.");
+      return;
+    }
+
     setIsPlacingOrder(true);
     try {
-      await api.post("/api/orders/create", {
+      const response = await api.post("/api/orders/create", {
         userId,
         items: orderItems,
         rentTotal,
@@ -257,7 +307,15 @@ function CheckoutPage() {
         grandTotal,
         deliveryDate,
         returnDate: orderReturnDate,
+        deliveryAddress: address,
       });
+
+      if (response.data?.conflict) {
+        const conflict = response.data.conflict;
+        alert(`Order conflict:\n\n${conflict.productName || 'Product'} is already booked for the selected dates.\n\nPlease choose a different delivery date.`);
+        setIsPlacingOrder(false);
+        return;
+      }
 
       await clearCartOnServer();
       setCartItems([]);
@@ -265,8 +323,17 @@ function CheckoutPage() {
 
       alert("Order placed successfully ✅");
       navigate("/orders");
-    } catch {
-      alert("Order failed ❌");
+    } catch (error) {
+      const status = error?.response?.status;
+      const data = error?.response?.data;
+
+      if (status === 409 && data?.conflict) {
+        alert(`Booking conflict:\n\n${data.conflict.productName || 'Product'} is already rented for those dates.\n\nPlease adjust your delivery date.`);
+      } else if (data?.message) {
+        alert(`Order failed: ${data.message}`);
+      } else {
+        alert("Order failed ❌. Please try again.");
+      }
     } finally {
       setIsPlacingOrder(false);
     }
@@ -325,6 +392,7 @@ function CheckoutPage() {
 
         <div className="checkout-summary">
           <h2>Payment Summary</h2>
+          <p>Payment Method: Cash on Delivery (COD)</p>
 
           <p>Rent Total: ₹{rentTotal}</p>
           <p>Security Deposit: ₹{depositTotal}</p>
@@ -345,6 +413,41 @@ function CheckoutPage() {
             {deliveryDate ? (
               <p className="hint">Selected: {formatYmdToEnIn(deliveryDate)}</p>
             ) : null}
+          </div>
+
+          {/* Address Form */}
+          <div className="address-box">
+            <h3>Delivery Address</h3>
+            <input
+              type="text"
+              placeholder="Street Address"
+              value={address.street}
+              onChange={(e) => setAddress({...address, street: e.target.value})}
+            />
+            <input
+              type="text"
+              placeholder="City"
+              value={address.city}
+              onChange={(e) => setAddress({...address, city: e.target.value})}
+            />
+            <input
+              type="text"
+              placeholder="State"
+              value={address.state}
+              onChange={(e) => setAddress({...address, state: e.target.value})}
+            />
+            <input
+              type="text"
+              placeholder="Pincode"
+              value={address.pincode}
+              onChange={(e) => setAddress({...address, pincode: e.target.value})}
+            />
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              value={address.phone}
+              onChange={(e) => setAddress({...address, phone: e.target.value})}
+            />
           </div>
 
           <label className="insurance-box">
@@ -376,4 +479,3 @@ function CheckoutPage() {
 }
 
 export default CheckoutPage;
-
