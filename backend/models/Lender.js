@@ -6,6 +6,9 @@ const lenderSchema = new mongoose.Schema(
     businessName: String,
     phone: String,
     address: String,
+    city: String,
+    pincode: String,
+    aadhaarCardUrl: String,
   },
   { timestamps: true }
 );

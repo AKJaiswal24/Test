@@ -1,16 +1,35 @@
 const express = require("express");
 const router = express.Router();
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
 
 const Lender = require("../models/Lender");
 const User = require("../models/User");
 
+// Configure multer for file upload
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = "uploads/aadhaar/";
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 // ===============================
 // ➕ REGISTER AS LENDER
 // ===============================
 router.post("/register", async (req, res) => {
   try {
-    const { userId, businessName, phone, address } = req.body;
+    const { userId, businessName, phone, address, city, pincode, aadhaarCardUrl } = req.body;
 
     // 🔥 VALIDATION
     if (!userId || !businessName || !phone) {
@@ -33,6 +52,8 @@ router.post("/register", async (req, res) => {
       businessName,
       phone,
       address,
+      city,
+      pincode,
     });
 
     await lender.save();
@@ -53,6 +74,23 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// ===============================
+// 📤 UPLOAD AADHAAR CARD
+// ===============================
+router.post("/upload-aadhaar", upload.single("aadhaarCard"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    
+    // Return the URL where the file is accessible
+    const fileUrl = `/uploads/aadhaar/${req.file.filename}`;
+    res.json({ url: fileUrl });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "File upload failed" });
+  }
+});
 
 // ===============================
 // 🔍 CHECK IF USER IS LENDER
@@ -73,7 +111,6 @@ router.get("/check/:userId", async (req, res) => {
     });
   }
 });
-
 
 // ===============================
 // 📄 GET LENDER DETAILS
@@ -98,6 +135,5 @@ router.get("/:userId", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;
