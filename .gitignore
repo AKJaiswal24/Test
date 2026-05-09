@@ -10,6 +10,8 @@ Thumbs.db
 node_modules/
 build/
 dist/
+.tmp-build/
+.eslintcache
 .env
 .env.local
 .env.development.local
@@ -78,3 +80,9 @@ coverage/
 # ----------------------
 *.swp
 *.swo
+
+# ----------------------
+# App runtime uploads
+# ----------------------
+backend/uploads/
+frontend/.tmp-build/

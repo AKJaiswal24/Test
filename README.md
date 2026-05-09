@@ -1,36 +1,42 @@
-<<<<<<< HEAD
 # Start2Rent
 
-Start2Rent is split into two apps:
+Start2Rent is a full-stack rental marketplace split into two apps:
 
-- `frontend/` — Create React App (React UI)
-- `backend/` — Express + MongoDB (API)
+- `backend/` — Express + MongoDB API
+- `frontend/` — React (Create React App) UI
 
-## Run locally
+Payment method is currently **Cash on Delivery (COD)** (no payment gateway integrated yet).
 
-### Backend
+## Run locally (recommended)
+
+### Backend (API)
 
 ```bash
 cd backend
 npm install
+copy .env.example .env
 npm start
 ```
 
 API runs on `http://localhost:5000`.
 
-### Frontend
+### Frontend (UI)
 
 ```bash
 cd frontend
 npm install
+copy .env.example .env
 npm start
 ```
 
 Frontend runs on `http://localhost:3000`.
 
-## Environment
+## Run via npm workspaces (optional)
 
-Frontend uses `REACT_APP_API_BASE_URL` (see `frontend/.env`).
-=======
-# Test
->>>>>>> 2785fbbc936c87d5645c8bfe6a6547d10fc37593
+From repo root:
+
+```bash
+npm -w backend start
+npm -w frontend start
+```
+

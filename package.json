@@ -1,0 +1,14 @@
+{
+  "name": "start2rent",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "start:backend": "npm -w backend start",
+    "start:frontend": "npm -w frontend start",
+    "test:backend": "npm -w backend test -- --runInBand",
+    "build:frontend": "npm -w frontend run build"
+  }
+}
