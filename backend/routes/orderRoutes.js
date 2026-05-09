@@ -1,11 +1,11 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const router = express.Router();
 
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 const requireAuth = require("../middleware/requireAuth");
+const { isObjectIdHex } = require("../utils/validation");
 
 const IST_OFFSET_MS = 330 * 60 * 1000; // IST = UTC + 05:30 (no DST)
 const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
@@ -131,7 +131,7 @@ router.post("/create", requireAuth, async (req, res) => {
     const { userId, items, deliveryDate, deliveryAddress } = req.body;
 
     const authUserId = req.user?.id;
-    if (!authUserId || !mongoose.Types.ObjectId.isValid(authUserId)) {
+    if (!authUserId || !isObjectIdHex(authUserId)) {
       return res.status(400).json({ message: "Invalid userId" });
     }
 
@@ -324,7 +324,7 @@ router.post("/create", requireAuth, async (req, res) => {
 router.get("/:userId", requireAuth, async (req, res) => {
   try {
     const { userId } = req.params;
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    if (!userId || !isObjectIdHex(userId)) {
       return res.status(400).json({ message: "Invalid userId" });
     }
 
@@ -360,11 +360,11 @@ router.post("/extend", requireAuth, async (req, res) => {
   try {
     const { orderId, itemId, selectedPlan } = req.body;
 
-    if (!orderId || !mongoose.Types.ObjectId.isValid(orderId)) {
+    if (!orderId || !isObjectIdHex(orderId)) {
       return res.status(400).json({ message: "Invalid orderId" });
     }
 
-    if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+    if (!itemId || !isObjectIdHex(itemId)) {
       return res.status(400).json({ message: "Invalid itemId" });
     }
 

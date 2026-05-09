@@ -1,73 +1,57 @@
-// const express = require("express");
-// const mongoose = require("mongoose");
-// const cors = require("cors");
-// require("dotenv").config();
-
-// const app = express();
-// const lenderRoutes = require("./routes/lenderRoutes");
-
-// app.use(cors());
-// app.use(express.json());
-
-// // routes
-// app.use("/api/auth", require("./routes/authRoutes"));
-// app.use("/api/products", require("./routes/productRoutes"));
-// app.use("/api/cart", require("./routes/cartRoutes"));
-// app.use("/api/orders", require("./routes/orderRoutes"));
-// app.use("/uploads", express.static("uploads"));
-// app.use("/api/lender", lenderRoutes);
-
-// // DB connection
-// mongoose.connect(process.env.MONGO_URI)
-//   .then(() => console.log("✅ MongoDB Connected"))
-//   .catch(err => console.log(err));
-
-// // start server
-// app.listen(5000, () => console.log("🚀 Server running on port 5000"));
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const app = express();
+const errorHandler = require("./middleware/errorHandler");
 const lenderRoutes = require("./routes/lenderRoutes");
 
-// ✅ CORS CONFIG
+const app = express();
+
+app.disable("x-powered-by");
+
+// CORS CONFIG (tight by default; add domains as you deploy)
 const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
-  "https://your-frontend-domain.com"
+  "https://your-frontend-domain.com",
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Allow non-browser clients / same-origin requests
+      if (!origin) return callback(null, true);
 
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("❌ Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+      if (allowedOrigins.includes(origin)) return callback(null, true);
 
-app.use(express.json());
+      const err = new Error("Not allowed by CORS");
+      err.status = 403;
+      return callback(err);
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
-// routes
+app.use(express.json({ limit: "200kb" }));
+
+// Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/cart", require("./routes/cartRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
-app.use("/uploads", express.static("uploads"));
 app.use("/api/lender", lenderRoutes);
+app.use("/uploads", express.static("uploads"));
 
-// DB connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch(err => console.log(err));
+app.use((req, res) => res.status(404).json({ message: "Not found" }));
+app.use(errorHandler);
 
-// start server
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+const port = Number(process.env.PORT || 5000);
+app.listen(port, () => console.log(`Server running on port ${port}`));
+
