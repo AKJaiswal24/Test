@@ -36,6 +36,15 @@ const orderSchema = new Schema(
     deliveryDate: { type: String, required: true }, // YYYY-MM-DD
     returnDate: { type: String, required: true }, // YYYY-MM-DD (max of items)
 
+    // Address fields
+    deliveryAddress: {
+      street: { type: String, default: "" },
+      city: { type: String, default: "" },
+      state: { type: String, default: "" },
+      pincode: { type: String, default: "" },
+      phone: { type: String, default: "" },
+    },
+
     items: { type: [orderItemSchema], default: [] },
 
     rentTotal: { type: Number, default: 0 },

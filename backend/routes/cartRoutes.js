@@ -9,7 +9,7 @@ router.post("/add", async (req, res) => {
   try {
     const { userId, productId, selectedPlan } = req.body;
 
-    if (!selectedPlan || !selectedPlan.price) {
+    if (!selectedPlan || !selectedPlan.price || !selectedPlan.durationLabel) {
       return res.status(400).json({ message: "Invalid plan data" });
     }
 
@@ -35,6 +35,7 @@ router.post("/add", async (req, res) => {
         selectedPlan: {
           duration: selectedPlan.duration,
           price: selectedPlan.price,
+          durationLabel: selectedPlan.durationLabel,
         },
       });
     }

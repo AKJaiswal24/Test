@@ -75,8 +75,13 @@ const isValidDeliveryDate = (ymd) => {
 
 const parseDurationLabel = (durationLabel) => {
   if (!durationLabel || typeof durationLabel !== "string") return null;
-  const normalized = durationLabel.trim();
+  const normalized = durationLabel.trim().toLowerCase();
   if (!normalized) return null;
+
+  // Handle simple labels (Daily, Weekly, Monthly)
+  if (normalized === "daily") return { unit: "day", value: 1 };
+  if (normalized === "weekly") return { unit: "day", value: 7 };
+  if (normalized === "monthly") return { unit: "month", value: 1 };
 
   const monthMatch = normalized.match(/(\d+)\s*(month|months|mo)\b/i);
   if (monthMatch) {
@@ -95,6 +100,23 @@ const parseDurationLabel = (durationLabel) => {
   return null;
 };
 
+// Helper: Convert display label to pricing key (e.g., "3 Months" -> "3_months")
+const getPricingKeyFromLabel = (durationLabel) => {
+  if (!durationLabel || typeof durationLabel !== "string") return null;
+  const normalized = durationLabel.trim().toLowerCase();
+  
+  const labelToKey = {
+    daily: "daily",
+    weekly: "weekly", 
+    monthly: "monthly",
+    "3 months": "3_months",
+    "6 months": "6_months",
+    "12 months": "12_months",
+  };
+  
+  return labelToKey[normalized] || normalized;
+};
+
 const addDurationYmd = (ymd, duration) => {
   if (!duration || !duration.unit || !duration.value) return null;
   return duration.unit === "day" ? addDaysYmd(ymd, duration.value) : addMonthsYmd(ymd, duration.value);
@@ -105,7 +127,7 @@ const addDurationYmd = (ymd, duration) => {
 // =======================
 router.post("/create", async (req, res) => {
   try {
-    const { userId, items, deliveryDate } = req.body;
+    const { userId, items, deliveryDate, deliveryAddress } = req.body;
 
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid userId" });
@@ -113,6 +135,12 @@ router.post("/create", async (req, res) => {
 
     if (!deliveryDate || !isValidDeliveryDate(deliveryDate)) {
       return res.status(400).json({ message: "Invalid deliveryDate" });
+    }
+
+    // Validate delivery address
+    if (!deliveryAddress || !deliveryAddress.street || !deliveryAddress.city ||
+        !deliveryAddress.state || !deliveryAddress.pincode || !deliveryAddress.phone) {
+      return res.status(400).json({ message: "Delivery address is required" });
     }
 
     if (!Array.isArray(items) || items.length === 0) {
@@ -132,6 +160,52 @@ router.post("/create", async (req, res) => {
       return res.status(400).json({ message: "No valid items" });
     }
 
+    // 🔒 FINAL AVAILABILITY CHECK - ensure no double booking
+    for (const item of normalizedItems) {
+      const product = await Product.findById(item.productId);
+      if (!product) {
+        return res.status(400).json({ message: `Product not found: ${item.productId}` });
+      }
+
+      const duration = parseDurationLabel(item.durationLabel);
+      if (!duration) {
+        return res.status(400).json({ message: `Invalid duration: ${item.durationLabel}` });
+      }
+
+      const returnDate = addDurationYmd(deliveryDate, duration);
+      if (!returnDate) {
+        return res.status(400).json({ message: "Unable to compute return date" });
+      }
+
+      // Check for conflicting ongoing orders
+      const conflicting = await Order.find({
+        "items.productId": product._id,
+        status: "Ongoing",
+        $or: [
+          { deliveryDate: { $lte: deliveryDate }, returnDate: { $gt: deliveryDate } },
+          { deliveryDate: { $gt: deliveryDate }, deliveryDate: { $lte: returnDate } },
+          { deliveryDate: { $lte: deliveryDate }, returnDate: { $gte: returnDate } }
+        ]
+      });
+
+      if (conflicting.length > 0) {
+        return res.status(409).json({
+          message: `Product "${product.name}" is already booked for the selected dates.`,
+          conflict: {
+            productId: product._id,
+            productName: product.name,
+            requestedDelivery: deliveryDate,
+            requestedReturn: returnDate,
+            conflicts: conflicting.map(o => ({
+              orderId: o._id,
+              deliveryDate: o.deliveryDate,
+              returnDate: o.returnDate
+            }))
+          }
+        });
+      }
+    }
+
     const productIds = [...new Set(normalizedItems.map((i) => i.productId))];
     const products = await Product.find({ _id: { $in: productIds } });
     const productById = new Map(products.map((p) => [String(p._id), p]));
@@ -149,7 +223,7 @@ router.post("/create", async (req, res) => {
 
       const duration = parseDurationLabel(item.durationLabel);
       if (!duration) {
-        return res.status(400).json({ message: `Invalid plan: ${item.durationLabel}` });
+        return res.status(400).json({ message: `Invalid plan duration: ${item.durationLabel}` });
       }
 
       const unitPrice = Number(item.unitPrice);
@@ -157,14 +231,13 @@ router.post("/create", async (req, res) => {
         return res.status(400).json({ message: "Invalid unit price" });
       }
 
-      const matchedPlan = (product.pricing || []).find(
-        (p) =>
-          String(p.duration).trim().toLowerCase() ===
-            String(item.durationLabel).trim().toLowerCase() && Number(p.price) === unitPrice
-      );
-
-      if (!matchedPlan) {
-        return res.status(400).json({ message: "Plan mismatch for product" });
+      // Pricing is an object, not an array - access by duration key
+      const pricingKey = getPricingKeyFromLabel(item.durationLabel);
+      const matchedPrice = product.pricing?.[pricingKey];
+      if (matchedPrice === undefined || Number(matchedPrice) !== unitPrice) {
+        return res.status(400).json({ 
+          message: `Plan mismatch for product. Expected ${item.durationLabel} at ₹${unitPrice}, found ₹${matchedPrice}` 
+        });
       }
 
       const itemReturnDate = addDurationYmd(deliveryDate, duration);
@@ -217,6 +290,13 @@ router.post("/create", async (req, res) => {
       deliveryDate,
       returnDate,
       status: "Ongoing",
+      deliveryAddress: {
+        street: deliveryAddress.street,
+        city: deliveryAddress.city,
+        state: deliveryAddress.state,
+        pincode: deliveryAddress.pincode,
+        phone: deliveryAddress.phone,
+      },
     });
 
     await order.save();
@@ -227,7 +307,8 @@ router.post("/create", async (req, res) => {
 
     res.json(order);
   } catch (err) {
-    res.status(500).json({ message: "Order error" });
+    console.error("Order creation error:", err);
+    res.status(500).json({ message: "Order error", error: err.message });
   }
 });
 
@@ -298,12 +379,10 @@ router.post("/extend", async (req, res) => {
     const product = await Product.findById(item.productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
 
-    const matchedPlan = (product.pricing || []).find(
-      (p) =>
-        String(p.duration).trim().toLowerCase() === String(durationLabel).trim().toLowerCase() &&
-        Number(p.price) === unitPrice
-    );
-    if (!matchedPlan) {
+    // Pricing is an object, not an array - access by duration key
+    const pricingKey = getPricingKeyFromLabel(durationLabel);
+    const matchedPrice = product.pricing?.[pricingKey];
+    if (matchedPrice === undefined || Number(matchedPrice) !== unitPrice) {
       return res.status(400).json({ message: "Plan mismatch for product" });
     }
 

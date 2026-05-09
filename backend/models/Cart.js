@@ -19,6 +19,7 @@ const cartSchema = new mongoose.Schema({
       selectedPlan: {
         duration: String,
         price: Number,
+        durationLabel: String,
       },
     },
   ],
