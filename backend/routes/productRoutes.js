@@ -283,6 +283,23 @@ router.post("/check-availability", async (req, res) => {
   }
 });
 
+// GET ALL BY LENDER ID
+router.get("/lender/:userId", requireAuth, requireLender, async (req, res) => {
+  try {
+    if (String(req.params.userId) !== String(req.user?.id)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const products = await Product.find({
+      userId: req.params.userId,
+    });
+
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching products" });
+  }
+});
+
 // GET ONE
 router.get("/:id", async (req, res) => {
   const product = await Product.findById(req.params.id);
@@ -348,24 +365,6 @@ router.put("/:id", requireAuth, requireLender, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error updating product" });
-  }
-});
-
-// GET ALL BY LENDER ID
-router.get("/lender/:userId", requireAuth, requireLender, async (req, res) => {
-  try {
-    if (String(req.params.userId) !== String(req.user?.id)) {
-      return res.status(403).json({ message: "Forbidden" });
-    }
-
-    const products = await Product.find({
-      userId: req.params.userId,
-    });
-
-    res.json(products);
-
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching products" });
   }
 });
 
