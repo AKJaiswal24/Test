@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 import "../styles/orders.css";
 import { formatYmdToEnIn } from "../utils/dateYmdIst";
 
 function MyOrders() {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -90,9 +92,10 @@ function MyOrders() {
     }
   };
 
-  return (
-    <div className="orders-page">
-      <h1>My Orders</h1>
+return (
+     <div className="orders-page">
+       <button className="btn-home" onClick={() => navigate("/")}>← Back to Home</button>
+       <h1>My Orders</h1>
 
       {isLoading ? (
         <div className="orders-state">Loading orders...</div>

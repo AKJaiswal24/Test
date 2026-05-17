@@ -246,9 +246,45 @@ let latestReturnDate = "";
       return;
     }
 
-    // Validate address
-    if (!address.street || !address.city || !address.state || !address.pincode || !address.phone) {
+    // Validate address with specific length requirements
+    const street = address.street.trim();
+    const city = address.city.trim();
+    const state = address.state.trim();
+    const pincode = address.pincode.trim();
+    const phone = address.phone.trim();
+
+    if (!street || !city || !state || !pincode || !phone) {
       alert("Please fill in all address fields");
+      return;
+    }
+
+    // Street: 20-100 characters
+    if (street.length < 20 || street.length > 100) {
+      alert("Street Address must be between 20 and 100 characters");
+      return;
+    }
+
+    // City: max 15 characters
+    if (city.length > 15) {
+      alert("City must be 15 characters or less");
+      return;
+    }
+
+    // State: max 20 characters
+    if (state.length > 20) {
+      alert("State must be 20 characters or less");
+      return;
+    }
+
+    // Pincode: exactly 6 digits
+    if (!/^\d{6}$/.test(pincode)) {
+      alert("Pincode must be exactly 6 digits");
+      return;
+    }
+
+    // Phone: exactly 10 digits
+    if (!/^\d{10}$/.test(phone)) {
+      alert("Phone Number must be exactly 10 digits");
       return;
     }
 
@@ -339,8 +375,9 @@ let latestReturnDate = "";
     }
   };
 
-  return (
-    <div className="checkout-page">
+return (
+     <div className="checkout-page">
+       <button className="btn-home" onClick={() => navigate("/")}>← Back to Home</button>
       <h1>Checkout</h1>
 
       <div className="checkout-layout">
@@ -420,33 +457,44 @@ let latestReturnDate = "";
             <h3>Delivery Address</h3>
             <input
               type="text"
-              placeholder="Street Address"
+              placeholder="Street Address (20-100 characters)"
               value={address.street}
+              maxLength={100}
               onChange={(e) => setAddress({...address, street: e.target.value})}
             />
             <input
               type="text"
-              placeholder="City"
+              placeholder="City (max 15 characters)"
               value={address.city}
+              maxLength={15}
               onChange={(e) => setAddress({...address, city: e.target.value})}
             />
             <input
               type="text"
-              placeholder="State"
+              placeholder="State (max 20 characters)"
               value={address.state}
+              maxLength={20}
               onChange={(e) => setAddress({...address, state: e.target.value})}
             />
             <input
               type="text"
-              placeholder="Pincode"
+              placeholder="Pincode (6 digits)"
               value={address.pincode}
-              onChange={(e) => setAddress({...address, pincode: e.target.value})}
+              maxLength={6}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '');
+                setAddress({...address, pincode: val});
+              }}
             />
             <input
               type="tel"
-              placeholder="Phone Number"
+              placeholder="Phone Number (10 digits)"
               value={address.phone}
-              onChange={(e) => setAddress({...address, phone: e.target.value})}
+              maxLength={10}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '');
+                setAddress({...address, phone: val});
+              }}
             />
           </div>
 

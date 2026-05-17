@@ -188,6 +188,7 @@ function CartPage() {
 
   return (
     <div className="cart-page">
+      <button className="btn-home" onClick={() => navigate("/")}>← Back to Home</button>
       <div className="cart-header">
         <div>
           <h1>Your Cart</h1>

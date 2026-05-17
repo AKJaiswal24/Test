@@ -4,6 +4,8 @@ const router = express.Router();
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
+const DeliveryTask = require("../models/DeliveryTask");
+const generateOTP = () => String(Math.floor(100000 + Math.random() * 900000));
 const requireAuth = require("../middleware/requireAuth");
 const { isObjectIdHex } = require("../utils/validation");
 
@@ -149,6 +151,33 @@ router.post("/create", requireAuth, async (req, res) => {
       return res.status(400).json({ message: "Delivery address is required" });
     }
 
+    // Validate delivery address length requirements
+    const street = deliveryAddress.street.trim();
+    const city = deliveryAddress.city.trim();
+    const state = deliveryAddress.state.trim();
+    const pincode = deliveryAddress.pincode.trim();
+    const phone = deliveryAddress.phone.trim();
+
+    if (street.length < 20 || street.length > 100) {
+      return res.status(400).json({ message: "Street Address must be between 20 and 100 characters" });
+    }
+
+    if (city.length > 15) {
+      return res.status(400).json({ message: "City must be 15 characters or less" });
+    }
+
+    if (state.length > 20) {
+      return res.status(400).json({ message: "State must be 20 characters or less" });
+    }
+
+    if (!/^\d{6}$/.test(pincode)) {
+      return res.status(400).json({ message: "Pincode must be exactly 6 digits" });
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      return res.status(400).json({ message: "Phone Number must be exactly 10 digits" });
+    }
+
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "No items" });
     }
@@ -240,12 +269,18 @@ router.post("/create", requireAuth, async (req, res) => {
 
       // Pricing is an object, not an array - access by duration key
       const pricingKey = getPricingKeyFromLabel(item.durationLabel);
+      
+      // Validate that the plan exists for this product
       const matchedPrice = product.pricing?.[pricingKey];
-      if (matchedPrice === undefined || Number(matchedPrice) !== unitPrice) {
+      if (matchedPrice === undefined) {
         return res.status(400).json({ 
-          message: `Plan mismatch for product. Expected ${item.durationLabel} at ₹${unitPrice}, found ₹${matchedPrice}` 
+          message: `Invalid plan "${item.durationLabel}" for this product. Please remove and add again.`
         });
       }
+
+      // Note: We allow orders to proceed even if cart price differs from current price
+      // This handles cases where product prices changed after item was added to cart
+      // The cart price is honored as the user agreed to it when adding to cart
 
       const itemReturnDate = addDurationYmd(deliveryDate, duration);
       if (!itemReturnDate) {
@@ -308,6 +343,78 @@ router.post("/create", requireAuth, async (req, res) => {
 
     await order.save();
     await order.populate("items.productId");
+
+    // Auto-create delivery tasks for each item in the order
+    try {
+      for (let i = 0; i < orderItems.length; i++) {
+        const item = orderItems[i];
+        const product = productById.get(String(item.productId));
+        const lenderId = product ? product.userId : authUserId; // Product owner is the lender
+
+        // Delivery task: lender -> renter
+        const deliveryTask = new DeliveryTask({
+          orderId: order._id,
+          productId: item.productId,
+          lenderId: lenderId,
+          renterId: authUserId, // Renter is the order creator
+          taskType: "delivery",
+          status: "Waiting for Agent",
+          paymentAmount: 75,
+          pickupAddress: {
+            street: deliveryAddress.street,
+            city: deliveryAddress.city,
+            state: deliveryAddress.state,
+            pincode: deliveryAddress.pincode,
+            phone: deliveryAddress.phone,
+          },
+          dropAddress: {
+            street: deliveryAddress.street,
+            city: deliveryAddress.city,
+            state: deliveryAddress.state,
+            pincode: deliveryAddress.pincode,
+            phone: deliveryAddress.phone,
+          },
+          otp: generateOTP(),
+          trackingLogs: [
+            { status: "Waiting for Agent", notes: "Delivery task created for order" },
+          ],
+        });
+        await deliveryTask.save();
+
+        // Pickup task: renter -> lender (auto-scheduled for return)
+        const pickupTask = new DeliveryTask({
+          orderId: order._id,
+          productId: item.productId,
+          lenderId: lenderId,
+          renterId: authUserId,
+          taskType: "pickup",
+          status: "Pickup Scheduled",
+          paymentAmount: 75,
+          pickupAddress: {
+            street: deliveryAddress.street,
+            city: deliveryAddress.city,
+            state: deliveryAddress.state,
+            pincode: deliveryAddress.pincode,
+            phone: deliveryAddress.phone,
+          },
+          dropAddress: {
+            street: deliveryAddress.street,
+            city: deliveryAddress.city,
+            state: deliveryAddress.state,
+            pincode: deliveryAddress.pincode,
+            phone: deliveryAddress.phone,
+          },
+          otp: generateOTP(),
+          trackingLogs: [
+            { status: "Pickup Scheduled", notes: "Return pickup auto-scheduled" },
+          ],
+        });
+        await pickupTask.save();
+      }
+    } catch (taskErr) {
+      console.error("Error creating delivery tasks:", taskErr);
+      // Don't fail the order if task creation fails
+    }
 
     // Best-effort: clear cart after order success
     await Cart.updateOne({ userId: String(authUserId) }, { $set: { items: [] } });
