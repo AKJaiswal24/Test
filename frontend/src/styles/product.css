@@ -277,7 +277,460 @@
   background: #059669;
 }
 
-/* RESPONSIVE */
+/* ====================
+   NEGOTIATION SECTION
+   ==================== */
+
+/* Main Negotiation Container */
+.negotiation-section {
+  margin-top: 25px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 20px;
+}
+
+.negotiation-header h3 {
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.negotiation-subtitle {
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* Status Badge */
+.negotiation-status-card {
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border-left: 4px solid;
+  background: #f9fafb;
+}
+
+.negotiation-status-card.badge-pending {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.negotiation-status-card.badge-accepted {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+
+.negotiation-status-card.badge-rejected {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.negotiation-status-card.badge-countered {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.negotiation-status-card.badge-expired {
+  border-color: #9ca3af;
+  background: #f3f4f6;
+}
+
+.negotiation-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.negotiation-status-badge {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.badge-pending .negotiation-status-badge { color: #d97706; }
+.badge-accepted .negotiation-status-badge { color: #059669; }
+.badge-rejected .negotiation-status-badge { color: #dc2626; }
+.badge-countered .negotiation-status-badge { color: #2563eb; }
+.badge-expired .negotiation-status-badge { color: #6b7280; }
+
+.negotiation-status-date {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.negotiation-status-text {
+  font-size: 14px;
+  color: #374151;
+  margin: 0;
+}
+
+.counter-offer-info {
+  margin-top: 8px;
+}
+
+.negotiation-original-text {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+  text-decoration: line-through;
+}
+
+.accepted-info .negotiation-status-text {
+  color: #059669;
+  font-weight: 500;
+}
+
+.negotiation-expiry {
+  font-size: 12px;
+  color: #d97706;
+  margin-top: 6px;
+}
+
+/* Messages Timeline */
+.negotiation-messages {
+  margin-top: 16px;
+}
+
+.negotiation-messages h4 {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.messages-timeline {
+  max-height: 250px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 8px;
+}
+
+.messages-timeline::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-timeline::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  max-width: 90%;
+}
+
+.message-buyer {
+  background: #eef2ff;
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+
+.message-seller {
+  background: #f3f4f6;
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.message-sender {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--primary);
+}
+
+.message-time {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.message-text {
+  font-size: 13px;
+  color: #374151;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.message-price {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--secondary);
+  background: white;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+/* Negotiation Form */
+.negotiation-form {
+  margin-top: 16px;
+}
+
+.negotiation-input-group {
+  margin-bottom: 14px;
+}
+
+.negotiation-input-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.negotiation-input-group label span {
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+.negotiation-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.negotiation-input-wrapper:focus-within {
+  border-color: var(--secondary);
+}
+
+.negotiation-currency {
+  padding: 12px 12px;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+}
+
+.negotiation-input-wrapper input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-size: 15px;
+  outline: none;
+  background: white;
+}
+
+.negotiation-input-wrapper input:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+}
+
+.negotiation-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.negotiation-input-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.negotiation-input-group textarea:focus {
+  border-color: var(--secondary);
+}
+
+.negotiation-input-group textarea:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+}
+
+/* Negotiation Action Buttons */
+.negotiation-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.negotiation-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 140px;
+}
+
+.negotiation-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-propose {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.btn-propose:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+}
+
+.btn-accept {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-accept:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.btn-reject {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-reject:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+}
+
+.btn-update {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.btn-update:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+}
+
+/* Negotiated Price Banner */
+.negotiated-price-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  border: 1px solid #a7f3d0;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #059669;
+}
+
+.negotiated-icon {
+  font-size: 18px;
+}
+
+/* Negotiated Badge Inline */
+.negotiated-badge-inline {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #059669;
+  background: #d1fae5;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+/* Plan card negotiated state */
+.plan-card.negotiated {
+  border-color: var(--secondary);
+  background: #eff6ff;
+}
+
+.plan-price-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.original-price-crossed {
+  text-decoration: line-through;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.original-price-crossed.summary {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.negotiated-price-text {
+  color: #059669;
+  font-size: 16px;
+}
+
+.negotiated-text {
+  color: #059669;
+}
+
+.negotiated-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #059669;
+}
+
+/* Login prompt */
+.negotiation-login-prompt {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.negotiation-login-prompt a {
+  color: var(--secondary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Notice (cannot negotiate own product) */
+.negotiation-notice {
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 10px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Spinner for negotiation buttons */
+.spinner-small {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ====================
+   RESPONSIVE
+   ==================== */
 @media (max-width: 768px) {
   .product-page {
     flex-direction: column;
@@ -294,5 +747,17 @@
 
   .thumbnail-row {
     justify-content: center;
+  }
+
+  .negotiation-actions {
+    flex-direction: column;
+  }
+
+  .negotiation-btn {
+    min-width: unset;
+  }
+
+  .messages-timeline {
+    max-height: 200px;
   }
 }
