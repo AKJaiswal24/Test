@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 import hero from "../assets/hero.png";
 import "../styles/landing.css";
+import "../styles/notifications.css";
 import { useNavigate } from "react-router-dom";
 import api from "../api/client";
+import NotificationBell from "../components/NotificationBell";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -18,6 +20,8 @@ function LandingPage() {
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [cartCount, setCartCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pendingNegotiationCount, setPendingNegotiationCount] = useState(0);
+  const [pendingDeliveryTasks, setPendingDeliveryTasks] = useState(0);
 
   // FETCH CATEGORIES DYNAMICALLY FROM BACKEND
   useEffect(() => {
@@ -82,6 +86,53 @@ function LandingPage() {
       setUser(JSON.parse(storedUser));
     }
   }, []);
+
+  // FETCH PENDING NEGOTIATIONS (for sellers)
+  useEffect(() => {
+    if (!user) {
+      setPendingNegotiationCount(0);
+      return;
+    }
+
+    const fetchPendingNegotiations = async () => {
+      try {
+        const response = await api.get(`/api/negotiation/seller/${user._id}`);
+        const negotiations = Array.isArray(response.data) ? response.data : [];
+        const pending = negotiations.filter(n => n.status === "pending" || n.status === "countered");
+        setPendingNegotiationCount(pending.length);
+      } catch {
+        setPendingNegotiationCount(0);
+      }
+    };
+
+    fetchPendingNegotiations();
+    const interval = setInterval(fetchPendingNegotiations, 10000); // Poll every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [user]);
+
+  // FETCH AVAILABLE DELIVERY TASKS (for approved agents)
+  useEffect(() => {
+    if (!user || user.isDeliveryAgent !== true || user.verification_status !== "approved") {
+      setPendingDeliveryTasks(0);
+      return;
+    }
+
+    const fetchAvailableTasks = async () => {
+      try {
+        const response = await api.get("/api/delivery/available-tasks");
+        const tasks = Array.isArray(response.data?.tasks) ? response.data.tasks : [];
+        setPendingDeliveryTasks(tasks.length);
+      } catch {
+        setPendingDeliveryTasks(0);
+      }
+    };
+
+    fetchAvailableTasks();
+    const interval = setInterval(fetchAvailableTasks, 15000); // Poll every 15 seconds
+
+    return () => clearInterval(interval);
+  }, [user]);
 
   // FETCH PRODUCTS
   useEffect(() => {
@@ -160,6 +211,8 @@ function LandingPage() {
                 🛒 <span className="cart-count">{cartCount}</span>
               </div>
 
+              <NotificationBell />
+
               <div
                 className="menu-container"
                 onClick={(e) => {
@@ -172,9 +225,30 @@ function LandingPage() {
                 {menuOpen && (
                   <div className="dropdown">
                     <p onClick={() => navigate("/orders")}>Order History</p>
-                    {isLender && (
-                      <p onClick={() => navigate("/my-listings")}>My Listings</p>
-                    )}
+{user?.isDeliveryAgent === true && user?.verification_status === "approved" && (
+                         <>
+                           <p onClick={() => navigate("/delivery/dashboard")}>Delivery Dashboard</p>
+                           <p onClick={() => navigate("/delivery/orders")}>Delivery Orders</p>
+                         </>
+                       )}
+                     {user?.isAdmin && (
+                       <p onClick={() => navigate("/admin/agent-approvals")}>Agent Approvals</p>
+                     )}
+{isLender && (
+                        <>
+                          <p onClick={() => navigate("/my-listings")}>My Listings</p>
+                          <p onClick={() => navigate("/lender/dashboard")}>Lender Dashboard</p>
+                        </>
+                      )}
+                     {/* {!isLender && !user?.isAdmin && (
+                       <p onClick={() => navigate("/become-lender")}>Become Lender</p>
+                     )}
+                     {!user?.isDeliveryAgent && (
+                       <p onClick={() => navigate("/become-agent")}>Become Agent</p>
+                     )} */}
+                     {user?.isDeliveryAgent && user?.verification_status !== "approved" && (
+                       <p onClick={() => navigate("/become-agent")}>Agent Application Status</p>
+                     )}
                     <p onClick={handleLogout}>Logout</p>
                   </div>
                 )}
@@ -187,6 +261,29 @@ function LandingPage() {
           )}
         </div>
       </div>
+
+      {/* NEGOTIATION NOTIFICATION - Only visible for sellers with pending negotiations */}
+      {user && isLender && pendingNegotiationCount > 0 && (
+        <div
+          className="negotiation-notification-bar"
+          onClick={() => navigate("/my-listings")}
+          title="View pending negotiations"
+        >
+          🤝 You have {pendingNegotiationCount} pending negotiation{pendingNegotiationCount > 1 ? 's' : ''} - Click to view
+        </div>
+      )}
+
+      {/* DELIVERY AGENT NOTIFICATION */}
+      {user && user.isDeliveryAgent === true && user.verification_status === "approved" && pendingDeliveryTasks > 0 && (
+        <div
+          className="negotiation-notification-bar"
+          style={{ background: '#dbeafe', color: '#1e3a8a', borderColor: '#93c5fd' }}
+          onClick={() => navigate("/delivery/dashboard")}
+          title="View available tasks"
+        >
+          🚚 You have {pendingDeliveryTasks} available delivery task{pendingDeliveryTasks > 1 ? 's' : ''} - Click to view
+        </div>
+      )}
 
       {/* HERO SECTION */}
       <div className="hero-section">
@@ -310,7 +407,7 @@ function LandingPage() {
             <h4>Services</h4>
             <p>Rent Equipment</p>
             <p onClick={() => navigate("/add-product")}>List Your Product</p>
-            <p>Delivery Chain</p>
+            <p onClick={() => navigate("/become-agent")}>Delivery Chain</p>
           </div>
 
           <div>

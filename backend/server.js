@@ -42,6 +42,9 @@ app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/cart", require("./routes/cartRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
 app.use("/api/lender", lenderRoutes);
+app.use("/api/negotiation", require("./routes/negotiationRoutes"));
+app.use("/api/delivery", require("./routes/deliveryRoutes"));
+app.use("/api/notifications", require("./routes/notificationRoutes"));
 app.use("/uploads", express.static("uploads"));
 
 app.use((req, res) => res.status(404).json({ message: "Not found" }));

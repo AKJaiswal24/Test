@@ -21,6 +21,30 @@ body {
 
 /* ================= NAVBAR ================= */
 
+.negotiation-notification-bar {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin: 10px auto;
+  max-width: 1200px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+  animation: pulse 2s infinite;
+}
+
+.negotiation-notification-bar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
+}
+
 .navbar {
   display: flex;
   align-items: center;
