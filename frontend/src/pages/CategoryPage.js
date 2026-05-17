@@ -41,6 +41,7 @@ function CategoryPage() {
 
   return (
     <div className="container">
+      <button className="btn-home" onClick={() => navigate("/")}>← Back to Home</button>
 
       <h2 style={{ marginBottom: "20px" }}>
         {categoryName} Rentals

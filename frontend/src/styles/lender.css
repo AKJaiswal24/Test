@@ -1,3 +1,4 @@
+/* LENDER REGISTRATION FORM */
 .lender-page {
   max-width: 420px;
   margin: auto;
@@ -101,8 +102,547 @@
   .lender-page {
     padding: 20px;
   }
-  
+
   .lender-form {
     padding: 20px;
+  }
+}
+
+/* ========================================
+   LENDER DASHBOARD - Overview & All Tabs
+   ======================================== */
+.lender-page.overview,
+.lender-dashboard {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 16px;
+  text-align: left;
+}
+
+.lender-dashboard h1,
+.lender-page.overview h1 {
+  margin: 0 0 24px;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #111827;
+}
+
+.lender-dashboard .btn-home,
+.lender-page.overview .btn-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.lender-dashboard .btn-home:hover,
+.lender-page.overview .btn-home:hover {
+  background: #e5e7eb;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #1e3a8a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #eef2f7;
+  padding: 20px;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.06);
+  text-align: center;
+}
+
+.stat-card .stat-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.stat-card .stat-info h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #111827;
+}
+
+.stat-card .stat-info p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.stat-sub {
+  font-size: 11px !important;
+  color: #9ca3af !important;
+  margin-top: 4px;
+}
+
+/* Tabs */
+.tabs-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.tab-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b7280;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.tab-active {
+  background: #fff;
+  color: #1e3a8a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Tabs */
+.tab-content {
+  min-height: 300px;
+}
+
+.dashboard-tab {
+  /* No extra styles needed; children provide spacing */
+}
+
+/* Cards inside tabs */
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #eef2f7;
+}
+
+.empty-state span {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  color: #9ca3af;
+  font-size: 15px;
+}
+
+.empty-state a {
+  color: #1e3a8a;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Profile / Earnings Grid */
+.profile-section {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #eef2f7;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.06);
+}
+
+.profile-section h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #111827;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.profile-item {
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #eef2f7;
+}
+
+.profile-item label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.profile-item span {
+  font-size: 16px;
+  font-weight: 900;
+  color: #111827;
+}
+
+/* Badge helpers */
+.badge-green { background: #dcfce7; color: #166534; }
+.badge-yellow { background: #fef9c3; color: #854d0e; }
+.badge-blue { background: #dbeafe; color: #1e3a8a; }
+.badge-orange { background: #ffedd5; color: #9a3412; }
+.badge-purple { background: #f3e8ff; color: #6b21a8; }
+.badge-teal { background: #ccfbf1; color: #115e59; }
+.badge-indigo { background: #e0e7ff; color: #3730a3; }
+.badge-emerald { background: #d1fae5; color: #065f46; }
+.badge-gray { background: #f3f4f6; color: #374151; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+
+.badge-pending { color: #d97706; font-weight: 700; }
+.badge-paid { color: #166534; font-weight: 700; }
+
+/* Lender Product Card */
+.lender-product-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.06);
+}
+
+.product-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f3f4f6;
+}
+
+.product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.product-info h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 900;
+  color: #111827;
+}
+
+.product-pricing {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.price-tag {
+  font-weight: 900;
+  color: #1e3a8a;
+  font-size: 14px;
+}
+
+.price-small {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.product-meta {
+  margin-top: 4px;
+}
+
+.product-meta span {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+/* Rental Card */
+.lender-rental-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #eef2f7;
+  padding: 18px;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.06);
+}
+
+.rental-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rental-product {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.rental-product img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f3f4f6;
+}
+
+.rental-product h4 {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.rental-meta {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.rental-details {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 10px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+  color: #374151;
+}
+
+.detail-label {
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+/* Commission Summary */
+.commission-summary {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.commission-stat {
+  flex: 1;
+  text-align: center;
+  background: #fff;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #eef2f7;
+}
+
+.commission-stat strong {
+  display: block;
+  font-size: 20px;
+  font-weight: 900;
+  color: #1e3a8a;
+}
+
+.commission-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #eef2f7;
+  padding: 16px;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.06);
+  margin-bottom: 12px;
+}
+
+.commission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.commission-header h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.commission-meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.commission-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.commission-amount {
+  font-weight: 900;
+  color: #1e3a8a;
+  font-size: 16px;
+}
+
+.commission-rate {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.commission-date {
+  color: #9ca3af;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+/* Quick Actions */
+.quick-actions {
+  margin-top: 24px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.06);
+}
+
+.quick-actions h3 {
+  margin: 0 0 14px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.action-btn {
+  text-align: center;
+  padding: 14px;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  border-color: #1e3a8a;
+  color: #1e3a8a;
+  background: #f8faff;
+}
+
+/* Status badge inline */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Button inside card */
+.btn-view {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e3a8a;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-view:hover {
+  background: #f0f3ff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .rental-header {
+    flex-direction: column;
+  }
+
+  .commission-summary {
+    flex-direction: column;
+  }
+
+  .commission-details {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .commission-date {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .lender-page.overview,
+  .lender-dashboard {
+    padding: 16px 12px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
   }
 }

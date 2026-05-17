@@ -76,28 +76,28 @@ function AddProduct() {
     }
   }, [isLender, userId, navigate]);
 
-// Fetch categories on component mount
-    useEffect(() => {
-      const fetchCategories = async () => {
-        setIsLoadingCategories(true);
-        try {
-          const response = await api.get("/api/products/categories");
-          // Use API categories if available, otherwise use fallback
-          const apiCategories = response.data.categories || [];
-          // Merge backend categories with defaults to ensure all are shown
-          const allCategories = [...new Set([...DEFAULT_CATEGORIES.slice(1), ...apiCategories])];
-          setCategories(allCategories);
-        } catch (err) {
-          console.error("Error fetching categories:", err);
-          // Fallback to default categories if API fails
-          setCategories(DEFAULT_CATEGORIES.slice(1)); // Remove "All" from defaults for add form
-        } finally {
-          setIsLoadingCategories(false);
-        }
-      };
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsLoadingCategories(true);
+      try {
+        const response = await api.get("/api/products/categories");
+        // Use API categories if available, otherwise use fallback
+        const apiCategories = response.data.categories || [];
+        // Merge backend categories with defaults to ensure all are shown
+        const allCategories = [...new Set([...DEFAULT_CATEGORIES.slice(1), ...apiCategories])];
+        setCategories(allCategories);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        // Fallback to default categories if API fails
+        setCategories(DEFAULT_CATEGORIES.slice(1)); // Remove "All" from defaults for add form
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
 
-      fetchCategories();
-    }, []);
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -179,6 +179,7 @@ function AddProduct() {
       <div className="add-product-card">
         {/* Header */}
         <div className="card-header">
+          <button className="btn-home" onClick={() => navigate("/")}>← Back to Home</button>
           <div className="header-content">
             <h1>
               <span className="icon">➕</span>

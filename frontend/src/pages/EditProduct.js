@@ -113,46 +113,46 @@ function EditProduct() {
    }, [isLender, navigate, userId, id]);
 
 // Fetch categories on component mount
-    useEffect(() => {
-      const fetchCategories = async () => {
-        setIsLoadingCategories(true);
-        try {
-          const response = await api.get("/api/products/categories");
-          const apiCategories = response.data.categories || [];
-          // Merge backend categories with defaults to ensure all are shown
-          const allCategories = [...new Set([...DEFAULT_CATEGORIES.slice(1), ...apiCategories])];
-          setCategories(allCategories);
-        } catch (err) {
-          console.error("Error fetching categories:", err);
-          // Fallback to default categories if API fails
-          setCategories([
-            "Cleaning",
-            "Power Tools",
-            "Kitchen Machines",
-            "Construction",
-            "Electronics",
-            "Vehicles",
-            "Lighting",
-            "Machinery",
-            "Equipment",
-            "Audio Visual",
-            "Medical Equipment",
-            "Sports & Fitness",
-            "Garden & Outdoor",
-            "Party Supplies",
-            "Baby & Kids",
-            "Office Equipment",
-            "Tools & Hardware",
-            "Photography",
-            "Musical Instruments"
-          ]);
-        } finally {
-          setIsLoadingCategories(false);
-        }
-      };
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsLoadingCategories(true);
+      try {
+        const response = await api.get("/api/products/categories");
+        const apiCategories = response.data.categories || [];
+        // Merge backend categories with defaults to ensure all are shown
+        const allCategories = [...new Set([...DEFAULT_CATEGORIES.slice(1), ...apiCategories])];
+        setCategories(allCategories);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        // Fallback to default categories if API fails
+        setCategories([
+          "Cleaning",
+          "Power Tools",
+          "Kitchen Machines",
+          "Construction",
+          "Electronics",
+          "Vehicles",
+          "Lighting",
+          "Machinery",
+          "Equipment",
+          "Audio Visual",
+          "Medical Equipment",
+          "Sports & Fitness",
+          "Garden & Outdoor",
+          "Party Supplies",
+          "Baby & Kids",
+          "Office Equipment",
+          "Tools & Hardware",
+          "Photography",
+          "Musical Instruments"
+        ]);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
 
-     fetchCategories();
-   }, []);
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -245,6 +245,7 @@ function EditProduct() {
       <div className="edit-product-card">
         {/* Header */}
         <div className="card-header">
+          <button className="btn-home" onClick={() => navigate("/")}>← Back to Home</button>
           <div className="header-content">
             <h1>
               <span className="icon">✏️</span>

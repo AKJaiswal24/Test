@@ -124,8 +124,9 @@ function BecomeLender() {
   };
 
   return (
-    <div className="lender-page">
-      <h1>Become a Lender</h1>
+<div className="lender-page">
+       <button className="btn-home" onClick={() => navigate("/")}>← Back to Home</button>
+       <h1>Become a Lender</h1>
       <p>Register to start renting out your products</p>
       
       <form onSubmit={handleSubmit} className="lender-form">
