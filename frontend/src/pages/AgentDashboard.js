@@ -118,8 +118,14 @@ function AgentDashboard() {
       ]);
       setProfile(profileRes.data.profile);
       setStats(profileRes.data.stats);
-      setTasks(tasksRes.data.tasks || []);
-      setAvailableTasks(availableRes.data.tasks || []);
+
+      const tasksPayload = tasksRes.data;
+      setTasks(Array.isArray(tasksPayload) ? tasksPayload : tasksPayload?.tasks || []);
+
+      const availablePayload = availableRes.data;
+      setAvailableTasks(
+        Array.isArray(availablePayload) ? availablePayload : availablePayload?.tasks || []
+      );
       setEarnings(earningsRes.data.earnings || []);
       setEarningsSummary(earningsRes.data.summary);
       setAvailability(profileRes.data.profile?.availability_status || "available");

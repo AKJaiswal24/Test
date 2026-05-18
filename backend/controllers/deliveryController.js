@@ -465,7 +465,7 @@ const getAgentDeliveryTasks = async (req, res) => {
       .populate("renterId", "name phone")
       .sort({ assignedAt: -1 });
 
-    res.json(tasks);
+    res.json({ tasks });
   } catch (err) {
     console.error("Get agent tasks error:", err);
     res.status(500).json({ message: "Server error" });
