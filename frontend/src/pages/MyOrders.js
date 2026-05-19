@@ -56,41 +56,64 @@ function MyOrders() {
     });
   };
 
-  const handleExtend = async ({ orderId, itemId, selectedPlan }) => {
-    if (!orderId || !itemId || !selectedPlan?.duration || selectedPlan?.price == null) {
-      alert("Please select a valid plan to extend.");
-      return;
-    }
+   const handleExtend = async ({ orderId, itemId, selectedPlan }) => {
+     if (!orderId || !itemId || !selectedPlan?.duration || selectedPlan?.price == null) {
+       alert("Please select a valid plan to extend.");
+       return;
+     }
 
-    if (isExtending) return;
+     if (isExtending) return;
 
-    try {
-      setIsExtending(true);
+     try {
+       setIsExtending(true);
 
-      const response = await api.post("/api/orders/extend", {
-        orderId,
-        itemId,
-        selectedPlan: {
-          duration: selectedPlan.duration,
-          price: selectedPlan.price,
-        },
-      });
+       const response = await api.post("/api/orders/extend", {
+         orderId,
+         itemId,
+         selectedPlan: {
+           duration: selectedPlan.duration,
+           price: selectedPlan.price,
+         },
+       });
 
-      const updatedOrder = response?.data;
-      if (updatedOrder?._id) {
-        setOrders((prev) => prev.map((o) => (o._id === updatedOrder._id ? updatedOrder : o)));
-      } else {
-        await fetchOrders();
-      }
+       const updatedOrder = response?.data;
+       if (updatedOrder?._id) {
+         setOrders((prev) => prev.map((o) => (o._id === updatedOrder._id ? updatedOrder : o)));
+       } else {
+         await fetchOrders();
+       }
 
-      alert("Rental extended ✅");
-      setActiveExtend(null);
-    } catch {
-      alert("Failed to extend ❌");
-    } finally {
-      setIsExtending(false);
-    }
-  };
+       alert("Rental extended ✅");
+       setActiveExtend(null);
+     } catch {
+       alert("Failed to extend ❌");
+     } finally {
+       setIsExtending(false);
+     }
+   };
+
+   const handleCancelOrder = async (orderId) => {
+     if (!orderId) {
+       alert("Invalid order");
+       return;
+     }
+
+     if (!window.confirm("Are you sure you want to cancel this order?")) {
+       return;
+     }
+
+     try {
+       const response = await api.post("/api/orders/cancel", { orderId });
+       if (response?.data?._id) {
+         setOrders((prev) => prev.map((o) => (o._id === response.data._id ? response.data : o)));
+         alert("Order cancelled successfully");
+       } else {
+         await fetchOrders();
+       }
+     } catch (err) {
+       alert(err?.response?.data?.message || "Failed to cancel order");
+     }
+   };
 
 return (
      <div className="orders-page">
@@ -98,33 +121,49 @@ return (
        <h1>My Orders</h1>
 
       {isLoading ? (
-        <div className="orders-state">Loading orders...</div>
-      ) : errorMessage ? (
-        <div className="orders-state orders-error">{errorMessage}</div>
-      ) : orders.length === 0 ? (
-        <div className="orders-state">No orders yet 😕</div>
-      ) : (
-        orders.map((order, index) => {
-          const deliveryLabel = order?.deliveryDate ? formatYmdToEnIn(order.deliveryDate) : "";
-          const statusLabel = order?.status || "Ongoing";
+         <div className="orders-state">Loading orders...</div>
+       ) : errorMessage ? (
+         <div className="orders-state orders-error">{errorMessage}</div>
+       ) : orders.length === 0 ? (
+         <div className="orders-state">No orders yet 😕</div>
+       ) : (
+         orders.map((order, index) => {
+           const deliveryLabel = order?.deliveryDate ? formatYmdToEnIn(order.deliveryDate) : "";
+           const statusLabel = order?.status || "Ongoing";
 
-          return (
-            <div className="order-card" key={order._id}>
-              <div className="order-header">
-                <div>
-                  <h3>Order #{index + 1}</h3>
-                  <p className="order-sub">
-                    Ordered:{" "}
-                    {order?.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN") : "-"}
-                  </p>
-                </div>
+           return (
+             <div className="order-card" key={order._id}>
+               <div className="order-header">
+                 <div>
+                   <h3>Order #{index + 1}</h3>
+                   <p className="order-sub">
+                     Ordered:{" "}
+                     {order?.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN") : "-"}
+                   </p>
+                 </div>
 
-                <span
-                  className={`status ${statusLabel === "Delivered" ? "delivered" : "ongoing"}`}
-                >
-                  {statusLabel}
-                </span>
-              </div>
+                 <span
+                   className={`status ${statusLabel === "Delivered" ? "delivered" : "ongoing"}`}
+                 >
+                   {statusLabel}
+                 </span>
+                 
+                 {order.otp && (
+                   <div className="otp-info">
+                     <small>OTP for agent: <strong>{order.otp}</strong></small>
+                   </div>
+                 )}
+                 
+                 {order.status === "Ongoing" && (
+                   <button
+                     type="button"
+                     onClick={() => handleCancelOrder(order._id)}
+                     className="cancel-btn"
+                   >
+                     Cancel Order
+                   </button>
+                 )}
+               </div>
 
               <div className="order-topline">
                 <div className="order-total">

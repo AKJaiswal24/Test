@@ -12,11 +12,16 @@ function TaskCard({ task, statusBadge, onAccept, onReject, onStatusChange, isAct
    const renterName = task?.renterId?.name || task?.renterName || "Unknown";
 
    return (
-     <div className="task-card">
-       <div className="task-card-header">
-         <div className="task-type-badge">{task.taskType === "delivery" ? "📦 DELIVERY" : "📥 PICKUP"}</div>
+       <div className="task-card">
+         <div className="task-card-head">
+           <div className="task-type-row">
+             <div className="task-type-badge">{task.taskType === "delivery" ? "📦 DELIVERY" : "📥 PICKUP"}</div>
+             {task.grandTotal > 0 && (
+               <span className="task-earn-pill">₹{task.grandTotal}</span>
+             )}
+           </div>
+         </div>
          <span className={`status-badge ${statusBadge}`}>{task.status}</span>
-       </div>
 
        <div className="task-card-body">
          {productImage && <img src={productImage} alt={productName} className="task-product-img" />}

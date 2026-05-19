@@ -32,10 +32,8 @@ const orderItemSchema = new Schema(
 const orderSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-
     deliveryDate: { type: String, required: true }, // YYYY-MM-DD
     returnDate: { type: String, required: true }, // YYYY-MM-DD (max of items)
-
     // Address fields
     deliveryAddress: {
       street: { type: String, default: "" },
@@ -44,18 +42,17 @@ const orderSchema = new Schema(
       pincode: { type: String, default: "" },
       phone: { type: String, default: "" },
     },
-
     items: { type: [orderItemSchema], default: [] },
-
     rentTotal: { type: Number, default: 0 },
     depositTotal: { type: Number, default: 0 },
     transport: { type: Number, default: 200 },
     platformCharge: { type: Number, default: 20 },
     insurance: { type: Number, default: 0 },
     grandTotal: { type: Number, default: 0 },
-
-    status: { type: String, enum: ["Ongoing", "Delivered"], default: "Ongoing" },
+     status: { type: String, enum: ["Ongoing", "Delivered", "Cancelled"], default: "Ongoing" },
     deliveredAt: { type: Date },
+    rentalPaymentConfirmed: { type: Boolean, default: false },
+    paymentConfirmedAt: { type: Date },
   },
   { timestamps: true }
 );

@@ -50,6 +50,12 @@ const deliveryTaskSchema = new Schema({
   }],
   rejectedBy: { type: Schema.Types.ObjectId, ref: "User" },
   rejectionReason: { type: String, default: "" },
+  // NEW: Payment and condition verification fields
+  rentalPaymentConfirmed: { type: Boolean, default: false },
+  paymentConfirmedAt: { type: Date },
+  pickupConditionVerified: { type: Boolean, default: false },
+  pickupIsWorking: { type: Boolean },
+  pickupConditionNotes: { type: String }
 }, { timestamps: true });
 
 // Index for faster queries

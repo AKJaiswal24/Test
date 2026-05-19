@@ -264,20 +264,20 @@ function LenderDashboard() {
                       </div>
                       <span className={`status-badge ${getStatusBadge(task.status)}`}>{task.status}</span>
                     </div>
-                    <div className="rental-details">
-                      <div className="detail-row"><span className="detail-label">Duration:</span>
-                        <span>{formatDate(task.deliveryDate)} → {formatDate(task.returnDate)}</span>
-                      </div>
-                      <div className="detail-row"><span className="detail-label">Agent:</span>
-                        <span>{task.agentName || "Unassigned"}</span>
-                      </div>
-                      <div className="detail-row"><span className="detail-label">Rent Total:</span>
-                        <span>{formatCurrency(task.rentTotal)}</span>
-                      </div>
-                      <div className="detail-row"><span className="detail-label">Your Net (after ₹75 fee):</span>
-                        <span style={{ color: "#166534", fontWeight: "bold" }}>{formatCurrency(task.rentTotal - 75)}</span>
-                      </div>
-                    </div>
+                     <div className="rental-details">
+                       <div className="detail-row"><span className="detail-label">From:</span>
+                         <span>{formatDate(task.deliveryDate)}</span>
+                       </div>
+                       <div className="detail-row"><span className="detail-label">To:</span>
+                         <span>{formatDate(task.returnDate)}</span>
+                       </div>
+                       <div className="detail-row"><span className="detail-label">Payment:</span>
+                         <span>{formatCurrency(task.rentTotal)}</span>
+                       </div>
+                       <div className="detail-row"><span className="detail-label">Assigned:</span>
+                         <span>{task.agentName || "Unassigned"}</span>
+                       </div>
+                     </div>
                   </div>
                 ))}
               </div>
@@ -308,11 +308,28 @@ function LenderDashboard() {
                     <div className="rental-details">
                       <div className="detail-row"><span className="detail-label">Completed:</span><span>{formatDate(task.completedAt)}</span></div>
                       <div className="detail-row"><span className="detail-label">Agent:</span><span>{task.agentName}</span></div>
-                      <div className="detail-row"><span className="detail-label">Rent:</span><span>{formatCurrency(task.rentTotal)}</span></div>
+                      <div className="detail-row"><span className="detail-label">Price to be Collected:</span><span>{formatCurrency(task.rentTotal)}</span></div>
                       <div className="detail-row"><span className="detail-label">Agent Fee:</span><span>-₹75</span></div>
                       <div className="detail-row"><span className="detail-label">Your Net:</span>
                         <span style={{ color: "#166534", fontWeight: "bold" }}>{formatCurrency(task.netIncome)}</span>
                       </div>
+                      {task.pickupIsWorking !== undefined && (
+                        <div className="detail-row">
+                          <span className="detail-label">Product Condition:</span>
+                          <span style={{ 
+                            color: task.pickupIsWorking ? "#166534" : "#dc2626", 
+                            fontWeight: "bold" 
+                          }}>
+                            {task.pickupIsWorking ? "✓ Working" : "✗ Not Working"}
+                          </span>
+                        </div>
+                      )}
+                      {task.pickupConditionNotes && task.pickupConditionNotes.trim() !== "" && (
+                        <div className="detail-row">
+                          <span className="detail-label">Condition Notes:</span>
+                          <span>{task.pickupConditionNotes}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

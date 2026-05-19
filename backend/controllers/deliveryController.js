@@ -584,6 +584,33 @@ const updateDeliveryTaskStatus = async (req, res) => {
       }
     }
 
+    // Verify payment confirmation for delivery completion
+    if (status === "Delivered") {
+      // Require payment confirmation from agent
+      if (!req.body.paymentConfirmed) {
+        return res.status(400).json({ message: "Payment confirmation required from agent" });
+      }
+      // Update order with payment confirmation
+      const order = await Order.findById(task.orderId);
+      if (order) {
+        order.rentalPaymentConfirmed = true;
+        order.paymentConfirmedAt = new Date();
+        await order.save();
+      }
+    }
+
+    // Verify condition check for pickup return
+    if (status === "Returned to Lender") {
+      // Require condition verification from agent
+      if (req.body.pickupConditionVerified === undefined || req.body.pickupIsWorking === undefined) {
+        return res.status(400).json({ message: "Condition verification required: Is the product working? Any notes?" });
+      }
+      // Save condition details
+      task.pickupConditionVerified = req.body.pickupConditionVerified;
+      task.pickupIsWorking = req.body.pickupIsWorking;
+      task.pickupConditionNotes = req.body.pickupConditionNotes || "";
+    }
+
     const isAdminOrAgent = isAdmin || req.user?.id === task.agentId?.toString();
     const role = isAdmin ? "admin" : isAdminOrAgent ? "agent" : "system";
 

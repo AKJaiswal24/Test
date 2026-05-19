@@ -441,10 +441,27 @@ router.get("/:userId", requireAuth, async (req, res) => {
     }
 
     const orders = await Order.find({ userId }).populate("items.productId").sort({ createdAt: -1 });
-
+    
+    // Populate OTP from delivery tasks for each order
+    const ordersWithOtp = await Promise.all(orders.map(async (order) => {
+      const orderObj = order.toObject ? order.toObject() : order;
+      // Find delivery tasks for this order to get OTP
+      const deliveryTasks = await DeliveryTask.find({ orderId: order._id, taskType: "delivery" });
+      if (deliveryTasks && deliveryTasks.length > 0) {
+        // Use the first delivery task's OTP (there should be one per item, but we'll show the first)
+        orderObj.otp = deliveryTasks[0].otp;
+        orderObj.deliveryTaskId = deliveryTasks[0]._id;
+      } else {
+        orderObj.otp = "";
+        orderObj.deliveryTaskId = null;
+      }
+      return orderObj;
+    }));
+    
+    // Auto-update order status to "Delivered" if delivery date has passed
     const todayIst = getTodayIstYmd();
     const updates = [];
-
+    
     for (const order of orders) {
       if (order.status !== "Delivered" && order.deliveryDate && todayIst > order.deliveryDate) {
         order.status = "Delivered";
@@ -452,10 +469,10 @@ router.get("/:userId", requireAuth, async (req, res) => {
         updates.push(order.save());
       }
     }
-
+    
     if (updates.length) await Promise.allSettled(updates);
-
-    res.json(orders);
+    
+    res.json(ordersWithOtp);
   } catch (err) {
     res.status(500).json({ message: "Fetch orders failed" });
   }
@@ -571,9 +588,42 @@ router.post("/extend", requireAuth, async (req, res) => {
     await order.save();
     await order.populate("items.productId");
 
+     res.json(order);
+   } catch (err) {
+     res.status(500).json({ message: "Extend failed" });
+   }
+});
+
+// =======================
+// CANCEL ORDER
+// =======================
+router.post("/cancel", requireAuth, async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    if (!orderId || !isObjectIdHex(orderId)) {
+      return res.status(400).json({ message: "Invalid orderId" });
+    }
+
+    const order = await Order.findById(orderId);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    if (String(order.userId) !== String(req.user?.id)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    // Only allow cancellation of ongoing orders
+    if (order.status !== "Ongoing") {
+      return res.status(400).json({ message: "Only ongoing orders can be cancelled" });
+    }
+
+    order.status = "Cancelled";
+    await order.save();
+    await order.populate("items.productId");
+
     res.json(order);
   } catch (err) {
-    res.status(500).json({ message: "Extend failed" });
+    res.status(500).json({ message: "Cancel failed" });
   }
 });
 
