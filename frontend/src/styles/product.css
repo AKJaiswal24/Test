@@ -14,7 +14,10 @@
   background: var(--bg);
   min-height: 100vh;
 }
-
+.btn-home{
+  margin-left: 50px;
+  margin-top: 50px;
+}
 /* LEFT SIDE */
 .product-left {
   flex: 1;
@@ -159,9 +162,10 @@
 }
 
 /* LEFT SIDE (DEPOSIT) */
-.cta-left {
+.cta-full {
   flex: 1;
-  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  /* background: linear-gradient(135deg, #b91c1c, #dc2626); */
+  background: linear-gradient(135deg, #ef4444, #f87171);
   color: white;
   padding: 14px 18px;
   display: flex;
@@ -169,30 +173,20 @@
   justify-content: center;
 }
 
-.cta-left p {
+.cta-full p {
   font-size: 12px;
   opacity: 0.9;
 }
 
-.cta-left h4 {
+.cta-full h4 {
   font-size: 18px;
   font-weight: bold;
 }
 
-/* RIGHT SIDE (BUTTON) */
-.cta-right {
-  flex: 1;
-  background: linear-gradient(135deg, #ef4444, #f87171);
-  border: none;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-}
+
 
 /* HOVER EFFECT */
-.cta-right:hover {
+.cta-full:hover {
   background: linear-gradient(135deg, #dc2626, #ef4444);
 }
 

@@ -20,6 +20,7 @@ import DeliveryOrders from "./pages/DeliveryOrders";
 import OrderTasks from "./pages/DeliveryTaskDetail";
 import AdminAgentApprovals from "./pages/AdminAgentApprovals";
 import LenderDashboard from "./pages/LenderDashboard";
+import Wallet from "./pages/wallet";
 
 // Auth guard for lender routes
 function LenderGuard({ children }) {
@@ -106,7 +107,14 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/orders" element={<MyOrders />} />
         <Route path="/become-lender" element={<BecomeLender />} />
-        <Route path="/add-product" element={<AddProduct />} />
+        <Route
+          path="/add-product"
+          element={
+            <LenderRoute>
+              <AddProduct />
+            </LenderRoute>
+          }
+        />
         <Route
           path="/my-listings"
           element={
@@ -173,8 +181,11 @@ function App() {
           }
         />
 
-{/* Lender Dashboard */}
+        {/* Lender Dashboard */}
         <Route path="/lender/dashboard" element={<LenderGuard><LenderDashboard /></LenderGuard>} />
+
+        {/* Agent Wallet */}
+        <Route path="/agent/wallet" element={<AgentRoute><Wallet /></AgentRoute>} />
       </Routes>
     </Router>
   );

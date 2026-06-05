@@ -22,6 +22,7 @@ function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingNegotiationCount, setPendingNegotiationCount] = useState(0);
   const [pendingDeliveryTasks, setPendingDeliveryTasks] = useState(0);
+  const [pendingSettlements, setPendingSettlements] = useState(0);
 
   // FETCH CATEGORIES DYNAMICALLY FROM BACKEND
   useEffect(() => {
@@ -134,6 +135,29 @@ function LandingPage() {
     return () => clearInterval(interval);
   }, [user]);
 
+  // FETCH PENDING SETTLEMENTS (for admins)
+  useEffect(() => {
+    if (!user || !user.isAdmin) {
+      setPendingSettlements(0);
+      return;
+    }
+
+    const fetchPendingSettlements = async () => {
+      try {
+        const response = await api.get("/api/wallet/admin/settlements?status=submitted");
+        const settlements = Array.isArray(response.data?.settlements) ? response.data.settlements : [];
+        setPendingSettlements(settlements.length);
+      } catch {
+        setPendingSettlements(0);
+      }
+    };
+
+    fetchPendingSettlements();
+    const interval = setInterval(fetchPendingSettlements, 10000); // Poll every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [user]);
+
   // FETCH PRODUCTS
   useEffect(() => {
     setLoading(true);
@@ -159,6 +183,35 @@ function LandingPage() {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
+
+  // Category to icon mapping (Flaticon 256px PNG style for consistent rendering)
+  const CATEGORY_ICONS = {
+    "All": "1046857",
+    "Cleaning": "2913166",
+    "Power Tools": "5202868",
+    "Kitchen Machines": "2913275",
+    "Construction": "1158869",
+    "Electronics": "2582771",
+    "Vehicles": "8607349",
+    "Lighting": "2914471",
+    "Machinery": "2914477",
+    "Equipment": "2914479",
+    "Audio Visual": "2914480",
+    "Medical Equipment": "2914481",
+    "Sports & Fitness": "2914482",
+    "Garden & Outdoor": "2914483",
+    "Party Supplies": "2914484",
+    "Baby & Kids": "2914485",
+    "Office Equipment": "2914486",
+    "Tools & Hardware": "2914487",
+    "Photography": "2914488",
+    "Musical Instruments": "2914489",
+  };
+
+  // Pre-compute icon URLs once at module load
+  const ICON_URLS = Object.fromEntries(
+    Object.entries(CATEGORY_ICONS).map(([k, v]) => [k, `https://cdn-icons-png.flaticon.com/256/${v}/${v}.png`])
+  );
 
   // CATEGORY CLICK HANDLER
   const handleCategoryClick = (cat) => {
@@ -225,30 +278,28 @@ function LandingPage() {
                 {menuOpen && (
                   <div className="dropdown">
                     <p onClick={() => navigate("/orders")}>Order History</p>
-{user?.isDeliveryAgent === true && user?.verification_status === "approved" && (
-                         <>
-                           <p onClick={() => navigate("/delivery/dashboard")}>Delivery Dashboard</p>
-                           <p onClick={() => navigate("/delivery/orders")}>Delivery Orders</p>
-                         </>
-                       )}
-                     {user?.isAdmin && (
-                       <p onClick={() => navigate("/admin/agent-approvals")}>Agent Approvals</p>
+                    {user?.isDeliveryAgent === true && user?.verification_status === "approved" && (
+                      <>
+                        <p onClick={() => navigate("/delivery/dashboard")}>Delivery Dashboard</p>
+                        <p onClick={() => navigate("/delivery/orders")}>Delivery Orders</p>
+                        <p onClick={() => navigate("/agent/wallet")}>My Wallet</p>
+                      </>
+                    )}
+{user?.isAdmin && (
+                       <>
+                          <p onClick={() => navigate("/admin/agent-approvals")}>Agent Approvals</p>
+                          <p onClick={() => navigate("/admin/wallet")}>Admin Wallet</p>
+                       </>
                      )}
-{isLender && (
-                        <>
-                          <p onClick={() => navigate("/my-listings")}>My Listings</p>
-                          <p onClick={() => navigate("/lender/dashboard")}>Lender Dashboard</p>
-                        </>
-                      )}
-                     {/* {!isLender && !user?.isAdmin && (
-                       <p onClick={() => navigate("/become-lender")}>Become Lender</p>
-                     )}
-                     {!user?.isDeliveryAgent && (
-                       <p onClick={() => navigate("/become-agent")}>Become Agent</p>
-                     )} */}
-                     {user?.isDeliveryAgent && user?.verification_status !== "approved" && (
-                       <p onClick={() => navigate("/become-agent")}>Agent Application Status</p>
-                     )}
+                    {isLender && (
+                      <>
+                        <p onClick={() => navigate("/my-listings")}>My Listings</p>
+                        <p onClick={() => navigate("/lender/dashboard")}>Lender Dashboard</p>
+                      </>
+                    )}
+                    {user?.isDeliveryAgent && user?.verification_status !== "approved" && (
+                      <p onClick={() => navigate("/become-agent")}>Agent Application Status</p>
+                    )}
                     <p onClick={handleLogout}>Logout</p>
                   </div>
                 )}
@@ -285,6 +336,18 @@ function LandingPage() {
         </div>
       )}
 
+      {/* ADMIN SETTLEMENT NOTIFICATION */}
+      {user && user.isAdmin && pendingSettlements > 0 && (
+        <div
+          className="negotiation-notification-bar"
+          style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fcd34d' }}
+        onClick={() => navigate("/admin/wallet")}
+        title="View pending settlement approvals"
+        >
+          💰 You have {pendingSettlements} pending settlement request{pendingSettlements > 1 ? 's' : ''} - Click to review
+        </div>
+      )}
+
       {/* HERO SECTION */}
       <div className="hero-section">
         <div className="hero-content">
@@ -315,19 +378,19 @@ function LandingPage() {
           </h2>
 
           <div className="category-grid">
-            {(isLoadingCategories ? ["Loading..."] : ["All", ...categories]).map((cat, i) => (
+            {(isLoadingCategories ? ["Loading..."] : ["All", ...categories]).map((cat) => (
               <div
                 className={`category-card-new ${
                   selectedCategory === cat ? "active" : ""
                 }`}
-                key={i}
+                key={cat}
                 onClick={() => handleCategoryClick(cat)}
               >
-                <img
-                  src={`https://cdn-icons-png.flaticon.com/128/${1046857 + (i % 5)}/1046${857 + (i % 5)}.png`}
-                  alt="icon"
+<img
+                  src={ICON_URLS[cat] || ICON_URLS["All"]}
+                  alt={cat}
                   onError={(e) => {
-                    e.target.src = "https://cdn-icons-png.flaticon.com/128/1046/1046857.png";
+                    e.target.src = ICON_URLS["All"];
                   }}
                 />
                 <p>{cat}</p>
@@ -335,7 +398,7 @@ function LandingPage() {
             ))}
           </div>
 
-          <p className="view-more">View More categories ↓</p>
+         
         </div>
       </div>
 

@@ -4,6 +4,7 @@ const {
   applyAsDeliveryAgent,
   getAgentProfile,
   updateAgentProfile,
+  getAgentStatus,
   getAvailableDeliveryTasks,
   acceptDeliveryTask,
   rejectDeliveryTask,
@@ -12,14 +13,12 @@ const {
   getDeliveryTaskById,
   updateDeliveryTaskStatus,
   markCashCollected,
-  getDeliveryTasks,
+  getUserDeliveryTasks,
   approveDeliveryAgent,
   rejectDeliveryAgent,
   getDeliveryAgentApplications,
-  getAgentStatus,
   getDeliveryStatusForOrder,
-  calculateExtensionCharges,
-  executeRentalExtension,
+  collectCOD,
 } = require("../controllers/deliveryController");
 const requireAuth = require("../middleware/requireAuth");
 const { authorize } = require("../middleware/authorize");
@@ -84,17 +83,10 @@ router.put("/task/:taskId/status", requireAuth, updateDeliveryTaskStatus);
 // Mark cash as collected on delivery
 router.post("/task/:taskId/cash-collected", requireAuth, markCashCollected);
 
+// Collect COD (cash on delivery) for delivery tasks
+router.post("/task/:taskId/collect-cod", requireAuth, collectCOD);
+
 // Get delivery status for a specific order (renters/lenders)
 router.get("/order/:orderId", requireAuth, getDeliveryStatusForOrder);
-
-// ==============================
-// RENTAL EXTENSION ROUTES
-// ==============================
-
-// Calculate extension charges (preview)
-router.post("/extension/calculate", requireAuth, calculateExtensionCharges);
-
-// Execute rental extension
-router.post("/extension/execute", requireAuth, authorize("user"), executeRentalExtension);
 
 module.exports = router;

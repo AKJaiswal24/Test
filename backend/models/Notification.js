@@ -22,6 +22,7 @@ const notificationSchema = new Schema({
       "agent_approved",
       "agent_rejected",
       "order_conflict",
+      "settlement_submitted",
       "system"
     ],
     required: true,

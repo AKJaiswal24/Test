@@ -33,10 +33,13 @@ function DeliveryTracking() {
   };
 
   const getProgressSteps = () => {
-    const baseSteps = task?.taskType === "pickup"
-      ? ["Waiting for Agent", "Accepted", "Pickup Scheduled", "Return In Transit", "Returned to Lender", "Completed"]
-      : ["Waiting for Agent", "Accepted", "Picking Up Product", "In Transit", "Delivered", "Completed"];
-    return baseSteps;
+    if (task?.taskType === "pickup") {
+      return ["Waiting for Agent", "Accepted", "Pickup Scheduled", "Return In Transit", "Returned to Lender", "Completed"];
+    }
+    if (task?.taskType === "vendor_return") {
+      return ["Waiting for Agent", "Accepted", "Picking Up Product", "In Transit", "Returned to Vendor", "Completed"];
+    }
+    return ["Waiting for Agent", "Accepted", "Picking Up Product", "In Transit", "Delivered", "Completed"];
   };
 
   if (isLoading) {
@@ -69,7 +72,7 @@ function DeliveryTracking() {
             <div>
               <h3>{task?.productId?.name || "Unknown Product"}</h3>
               <p className="tracking-order-id">Order: #{String(task?.orderId?._id || task?.orderId).substring(0, 8)}</p>
-              <p className="tracking-type-badge">{task.taskType === "delivery" ? "📦 Delivery" : "📥 Return Pickup"}</p>
+              <p className="tracking-type-badge">{task.taskType === "delivery" ? "📦 Delivery" : task.taskType === "vendor_return" ? "📤 Vendor Return" : "📥 Return Pickup"}</p>
             </div>
           </div>
         </div>
@@ -171,6 +174,7 @@ function getStatusBadge(status) {
     "Picking Up Product": "badge-orange", "In Transit": "badge-purple",
     "Delivered": "badge-green", "Pickup Scheduled": "badge-teal",
     "Return In Transit": "badge-indigo", "Returned to Lender": "badge-emerald",
+    "Returned to Vendor": "badge-emerald",
     "Completed": "badge-gray",
   };
   return colors[status] || "badge-gray";

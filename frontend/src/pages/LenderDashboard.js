@@ -271,8 +271,8 @@ function LenderDashboard() {
                        <div className="detail-row"><span className="detail-label">To:</span>
                          <span>{formatDate(task.returnDate)}</span>
                        </div>
-                       <div className="detail-row"><span className="detail-label">Payment:</span>
-                         <span>{formatCurrency(task.rentTotal)}</span>
+                       <div className="detail-row"><span className="detail-label">To Collect:</span>
+                         <span>{formatCurrency(task.grandTotal ?? task.rentTotal)}</span>
                        </div>
                        <div className="detail-row"><span className="detail-label">Assigned:</span>
                          <span>{task.agentName || "Unassigned"}</span>
@@ -308,7 +308,7 @@ function LenderDashboard() {
                     <div className="rental-details">
                       <div className="detail-row"><span className="detail-label">Completed:</span><span>{formatDate(task.completedAt)}</span></div>
                       <div className="detail-row"><span className="detail-label">Agent:</span><span>{task.agentName}</span></div>
-                      <div className="detail-row"><span className="detail-label">Price to be Collected:</span><span>{formatCurrency(task.rentTotal)}</span></div>
+                      <div className="detail-row"><span className="detail-label">Collected from Customer:</span><span>{formatCurrency(task.grandTotal ?? task.rentTotal)}</span></div>
                       <div className="detail-row"><span className="detail-label">Agent Fee:</span><span>-₹75</span></div>
                       <div className="detail-row"><span className="detail-label">Your Net:</span>
                         <span style={{ color: "#166534", fontWeight: "bold" }}>{formatCurrency(task.netIncome)}</span>

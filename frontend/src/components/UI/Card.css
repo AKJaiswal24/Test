@@ -1,0 +1,14 @@
+.card-ui {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #eef2f7;
+  transition: box-shadow 0.15s;
+}
+
+.card-ui-shadow {
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+}
+
+.card-ui-shadow:hover {
+  box-shadow: 0 12px 32px rgba(17, 24, 39, 0.09);
+}

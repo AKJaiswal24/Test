@@ -151,7 +151,7 @@ router.get("/dashboard", requireAuth, async (req, res) => {
       status: "Completed",
       taskType: "delivery",
     })
-      .populate("orderId", "orderId grandTotal status")
+      .populate("orderId", "orderId grandTotal rentTotal status deliveryDate returnDate")
       .populate("renterId", "name email phone")
       .populate("agentId", "name")
       .populate("productId", "name image monthlyRent pricing")
@@ -161,7 +161,7 @@ router.get("/dashboard", requireAuth, async (req, res) => {
       productId: { $in: productIds },
       status: { $in: ["Accepted", "Picking Up Product", "In Transit", "Delivered", "Pickup Scheduled", "Return In Transit"] },
     })
-      .populate("orderId", "orderId grandTotal status deliveryDate returnDate")
+      .populate("orderId", "orderId grandTotal rentTotal status deliveryDate returnDate")
       .populate("renterId", "name email phone")
       .populate("agentId", "name")
       .populate("productId", "name image monthlyRent pricing")
@@ -229,6 +229,7 @@ router.get("/dashboard", requireAuth, async (req, res) => {
         renterName: task.renterId?.name || "Unknown",
         agentName: task.agentId?.name || "Unassigned",
         completedAt: task.completedAt,
+        grandTotal: task.orderId?.grandTotal || 0,
         rentTotal: task.orderId?.rentTotal || 0,
         deliveryFee: 75,
         netIncome: (task.orderId?.rentTotal || 0) - 75,
@@ -247,6 +248,7 @@ router.get("/dashboard", requireAuth, async (req, res) => {
         agentName: task.agentId?.name || "Unassigned",
         deliveryDate: task.orderId?.deliveryDate,
         returnDate: task.orderId?.returnDate,
+        grandTotal: task.orderId?.grandTotal || 0,
         rentTotal: task.orderId?.rentTotal || 0,
       })),
       commissions: commissions.map((c) => ({

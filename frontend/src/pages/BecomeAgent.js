@@ -1,46 +1,8 @@
 import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/client";
+import { useToast } from "../components/UI/Toast";
 import "../styles/delivery.css";
-
-// Simple toast notification component
-const useToast = () => {
-  const [toasts, setToasts] = useState([]);
-
-  const addToast = useCallback((message, type = "info") => {
-    const id = Date.now();
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
-  }, []);
-
-  const ToastContainer = () => (
-    <div style={{ position: "fixed", top: 20, right: 20, zIndex: 9999 }}>
-      {toasts.map((t) => (
-        <div
-          key={t.id}
-          style={{
-            background: t.type === "success" ? "#dcfce7" : t.type === "error" ? "#fee2e2" : "#dbeafe",
-            color: t.type === "success" ? "#166534" : t.type === "error" ? "#991b1b" : "#1e40af",
-            padding: "12px 20px",
-            borderRadius: 8,
-            marginBottom: 8,
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            fontWeight: 500,
-            borderLeft: `4px solid ${t.type === "success" ? "#22c55e" : t.type === "error" ? "#ef4444" : "#3b82f6"}`,
-          }}
-        >
-          {t.type === "success" && "✅ "}
-          {t.type === "error" && "❌ "}
-          {t.message}
-        </div>
-      ))}
-    </div>
-  );
-
-  return { addToast, ToastContainer };
-};
 
 function BecomeAgent() {
   const navigate = useNavigate();

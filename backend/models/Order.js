@@ -49,10 +49,18 @@ const orderSchema = new Schema(
     platformCharge: { type: Number, default: 20 },
     insurance: { type: Number, default: 0 },
     grandTotal: { type: Number, default: 0 },
-     status: { type: String, enum: ["Ongoing", "Delivered", "Cancelled"], default: "Ongoing" },
+    status: { type: String, enum: ["Ongoing", "Delivered", "Cancelled"], default: "Ongoing" },
     deliveredAt: { type: Date },
     rentalPaymentConfirmed: { type: Boolean, default: false },
     paymentConfirmedAt: { type: Date },
+    // COD fields for cash-on-delivery tracking
+    codStatus: { type: String, enum: ["pending", "verified", "collected"], default: "pending" },
+    codAmountCollected: { type: Number, default: 0 },
+    codPaymentMethod: { type: String, default: "" },
+    codPaymentId: { type: String, default: "" },
+    codCollectedAt: { type: Date },
+    codCollectedByAgent: { type: Schema.Types.ObjectId, ref: "User" },
+    codVerifiedAt: { type: Date },
   },
   { timestamps: true }
 );

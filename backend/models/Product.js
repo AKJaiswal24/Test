@@ -40,21 +40,21 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Middleware: auto-calculate all rental prices from monthlyRent before saving
-productSchema.pre('save', function(next) {
+// Middleware: auto-calculate all rental prices from monthlyRent before every save
+productSchema.pre("save", async function () {
   // Handle monthlyRent pricing calculation
   if (this.monthlyRent) {
     try {
       const calculated = pricing.getAllPricingOptions(this.monthlyRent);
-      
+
       // Build pricing object
       this.pricing = {
-        daily: calculated.find(p => p.duration === 'daily')?.totalPrice || 0,
-        weekly: calculated.find(p => p.duration === 'weekly')?.totalPrice || 0,
-        monthly: calculated.find(p => p.duration === 'monthly')?.totalPrice || 0,
-        '3_months': calculated.find(p => p.duration === '3_months')?.totalPrice || 0,
-        '6_months': calculated.find(p => p.duration === '6_months')?.totalPrice || 0,
-        '12_months': calculated.find(p => p.duration === '12_months')?.totalPrice || 0,
+        daily: calculated.find(p => p.duration === "daily")?.totalPrice || 0,
+        weekly: calculated.find(p => p.duration === "weekly")?.totalPrice || 0,
+        monthly: calculated.find(p => p.duration === "monthly")?.totalPrice || 0,
+        "3_months": calculated.find(p => p.duration === "3_months")?.totalPrice || 0,
+        "6_months": calculated.find(p => p.duration === "6_months")?.totalPrice || 0,
+        "12_months": calculated.find(p => p.duration === "12_months")?.totalPrice || 0,
       };
     } catch (error) {
       console.error("Error in product pricing middleware:", error);
@@ -63,20 +63,13 @@ productSchema.pre('save', function(next) {
         daily: 0,
         weekly: 0,
         monthly: 0,
-        '3_months': 0,
-        '6_months': 0,
-        '12_months': 0,
+        "3_months": 0,
+        "6_months": 0,
+        "12_months": 0,
       };
     }
   }
-  
-  // Always call next to prevent hanging - ensure it's a function
-  if (typeof next === 'function') {
-    return next();
-  } else {
-    // If next is not a function, we still need to return to prevent hanging
-    return;
-  }
 });
+
 
 module.exports = mongoose.model("Product", productSchema);

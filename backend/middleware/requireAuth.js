@@ -21,7 +21,7 @@ module.exports = function requireAuth(req, res, next) {
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
     req.user = { id: String(userId) };
-    return next();
+    next();
   } catch {
     return res.status(401).json({ message: "Unauthorized" });
   }

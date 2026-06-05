@@ -13,7 +13,7 @@ function ProductDetails() {
   const [mainImage, setMainImage] = useState("");
   const [negotiation, setNegotiation] = useState(null);
   const [isLoadingNegotiation, setIsLoadingNegotiation] = useState(false);
-  const [negotiationMsg, setNegotiationMsg] = useState("");
+  const [negotiationPrice, setNegotiationPrice] = useState("");
   const [isSubmittingNegotiation, setIsSubmittingNegotiation] = useState(false);
   const [negotiationError, setNegotiationError] = useState("");
   const [negotiationSuccess, setNegotiationSuccess] = useState("");
@@ -178,7 +178,7 @@ function ProductDetails() {
       return;
     }
 
-    const proposedPrice = Number(negotiationMsg.price || "");
+    const proposedPrice = Number(negotiationPrice || "");
 
     if (!proposedPrice || proposedPrice <= 0) {
       setNegotiationError("Please enter a valid proposed price");
@@ -208,12 +208,11 @@ function ProductDetails() {
         originalPrice: selectedPlan.price,
         duration: selectedPlan.duration,
         durationLabel: selectedPlan.durationLabel,
-        message: negotiationMsg.text || "",
       });
 
       setNegotiation(response.data.negotiation);
       setNegotiationSuccess("Negotiation request sent!");
-      setNegotiationMsg("");
+      setNegotiationPrice("");
     } catch (err) {
       const message = err?.response?.data?.message || "Failed to send negotiation request";
       setNegotiationError(message);
@@ -286,8 +285,9 @@ function ProductDetails() {
   if (!product) return <p>Loading...</p>;
 
   return (
-    <div className="product-page">
+    <div className="full-product">
       <button className="btn-home" onClick={() => navigate("/")}>← Back to Home</button>
+    <div className="product-page">
       {/* LEFT SIDE */}
       <div className="product-left">
         <div className="main-image">
@@ -331,12 +331,6 @@ function ProductDetails() {
           </div>
         )}
 
-        {/* TRUST BADGES */}
-        <div className="trust-badges">
-          <span>🚚 4–6 days delivery</span>
-          <span>🛡 Damage Protection</span>
-          <span>💯 Verified Product</span>
-        </div>
 
         {/* PLAN SELECTION */}
         <div className="plan-section">
@@ -547,13 +541,8 @@ function ProductDetails() {
                   <input
                     type="number"
                     id="negotiationPrice"
-                    value={negotiationMsg.price || ""}
-                    onChange={(e) =>
-                      setNegotiationMsg((prev) => ({
-                        ...prev,
-                        price: e.target.value,
-                      }))
-                    }
+                    value={negotiationPrice || ""}
+                    onChange={(e) => setNegotiationPrice(e.target.value)}
                     placeholder={`e.g., ${Math.round(
                       (selectedPlan?.price || 0) * 0.8
                     )}`}
@@ -566,39 +555,17 @@ function ProductDetails() {
                     }
                   />
                 </div>
-                {selectedPlan && (
-                  <small className="negotiation-hint">
-                    Current price: {formatCurrency(selectedPlan.price)}
-                    {negotiation?.status === "countered" &&
-                      ` | Owner's counter: ${formatCurrency(negotiation.counteredPrice)}`}
-                  </small>
-                )}
-              </div>
+{selectedPlan && (
+                   <small className="negotiation-hint">
+                     Current price: {formatCurrency(selectedPlan.price)}
+                     {negotiation?.status === "countered" &&
+                       ` | Owner's counter: ${formatCurrency(negotiation.counteredPrice)}`}
+                   </small>
+                 )}
+               </div>
 
-              <div className="negotiation-input-group">
-                <label htmlFor="negotiationMessage">
-                  Message to Owner <span>(optional)</span>
-                </label>
-                <textarea
-                  id="negotiationMessage"
-                  value={negotiationMsg.text || ""}
-                  onChange={(e) =>
-                    setNegotiationMsg((prev) => ({
-                      ...prev,
-                      text: e.target.value,
-                    }))
-                  }
-                  placeholder="Why are you requesting this price? (e.g., longer rental, budget constraints...)"
-                  rows="3"
-                  disabled={
-                    isSubmittingNegotiation ||
-                    negotiation?.status === "accepted"
-                  }
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="negotiation-actions">
+               {/* Action Buttons */}
+               <div className="negotiation-actions">
                 {/* Submit / Update Proposal */}
                 {(!negotiation ||
                   ["rejected", "expired"].includes(negotiation.status)) && (
@@ -680,23 +647,22 @@ function ProductDetails() {
                     type="button"
                     className="negotiation-btn btn-update"
                     onClick={async () => {
-                      if (!negotiationMsg.price) {
-                        setNegotiationError(
-                          "Please enter a new proposed price"
-                        );
-                        return;
-                      }
-                      try {
-                        const response = await api.put(
-                          `/api/negotiation/update-proposal/${negotiation._id}`,
-                          {
-                            proposedPrice: Number(negotiationMsg.price),
-                            message: negotiationMsg.text || "",
-                          }
-                        );
-                        setNegotiation(response.data.negotiation);
-                        setNegotiationSuccess("Offer updated!");
-                      } catch (err) {
+if (!negotiationPrice) {
+                         setNegotiationError(
+                           "Please enter a new proposed price"
+                         );
+                         return;
+                       }
+                       try {
+                         const response = await api.put(
+                           `/api/negotiation/update-proposal/${negotiation._id}`,
+                           {
+                             proposedPrice: Number(negotiationPrice),
+                           }
+                         );
+                         setNegotiation(response.data.negotiation);
+                         setNegotiationSuccess("Offer updated!");
+                       } catch (err) {
                         setNegotiationError(
                           err?.response?.data?.message ||
                             "Failed to update proposal"
@@ -737,7 +703,9 @@ function ProductDetails() {
             </div>
             <div className="summary-row">
               <span>
-                Rent:{" "}
+                Rent:
+              </span>
+              <strong>{" "}
                 {negotiation?.status === "accepted" &&
                 negotiation.duration === selectedPlan.duration ? (
                   <>
@@ -751,8 +719,7 @@ function ProductDetails() {
                   </>
                 ) : (
                   <strong>{formatCurrency(selectedPlan.price)}</strong>
-                )}
-              </span>
+                )}</strong>
             </div>
             {product?.deposit > 0 && (
               <div className="summary-row">
@@ -773,7 +740,7 @@ function ProductDetails() {
         )}
 
         {/* BREAKDOWN */}
-        {selectedPlan && (
+        {/* {selectedPlan && (
           <div className="rent-breakdown">
             <p>
               <strong>Plan:</strong> {selectedPlan.durationLabel}
@@ -785,15 +752,11 @@ function ProductDetails() {
               <strong>Deposit:</strong> {formatCurrency(product.deposit || 0)}
             </p>
           </div>
-        )}
+        )} */}
 
         {/* 🔥 PREMIUM CTA BAR */}
         <div className="cta-bar">
-          <div className="cta-left">
-            100% Refundable Deposit: {formatCurrency(product.deposit || 0)}
-          </div>
-
-          <button className="cta-right" onClick={handleAddToCart}>
+          <button className="cta-full" onClick={handleAddToCart}>
             Add to Cart
           </button>
         </div>
@@ -806,6 +769,7 @@ function ProductDetails() {
           View Cart
         </button>
       </div>
+    </div>
     </div>
   );
 }

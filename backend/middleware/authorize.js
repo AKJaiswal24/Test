@@ -35,7 +35,7 @@ function authorize(...roles) {
         return res.status(403).json({ message: "Insufficient permissions" });
       }
 
-      return next();
+      next();
     } catch (error) {
       console.error("Authorization error:", error);
       return res.status(500).json({ message: "Server error" });

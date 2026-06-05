@@ -350,6 +350,7 @@ router.post("/create", requireAuth, async (req, res) => {
         const item = orderItems[i];
         const product = productById.get(String(item.productId));
         const lenderId = product ? product.userId : authUserId; // Product owner is the lender
+        const depositAmount = Math.max(0, Number(product?.deposit || 0)) * Math.max(1, Number(item.quantity || 1));
 
         // Delivery task: lender -> renter
         const deliveryTask = new DeliveryTask({
@@ -360,6 +361,7 @@ router.post("/create", requireAuth, async (req, res) => {
           taskType: "delivery",
           status: "Waiting for Agent",
           paymentAmount: 75,
+          depositAmount,
           pickupAddress: {
             street: deliveryAddress.street,
             city: deliveryAddress.city,
@@ -390,6 +392,7 @@ router.post("/create", requireAuth, async (req, res) => {
           taskType: "pickup",
           status: "Pickup Scheduled",
           paymentAmount: 75,
+          depositAmount,
           pickupAddress: {
             street: deliveryAddress.street,
             city: deliveryAddress.city,
@@ -404,7 +407,8 @@ router.post("/create", requireAuth, async (req, res) => {
             pincode: deliveryAddress.pincode,
             phone: deliveryAddress.phone,
           },
-          otp: generateOTP(),
+          // OTP is not required for pickup/return; it is collected only on delivery to the renter.
+          otp: "",
           trackingLogs: [
             { status: "Pickup Scheduled", notes: "Return pickup auto-scheduled" },
           ],

@@ -1,4 +1,5 @@
 const Notification = require("../models/Notification");
+const User = require("../models/User");
 
 /**
  * Create one or more notifications
@@ -46,6 +47,27 @@ const notifyDeliveryAccepted = async (lenderId, orderId, taskId, agentName) => {
 };
 
 /**
+ * Maps delivery task statuses to their corresponding notification type enum values.
+ * Must stay in sync with the `type` enum in Notification.js.
+ * "generic" entries fall back to `delivery_${status}_snake_case`.
+ */
+const notificationTypeForStatus = {
+  "Picking Up Product": "delivery_picked_up",
+  "In Transit": "delivery_in_transit",
+  "Delivered": "delivery_completed",
+  "Pickup Scheduled": "pickup_scheduled",
+  "Return In Transit": "return_in_transit",
+  "Returned to Lender": "returned_to_lender",
+  "Completed": "delivery_completed",
+  // Cover accepted and default future statuses automatically
+  "Accepted": "delivery_accepted",
+};
+
+const getNotificationType = (status) => {
+  return notificationTypeForStatus[status] || `delivery_${status.toLowerCase().replace(/\s+/g, "_")}`;
+};
+
+/**
  * Create a delivery status update notification (for renter)
  */
 const notifyRenterDeliveryUpdate = async (renterId, orderId, taskId, status, agentName) => {
@@ -63,7 +85,7 @@ const notifyRenterDeliveryUpdate = async (renterId, orderId, taskId, status, age
     userId: renterId,
     title: `📦 Delivery Update: ${status}`,
     message: statusMessages[status] || `Your delivery status has been updated to: ${status}`,
-    type: `delivery_${status.toLowerCase().replace(/\s+/g, "_")}`,
+    type: getNotificationType(status),
     relatedOrderId: orderId,
     relatedTaskId: taskId,
   });
@@ -87,7 +109,7 @@ const notifyLenderDeliveryUpdate = async (lenderId, orderId, taskId, status, age
     userId: lenderId,
     title: `📦 Delivery Update: ${status}`,
     message: statusMessages[status] || `Delivery status updated: ${status}`,
-    type: `delivery_${status.toLowerCase().replace(/\s+/g, "_")}`,
+    type: getNotificationType(status),
     relatedOrderId: orderId,
     relatedTaskId: taskId,
   });
@@ -145,6 +167,22 @@ const notifyAgentApplication = async (userId, approved, reason) => {
 };
 
 /**
+ * Create settlement submitted notification for admin
+ */
+const notifySettlementSubmitted = async (settlementId, agentId, amount, orderId) => {
+  const admins = await User.find({ isAdmin: true }).select("_id");
+  const notifications = admins.map((admin) => ({
+    userId: admin._id,
+    title: "💰 Settlement Request Submitted",
+    message: `Agent has submitted a settlement request for ₹${amount.toLocaleString("en-IN")}.`,
+    type: "settlement_submitted",
+    relatedOrderId: orderId,
+    metadata: { settlementId, agentId, amount },
+  }));
+  return createNotification(notifications);
+};
+
+/**
  * Get notifications for a user
  */
 const getUserNotifications = async (userId, limit = 50) => {
@@ -178,6 +216,7 @@ module.exports = {
   notifyPaymentCollected,
   notifyRentalExtended,
   notifyAgentApplication,
+  notifySettlementSubmitted,
   getUserNotifications,
   markNotificationsRead,
 };

@@ -12,7 +12,7 @@ module.exports = async function requireLender(req, res, next) {
       return res.status(403).json({ message: "Lender access required" });
     }
 
-    return next();
+    next();
   } catch {
     return res.status(500).json({ message: "Server error" });
   }

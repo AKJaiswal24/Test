@@ -13,6 +13,8 @@ const commissionSchema = new Schema({
   commissionAmount: { type: Number, required: true, min: 0 },
   type: { type: String, enum: ["delivery", "pickup"], required: true },
   status: { type: String, enum: ["pending", "paid"], default: "pending" },
+  paymentReference: { type: String, default: "" },
+  paidAt: { type: Date },
 }, { timestamps: true });
 
 // Index for faster queries
