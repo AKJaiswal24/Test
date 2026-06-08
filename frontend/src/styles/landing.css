@@ -1,6 +1,6 @@
 :root {
-  --primary: #1E3A8A;
-  --secondary: #3B82F6;
+  --primary: var(--primary);
+  --secondary: var(--secondary);
   --bg: #F9FAFB;
   --text: #111827;
 }
@@ -84,7 +84,7 @@ body {
 }
 
 .search-main:focus {
-  border-color: #3B82F6;
+  border-color: var(--secondary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -160,7 +160,7 @@ body {
 /* ================= HERO SECTION ================= */
 
 .hero-section {
-  background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
   border-radius: 20px;
   padding: 60px 20px;
   margin: 20px 0;
@@ -251,22 +251,34 @@ body {
   text-align: center;
   cursor: pointer;
   border: 1px solid #e5e7eb;
-  transition: 0.2s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .category-card-new img {
   width: 40px;
   margin-bottom: 10px;
+  filter: grayscale(20%);
+  transition: filter 0.3s ease, transform 0.3s ease;
+  will-change: filter;
 }
 
 .category-card-new:hover {
   transform: translateY(-5px);
   background: #eef2ff;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+}
+
+.category-card-new:hover img {
+  filter: grayscale(0);
+  transform: scale(1.08);
 }
 
 .category-card-new.active {
   border: 2px solid var(--secondary);
   background: #eef2ff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 /* ================= PRODUCTS ================= */
@@ -359,6 +371,13 @@ body {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Category icon hover animation */
+@keyframes iconPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
 /* ================= LOADING ================= */

@@ -43,13 +43,14 @@ const getAgentWalletSummary = async (req, res) => {
       wallet: {
         _id: wallet._id,
         currency: wallet.currency,
-        availableBalance: wallet.availableBalance,
-        pendingBalance: wallet.pendingBalance,
-        shortBalance: wallet.shortBalance,
-        totalCollected: wallet.totalCollected,
-        totalSubmitted: wallet.totalSubmitted,
-        totalShortage: wallet.totalShortage,
-        totalIncentives: wallet.totalIncentives,
+        availableBalance: wallet.availableBalance ?? wallet.withdrawableBalance ?? 0,
+        pendingBalance: wallet.pendingBalance ?? 0,
+        shortBalance: wallet.shortBalance ?? 0,
+        totalCollected: wallet.totalCollected ?? 0,
+        totalSubmitted: wallet.totalSubmitted ?? 0,
+        totalShortage: wallet.totalShortage ?? 0,
+        totalIncentives: wallet.totalIncentives ?? 0,
+        pointsBalance: wallet.pointsBalance ?? 0,
         lastSubmittedAt: wallet.lastSubmittedAt,
         lastSubmittedAmount: wallet.lastSubmittedAmount,
         lastPayoutAt: wallet.lastPayoutAt,
@@ -162,22 +163,22 @@ const submitAgentCash = async (req, res) => {
     if (!wallet) wallet = await AgentWallet.create({ agentId });
 
     // Calculate new balances
-    const prevAvailable = wallet.availableBalance || 0;
-    const prevPending = wallet.pendingBalance || 0;
-    const prevShort = wallet.shortBalance || 0;
+    const prevWithdrawable = wallet.withdrawableBalance ?? wallet.availableBalance ?? 0;
+    const prevPending = wallet.pendingBalance ?? 0;
+    const prevShort = wallet.shortBalance ?? 0;
 
     // Pending amount (cash collected but not yet submitted) moves to available on submit
     const withdrawablePending = Math.max(0, prevPending - expected);
 
-    const newAvailable = prevAvailable + submitted - shortage;
+    const newAvailable = prevWithdrawable + submitted - shortage;
     const newShort = prevShort + shortage;
     const newPending = withdrawablePending;
 
-    wallet.availableBalance = Math.max(0, newAvailable);
+    wallet.withdrawableBalance = Math.max(0, newAvailable);
     wallet.shortBalance = newShort;
     wallet.pendingBalance = newPending;
-    wallet.totalSubmitted += submitted;
-    if (shortage > 0) wallet.totalShortage += shortage;
+    wallet.totalSubmitted = (wallet.totalSubmitted || 0) + submitted;
+    if (shortage > 0) wallet.totalShortage = (wallet.totalShortage || 0) + shortage;
     wallet.lastSubmittedAt = new Date();
     wallet.lastSubmittedAmount = submitted;
     await wallet.save();
@@ -239,7 +240,8 @@ const submitAgentCash = async (req, res) => {
         ? `Cash submitted. Shortage of ₹${shortage.toLocaleString("en-IN")} recorded.`
         : "Cash submitted successfully",
       wallet: {
-        availableBalance: wallet.availableBalance,
+        withdrawableBalance: wallet.withdrawableBalance,
+        availableBalance: wallet.withdrawableBalance,
         pendingBalance: wallet.pendingBalance,
         shortBalance: wallet.shortBalance,
       },

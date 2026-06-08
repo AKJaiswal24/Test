@@ -734,7 +734,7 @@ const requestSettlement = async (req, res) => {
     }
 
     const wallet = await getOrCreateWallet(agentId);
-    const pendingAmount = (wallet.totalCollected || 0) - (wallet.settledAmount || 0);
+    const pendingAmount = wallet.pendingSettlement || wallet.pendingBalance || (wallet.totalCollected || 0) - (wallet.settledAmount || 0);
 
     if (pendingAmount <= 0) {
       return res.status(400).json({ message: "No pending amount to submit" });
@@ -759,15 +759,18 @@ const requestSettlement = async (req, res) => {
       });
     }
 
-    const settlements = await Settlement.find({ agentId, status: "pending" });
-    if (settlements.length === 0) {
-      return res.status(400).json({ message: "No pending settlements found" });
-    }
-
-    const newSettlement = await Settlement.create({
+    /* No settlement record exists yet, but wallet has pending balance from COD.
+       Create a settlement from the earliest task that has COD evidence and is not yet settled. */
+    const codTask = await DeliveryTask.findOne({
       agentId,
-      orderId: settlements[0].orderId,
-      taskId: settlements[0].taskId,
+      codVerified: true,
+      settlementStatus: { $nin: ["completed"] },
+    }).sort({ codCollectedAt: 1 });
+
+    const settlement = await Settlement.create({
+      agentId,
+      orderId: codTask?.orderId || null,
+      taskId: codTask?._id || null,
       customerPayment: pendingAmount,
       agentCommission: 0,
       adminShare: pendingAmount,
@@ -778,13 +781,14 @@ const requestSettlement = async (req, res) => {
 
     wallet.settledAmount += pendingAmount;
     wallet.pendingSettlement = Math.max(0, wallet.pendingSettlement - pendingAmount);
+    wallet.pendingBalance = Math.max(0, wallet.pendingBalance - pendingAmount);
     await wallet.save();
 
-    await notifySettlementSubmitted(newSettlement._id, agentId, pendingAmount, newSettlement.orderId);
+    await notifySettlementSubmitted(settlement._id, agentId, pendingAmount, settlement.orderId);
 
     res.json({
       message: "Settlement request submitted successfully",
-      settlement: newSettlement,
+      settlement,
     });
   } catch (err) {
     console.error("Request settlement error:", err);
@@ -830,15 +834,16 @@ const adminAcceptSettlement = async (req, res) => {
     });
 
     // ------------------------------------------------------------------
-    // CRITICAL: Reset the agent's wallet balance to zero now that the
-    // admin has physically collected the cash.
+    // Reconcile the agent’s wallet: zero out only the cash side (totalCollected
+    // / pendingSettlement / settledAmount) but do NOT touch withdrawableBalance,
+    // which holds the agent’s own delivery-fee earnings (₹75 per delivery).
     // ------------------------------------------------------------------
     const wallet = await getOrCreateWallet(settlement.agentId);
-    wallet.totalCollected = 0;
-    wallet.pendingSettlement = 0;
-    wallet.settledAmount = 0;
-    wallet.withdrawableBalance = 0;
-    wallet.lastUpdated = new Date();
+    const cif = settlement.adminShare || settlement.customerPayment || 0;
+    wallet.totalCollected = Math.max(0, (wallet.totalCollected || 0) - cif);
+    wallet.pendingSettlement = Math.max(0, (wallet.pendingSettlement || 0) - cif);
+    wallet.settledAmount     = Math.max(0, (wallet.settledAmount || 0) - cif);
+    wallet.lastUpdated       = new Date();
     await wallet.save();
 
     // Tag the collection / commission transactions as paid

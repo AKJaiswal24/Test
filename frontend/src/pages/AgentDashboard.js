@@ -63,9 +63,9 @@ const actionNext = (() => {
   if (task.status === "In Transit" && task.taskType === "delivery") return "Delivered";
   if (task.status === "In Transit" && task.taskType === "pickup") return "Returned to Lender";
   if (task.status === "In Transit" && task.taskType === "vendor_return") return "Returned to Vendor";
-  if (task.status === "Delivered" && task.taskType === "delivery") return "Completed";
-  if (task.status === "Returned to Lender") return "Completed";
-  if (task.status === "Returned to Vendor" && task.taskType === "vendor_return") return "Completed";
+  if (task.status === "Delivered" && task.taskType === "delivery") return "Pickup Scheduled";
+  if (task.status === "Returned to Lender") return "Pickup Scheduled";
+  if (task.status === "Returned to Vendor" && task.taskType === "vendor_return") return "Pickup Scheduled";
   return null;
 })();
 
@@ -99,7 +99,7 @@ const actionNext = (() => {
       </div>
 
       <div className="task-card-body">
-        {productImage && <img src={productImage} alt={productName} className="task-product-img" />}
+        {productImage && <img src={productImage} alt={productName} className="task-product-img" loading="lazy" />}
         <div className="task-info">
           <h4>{productName}</h4>
           <div className="task-detail-row"><span className="task-label">Order:</span><span>{orderId ? String(orderId).substring(0, 8) : "—"}</span></div>
@@ -135,6 +135,7 @@ const actionNext = (() => {
       <label>{task.taskType === "vendor_return" ? "Rental Income Amount (₹)" : "Total Amount (₹)"}</label>
       <input
         type="number"
+        readOnly
         className="payment-input"
         value={paymentAmount}
         onChange={(e) => setPaymentAmount(e.target.value)}
@@ -196,16 +197,6 @@ function StatCard({ icon, value, label, colorClass, delay = 0 }) {
   );
 }
 
-/* ─────────────── Earnings Card ─────────────── */
-function EarningsCard({ amount, label, variant }) {
-  return (
-    <div className={`earnings-card earnings-anim ${variant}`}>
-      <div className="earnings-amount">₹{amount.toLocaleString("en-IN")}</div>
-      <div className="earnings-label">{label}</div>
-    </div>
-  );
-}
-
 /* ─────────────── Agent Dashboard ─────────────── */
 function AgentDashboard() {
   const navigate = useNavigate();
@@ -217,8 +208,6 @@ function AgentDashboard() {
   const [stats, setStats] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [availableTasks, setAvailableTasks] = useState([]);
-  const [earnings, setEarnings] = useState([]);
-  const [earningsSummary, setEarningsSummary] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [availability, setAvailability] = useState("available");
@@ -232,159 +221,74 @@ function AgentDashboard() {
 
   const { addToast, ToastContainer } = useToast();
 
-  /* ── Modals ── */
-  const [notesModal, setNotesModal] = useState({ open: false, onConfirm: null, label: "", placeholder: "", title: "", noteKey: "" });
-  const [confirmModal, setConfirmModal] = useState({ open: false, onConfirm: null, message: "", title: "", danger: false });
+   /* ── Modals ── */
+    const [notesModal, setNotesModal] = useState({ open: false, onConfirm: null, label: "", placeholder: "", title: "", noteKey: "", taskId: null });
+    const [selectedCondition, setSelectedCondition] = useState("yes");
+    const [conditionNotes, setConditionNotes] = useState("");
 
-  /* ── Fetch ── */
-  const fetchDashboardData = useCallback(async () => {
-    if (!user) return;
-    setIsLoading(true);
-    try {
-      const [profileRes, tasksRes, availableRes, earningsRes] = await Promise.all([
-        api.get("/api/delivery/profile"), api.get("/api/delivery/my-tasks"),
-        api.get("/api/delivery/available-tasks"), api.get("/api/delivery/earnings"),
-      ]);
-      setProfile(profileRes.data.profile);
-      setStats(profileRes.data.stats);
-      setTasks(Array.isArray(tasksRes.data) ? tasksRes.data : tasksRes.data?.tasks || []);
-      setAvailableTasks(Array.isArray(availableRes.data) ? availableRes.data : availableRes.data?.tasks || []);
-      setEarnings(earningsRes.data.earnings || []);
-      setEarningsSummary(earningsRes.data.summary);
-      setAvailability(profileRes.data.profile?.availability_status || "available");
-    } catch (err) {
-      console.error("Dashboard fetch error:", err);
-      addToast("Failed to load dashboard data", "error");
-    }
-    finally { setIsLoading(false); }
-  }, [user, addToast]);
+    const [confirmModal, setConfirmModal] = useState({ open: false, onConfirm: null, message: "", title: "", danger: false });
 
-  useEffect(() => { fetchDashboardData(); }, [fetchDashboardData]);
+   /* ── Fetch ── */
+   const fetchDashboardData = useCallback(async () => {
+     if (!user) return;
+     setIsLoading(true);
+     try {
+       const [profileRes, tasksRes, availableRes] = await Promise.all([
+         api.get("/api/delivery/profile"), api.get("/api/delivery/my-tasks"),
+         api.get("/api/delivery/available-tasks"),
+       ]);
+       setProfile(profileRes.data.profile);
+       setStats(profileRes.data.stats);
+       setTasks(Array.isArray(tasksRes.data) ? tasksRes.data : tasksRes.data?.tasks || []);
+       setAvailableTasks(Array.isArray(availableRes.data) ? availableRes.data : availableRes.data?.tasks || []);
+       setAvailability(profileRes.data.profile?.availability_status || "available");
+     } catch (err) {
+       console.error("Dashboard fetch error:", err);
+       addToast("Failed to load dashboard data", "error");
+     }
+     finally { setIsLoading(false); }
+   }, [user, addToast]);
 
-  /* ── Availability toggle ── */
-  const handleToggleAvailability = async () => {
-    try {
-      const newStatus = availability === "available" ? "unavailable" : "available";
-      await api.put("/api/delivery/profile", { availability_status: newStatus });
-      setAvailability(newStatus);
-      addToast(newStatus === "available" ? "You are now online" : "You are now offline", newStatus === "available" ? "success" : "info");
-      fetchDashboardData();
-    } catch {
-      addToast("Failed to update availability", "error");
-    }
-  };
+   useEffect(() => { fetchDashboardData(); }, [fetchDashboardData]);
 
-  /* ── Reject handler ── */
-  const handleTaskAction = async (taskId, action) => {
-    if (action === "accept") {
-      try {
-        await api.post(`/api/delivery/accept-task/${taskId}`);
-        addToast("Task accepted", "success");
-        fetchDashboardData();
-      } catch (err) { addToast(err?.response?.data?.message || "Failed to accept task", "error"); }
-      return;
-    }
-    if (action === "reject") {
-      openConfirm("Confirm Rejection", "Are you sure you want to reject this task?", true, async () => {
-        try {
-          await api.post(`/api/delivery/reject-task/${taskId}`);
-          addToast("Task rejected", "success");
-          fetchDashboardData();
-        } catch (err) { addToast(err?.response?.data?.message || "Failed to reject task", "error"); }
-      });
-    }
-  };
+   /* ── Availability toggle ── */
+   const handleToggleAvailability = async () => {
+     try {
+       const newStatus = availability === "available" ? "unavailable" : "available";
+       await api.put("/api/delivery/profile", { availability_status: newStatus });
+       setAvailability(newStatus);
+       addToast(newStatus === "available" ? "You are now online" : "You are now offline", newStatus === "available" ? "success" : "info");
+       fetchDashboardData();
+     } catch {
+       addToast("Failed to update availability", "error");
+     }
+   };
 
-  /* ── Payment gateway modal (Step 3 — blocks In Transit and Delivered without COD evidence) ── */
-  const [gatewayOpen,    setGatewayOpen]    = useState(false);
-  const [gatewayTaskId,  setGatewayTaskId]  = useState(null);
-  const [gatewayTaskType, setGatewayTaskType] = useState(""); // delivery or vendor_return
-  const [gatewayAmount,  setGatewayAmount]  = useState("");
-  const [gatewayMethod,  setGatewayMethod]  = useState("cash");
-  const [gatewayPayId,   setGatewayPayId]   = useState("");    // Payment ID / Transaction ID
-  const [gatewayOtp,     setGatewayOtp]     = useState("");    // OTP from customer/vendor
-  const [gatewayTargetStatus, setGatewayTargetStatus] = useState("In Transit"); // status we will set after payment
+   /* ── Task action (accept / reject) ── */
+   const handleTaskAction = async (taskId, action) => {
+     if (action === "accept") {
+       try {
+         await api.post(`/api/delivery/accept-task/${taskId}`);
+         addToast("Task accepted", "success");
+         fetchDashboardData();
+       } catch (err) { addToast(err?.response?.data?.message || "Failed to accept task", "error"); }
+       return;
+     }
+     if (action === "reject") {
+       openConfirm("Confirm Rejection", "Are you sure you want to reject this task?", true, async () => {
+         try {
+           await api.post(`/api/delivery/reject-task/${taskId}`);
+           addToast("Task rejected", "success");
+           fetchDashboardData();
+         } catch (err) { addToast(err?.response?.data?.message || "Failed to reject task", "error"); }
+       });
+     }
+   };
 
-  /* ── Open gateway modal — blocks delivery until agent confirms COD ── */
-  const openGateway = (taskId, targetStatus, taskType) => {
-    setGatewayTaskId(taskId);
-    setGatewayTaskType(taskType || "");
-    setGatewayAmount("");
-    setGatewayMethod("cash");
-    setGatewayPayId("");
-    setGatewayOtp("");
-    // remember which status we are about to apply once payment is confirmed
-    setGatewayTargetStatus(targetStatus || "In Transit");
-    setGatewayOpen(true);
-  };
-
-  /* ── Agent confirms "YES, COD collected" via gateway ──
-   *  Handles two flows:
-   *  1. "Picking Up Product" → "In Transit"   (collect COD at pickup time)
-   *  2. "In Transit"        → "Delivered"      (collect COD at delivery time)
-   *  ────────────────────────────────────────────────────────── */
-  const confirmGatewayYes = async () => {
-    if (!gatewayTaskId) { setGatewayOpen(false); return; }
-
-    const amount  = Number(gatewayAmount);
-    if (!amount || amount <= 0) {
-      addToast("Enter the amount collected", "error"); return;
-    }
-    if (!gatewayOtp) {
-      addToast(
-        `Enter the OTP provided by the ${gatewayTaskType === "vendor_return" ? "vendor" : "customer"}`,
-        "error"
-      );
-      return;
-    }
-
-    setGatewayOpen(false);
-    const targetStatus = gatewayTargetStatus;       // save before we null the state
-    const isDelivered = gatewayTargetStatus !== "In Transit";
-
-    // Step A — record COD evidence (sets task.codVerified = true)
-    try {
-      await api.post(`/api/delivery/task/${gatewayTaskId}/collect-cod`, {
-        codVerified:         true,
-        codPaymentMethod:    gatewayMethod,
-        codPaymentId:        gatewayPayId,
-        codAmountReceived:   amount,
-      });
-      addToast("COD payment recorded", "success");
-    } catch (err) {
-      addToast(err?.response?.data?.message || "Failed to record COD", "error");
-      return;
-    }
-
-    // Step B — status transition passes backend gate because collect-cod set codVerified=true
-    try {
-      const payload = { status: targetStatus, codVerified: true };
-      if (isDelivered) {
-        payload.otp               = gatewayOtp;
-        payload.paymentConfirmed  = true;
-      }
-      await api.put(`/api/delivery/task/${gatewayTaskId}/status`, payload);
-      addToast(`Task marked as ${targetStatus}`, "success");
-      fetchDashboardData();
-    } catch (err) {
-      addToast(err?.response?.data?.message || "Failed to update status", "error");
-    }
-  };
-
-  const confirmGatewayNo = () => {
-    setGatewayOpen(false);
-    addToast(
-      gatewayTaskType === "vendor_return"
-        ? "Vendor OTP verification and rental income recording is mandatory before completing this step. Record payment evidence first using the payment gateway."
-        : "COD payment collection is mandatory before completing this step. Record payment evidence first using the payment gateway.",
-      "error"
-    );
-  };
-
-  /* ── Inline form "Paid" handler: marks the task Delivered with COD evidence and OTP ── */
+   /* ── Inline form "Paid" handler: marks the task Delivered/Returned to Vendor with COD evidence and OTP ── */
   const handlePaid = async (taskId, { amount, otp }) => {
     try {
-      // Step A — record COD evidence first (same gateway logic as confirmGatewayYes)
+      // Step A — record COD evidence (sets task.codVerified = true)
       await api.post(`/api/delivery/task/${taskId}/collect-cod`, {
         codVerified: true,
         codPaymentMethod: "cash",
@@ -420,34 +324,64 @@ function AgentDashboard() {
     }
   };
 
-  /* ── Update task status — opens the COD gateway for In Transit and Delivered ── */
+  /* ── Update task status ── */
   const updateTaskStatus = async (taskId, newStatus) => {
-    /* ─── In Transit (from Picking Up Product) — gate on COD evidence ─── */
-    if (newStatus === "In Transit") {
-      const task = tasks.find(t => t._id === taskId);
-      openGateway(taskId, "In Transit", task?.taskType);
-      return;
-    }
-    /* ─── Delivered — gate on COD evidence ─── */
-    if (newStatus === "Delivered") {
-      const task = tasks.find(t => t._id === taskId);
-      openGateway(taskId, "Delivered", task?.taskType);
-      return;
-    }
-    /* ─── Returned to Vendor — gate on COD evidence ─── */
-    if (newStatus === "Returned to Vendor") {
-      const task = tasks.find(t => t._id === taskId);
-      openGateway(taskId, "Returned to Vendor", task?.taskType);
-      return;
-    }
-    /* Open a notes modal then call the API */
     const placeholders = {
       "In Transit": "Any updates along the way?",
-      "Picking Up Product": "Any pickup notes for the lender?",
+      "Picking Up Product": "Pickup notes for the lender.",
     };
 
     const placeholder = placeholders[newStatus] || "Add a note (optional)";
 
+    if (newStatus === "Picking Up Product") {
+      setSelectedCondition("yes");
+      setConditionNotes("");
+      setNotesModal({
+        open: true,
+        onConfirm: null,
+        label: placeholder,
+        placeholder,
+        title: `Confirm Pickup — "${newStatus}"`,
+        noteKey: newStatus,
+        taskId,
+      });
+
+      setNotesModal((prev) => ({
+        ...prev,
+        onConfirm: async (note, isWorking, conditionNotes) => {
+          setNotesModal((prev2) => ({ ...prev2, open: false }));
+
+          if (!isWorking) {
+            openConfirm(
+              "Cancel Entire Order?",
+              "The product is NOT working. This will reject this pickup task AND cancel the entire order for this product. Both renter and lender will be notified automatically.",
+              true,
+              async () => {
+                await rejectTaskAndCancelOrder(taskId);
+              }
+            );
+            return;
+          }
+
+          try {
+            const payload = { status: newStatus };
+            if (note) payload.notes = note;
+            payload.pickupConditionVerified = true;
+            payload.pickupIsWorking = true;
+            payload.pickupConditionNotes = conditionNotes || "";
+
+            await api.put(`/api/delivery/task/${taskId}/status`, payload);
+            addToast("Pickup confirmed — product is working", "success");
+            fetchDashboardData();
+          } catch (err) {
+            addToast(err?.response?.data?.message || "Failed to update status", "error");
+          }
+        },
+      }));
+      return;
+    }
+
+    /* All other statuses: simple notes modal */
     setNotesModal({
       open: true,
       onConfirm: null,
@@ -457,31 +391,22 @@ function AgentDashboard() {
       noteKey: newStatus,
     });
 
-    /* Once the modal is resolved, proceed to status update */
     setNotesModal((prev) => ({
       ...prev,
-      onConfirm: async (note, isWorking, conditionNotes) => {
+      onConfirm: async (note) => {
         setNotesModal((prev2) => ({ ...prev2, open: false }));
         try {
           const payload = { status: newStatus };
           if (["Delivered", "Picking Up Product", "In Transit"].includes(newStatus) && note) payload.notes = note;
 
-if (newStatus === "Delivered" || newStatus === "Returned to Lender" || newStatus === "Returned to Vendor") {
-             const otp = prompt("Enter the OTP provided by the user:");
-             if (!otp) { addToast("OTP is required", "error"); return; }
-             payload.otp = otp;
-           }
-
-          /* Payment confirmation required by backend for Delivered */
-          if (newStatus === "Delivered") {
-            payload.paymentConfirmed = true;
+          if (newStatus === "Delivered" || newStatus === "Returned to Lender" || newStatus === "Returned to Vendor") {
+            const otp = prompt("Enter the OTP provided by the user:");
+            if (!otp) { addToast("OTP is required", "error"); return; }
+            payload.otp = otp;
           }
 
-          /* Pickup: also send condition verification */
-          if (newStatus === "Picking Up Product") {
-            payload.pickupConditionVerified = !!isWorking;
-            payload.pickupIsWorking = !!isWorking;
-            payload.pickupConditionNotes = conditionNotes || "";
+          if (newStatus === "Delivered") {
+            payload.paymentConfirmed = true;
           }
 
           await api.put(`/api/delivery/task/${taskId}/status`, payload);
@@ -496,6 +421,23 @@ if (newStatus === "Delivered" || newStatus === "Returned to Lender" || newStatus
 
   const openConfirm = (title, message, danger, onConfirm) => {
     setConfirmModal({ open: true, onConfirm, message, title, danger });
+  };
+
+  /* ── Reject pickup task & cancel order when product is not working ── */
+  const rejectTaskAndCancelOrder = async (taskId) => {
+    try {
+      const res = await api.post(`/api/delivery/reject-pickup/${taskId}/cancel-order`, {
+        reason: "Product not working — rejected by agent at pickup",
+      });
+      if (res.data?.message) {
+        addToast(res.data.message, "success");
+      } else {
+        addToast("Pickup rejected and order cancelled", "success");
+      }
+    } catch (err) {
+      addToast(err?.response?.data?.message || "Failed to reject pickup / cancel order", "error");
+    }
+    fetchDashboardData();
   };
 
 
@@ -554,7 +496,7 @@ const getStatusBadge = (status) => {
   const pendingTasks = availableTasks.filter((t) => t.status === "Waiting for Agent" && !t.agentId);
   const deliveryTasks = tasks.filter((t) =>
     ["delivery", "vendor_return"].includes(t.taskType) &&
-    ["Accepted", "Picking Up Product", "In Transit", "Delivered"].includes(t.status));
+    ["Accepted", "Picking Up Product", "In Transit"].includes(t.status));
   const returnTasks = tasks.filter((t) =>
     ["pickup", "return_pickup"].includes(t.taskType) &&
     ["Accepted", "Return In Transit", "Returned to Lender"].includes(t.status));
@@ -564,7 +506,7 @@ const getStatusBadge = (status) => {
     ["pickup", "return_pickup"].includes(t.taskType));
 
   const completedTasks = tasks.filter((t) =>
-    ["Delivered", "Returned to Lender", "Completed"].includes(t.status));
+    ["Pickup Scheduled", "Delivered", "Returned to Lender", "Returned to Vendor", "Completed"].includes(t.status));
 
   const tabs = [
     { id: "dashboard", label: "Overview", showCount: false },
@@ -572,7 +514,6 @@ const getStatusBadge = (status) => {
     { id: "returns", label: "📥 Returns", count: returnTasks.length + availableReturnTasks.length },
     { id: "available", label: "Available", count: pendingTasks.length },
     { id: "completed", label: "Completed", count: completedTasks.length },
-    { id: "earnings", label: "Earnings", showCount: false },
   ];
 
 
@@ -646,28 +587,7 @@ const getStatusBadge = (status) => {
               </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="quick-actions">
-              <h3>⚡ Quick Actions</h3>
-              <div className="actions-grid">
-                <button className="action-btn" onClick={() => setActiveTab("available")}>
-                  <span className="action-icon">📦</span>
-                  <div><strong>Find Work</strong><small>Available tasks</small></div>
-                </button>
-                <button className="action-btn" onClick={() => setActiveTab("delivery")}>
-                  <span className="action-icon">🚚</span>
-                  <div><strong>Delivery</strong><small>Outbound jobs</small></div>
-                </button>
-                <button className="action-btn" onClick={() => setActiveTab("returns")}>
-                  <span className="action-icon">📥</span>
-                  <div><strong>Returns</strong><small>Return pickups</small></div>
-                </button>
-                <button className="action-btn" onClick={() => setActiveTab("earnings")}>
-                  <span className="action-icon">💰</span>
-                  <div><strong>Earnings</strong><small>Income summary</small></div>
-                </button>
-              </div>
-            </div>
+
           </div>
         )}
 
@@ -747,41 +667,6 @@ const getStatusBadge = (status) => {
             )}
           </div>
         )}
-
-        {/* ─── Tab: Earnings ─── */}
-        {activeTab === "earnings" && (
-          <div className="earnings-tab">
-            <h3>💰 Earnings Summary</h3>
-            <div className="earnings-summary-grid">
-              <EarningsCard amount={earningsSummary?.pendingAmount || 0} label={`Pending (${earningsSummary?.pendingCount || 0} tasks)`} variant="earnings-pending" />
-              <EarningsCard amount={earningsSummary?.paidAmount || 0} label={`Paid (${earningsSummary?.paidCount || 0} tasks)`} variant="earnings-paid" />
-              <EarningsCard amount={earningsSummary?.totalEarned || 0} label="Total Earned" variant="earnings-total" />
-              <EarningsCard amount={profile?.earnings_balance || 0} label="Withdrawable Balance" variant="earnings-balance" />
-            </div>
-
-            <div className="earnings-history">
-              <h4>Earnings History</h4>
-              {earnings.length === 0 ? (
-                <p className="empty-text">No earnings yet</p>
-              ) : (
-                <div className="earnings-table">
-                  <div className="earnings-table-header">
-                    <span>Date</span><span>Task</span><span>Type</span><span>Amount</span><span>Status</span>
-                  </div>
-                  {earnings.map((e) => (
-                    <div className="earnings-table-row" key={e._id}>
-                      <span>{new Date(e.createdAt).toLocaleDateString("en-IN")}</span>
-                      <span>{e.taskId?._id?.substring(0, 8)}…</span>
-                      <span className="badge-delivery">{e.earningType === "delivery" ? "📦 Delivery" : "📥 Pickup"}</span>
-                      <span className="earnings-amount-cell">₹{e.amount.toLocaleString("en-IN")}</span>
-                      <span className={e.status === "paid" ? "badge-paid" : "badge-pending-earn"}>{e.status}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* ─── Modals ─── */}
@@ -797,13 +682,13 @@ const getStatusBadge = (status) => {
       >
         <div className="modal-form">
           {notesModal.label && <label>{notesModal.label}</label>}
-          <textarea
-            className="modal-textarea"
-            placeholder={notesModal.placeholder}
-            rows={3}
-            defaultValue=""
-            ref={(el) => { if (el && notesModal.open) el.focus(); }}
-          />
+              <textarea
+                className="modal-textarea"
+                placeholder={notesModal.placeholder}
+                rows={3}
+                defaultValue=""
+                ref={(el) => { if (el && notesModal.open) el.focus(); }}
+              />
           {/* Condition check for pickup */}
           {notesModal.noteKey === "Picking Up Product" && (
             <>
@@ -811,38 +696,68 @@ const getStatusBadge = (status) => {
                 <label className="condition-label">Is the product in working condition?</label>
                 <div className="condition-btn-group">
                   <button
-                    className="condition-btn condition-yes"
-                    onClick={(e) => { e.currentTarget.parentElement.dataset.choice = "yes"; }}
+                    type="button"
+                    className={`condition-btn ${selectedCondition === "yes" ? "condition-yes" : ""}`}
+                    onClick={() => setSelectedCondition("yes")}
                   >
                     ✔ Yes, Working
                   </button>
                   <button
-                    className="condition-btn condition-no"
-                    onClick={(e) => { e.currentTarget.parentElement.dataset.choice = "no"; }}
+                    type="button"
+                    className={`condition-btn ${selectedCondition === "no" ? "condition-no" : ""}`}
+                    onClick={() => setSelectedCondition("no")}
                   >
                     ✖ Not Working
                   </button>
                 </div>
-                <textarea className="modal-textarea" placeholder="Any condition notes? (optional)" rows={2} />
+                <textarea
+                  className="modal-textarea"
+                  placeholder="Any condition notes? (optional)"
+                  rows={2}
+                  value={conditionNotes}
+                  onChange={(e) => setConditionNotes(e.target.value)}
+                />
               </div>
             </>
           )}
           <div className="modal-actions">
-            <button className="modal-btn-secondary" onClick={() => setNotesModal((p) => ({ ...p, open: false, onConfirm: null }))}>Cancel</button>
+            <button className="modal-btn-secondary" onClick={() => { setNotesModal((p) => ({ ...p, open: false, onConfirm: null })); setSelectedCondition("yes"); setConditionNotes(""); }}>Cancel</button>
             <button
               className="modal-btn-primary"
-              onClick={() => {
+              onClick={async () => {
                 const textarea = document.querySelector(".modal-textarea");
                 const note = textarea ? textarea.value : "";
+
                 if (notesModal.noteKey === "Picking Up Product") {
-                  const conditionBox = document.querySelector(".condition-btn-group");
-                  const conditionNotesEl = conditionBox?.nextElementSibling;
-                  const conditionNotes = conditionNotesEl?.value || "";
-                  const choice = conditionBox?.dataset?.choice === "yes";
-                  notesModal.onConfirm?.(note, choice, conditionNotes);
-                } else {
-                  notesModal.onConfirm?.(note);
+                  const choice = selectedCondition === "yes";
+                  const cn = conditionNotes;
+
+                  if (!choice) {
+                    openConfirm(
+                      "Cancel Entire Order?",
+                      "The product is NOT working. This will reject the current pickup and cancel the entire order. Both renter and lender will be notified automatically.",
+                      true,
+                      async () => {
+                        await rejectTaskAndCancelOrder(notesModal.taskId);
+                        setNotesModal((p) => ({ ...p, open: false, onConfirm: null }));
+                        setSelectedCondition("yes");
+                        setConditionNotes("");
+                      }
+                    );
+                    return;
+                  }
+
+                  if (!notesModal.onConfirm) return;
+                  setNotesModal((p) => ({ ...p, open: false }));
+                  await notesModal.onConfirm(note, true, cn);
+                  setSelectedCondition("yes");
+                  setConditionNotes("");
+                  return;
                 }
+
+                if (!notesModal.onConfirm) return;
+                setNotesModal((p) => ({ ...p, open: false }));
+                await notesModal.onConfirm(note);
               }}
             >
               Confirm
@@ -870,103 +785,6 @@ const getStatusBadge = (status) => {
           >
             {confirmModal.danger ? "Reject Task" : "Confirm"}
           </button>
-        </div>
-      </Modal>
-
-      {/* ══════════════════════════════════════════
-           STEP 3 — Mandatory COD Payment Gateway
-           Agent cannot mark Delivered without confirming COD collection here
-      ══════════════════════════════════════════ */}
-      <Modal
-        title={gatewayTaskType === "vendor_return" ? "Confirm Vendor Handover?" : "Has payment been collected?"}
-        icon="💵"
-        isOpen={gatewayOpen}
-        onClose={() => setGatewayOpen(false)}
-      >
-        <div className="gateway-inner">
-          <p style={{ marginBottom: "0.25rem", color: "#555" }}>
-        {gatewayTaskType === "vendor_return"
-          ? "Vendor OTP verification and rental income recording is <strong>mandatory</strong> before completing return."
-          : "COD payment collection is <strong>mandatory</strong> before completing delivery."
-        }
-      </p>
-          <p style={{ marginBottom: "1rem", fontSize: "12px", color: "#9ca3af", fontWeight: 700 }}>
-            Required: Amount · Payment Method · OTP &nbsp;|&nbsp; Optional: Payment / Transaction ID
-          </p>
-
-          <div style={{ marginBottom: "1rem" }}>
-<label style={{ display: "block", fontWeight: 700, marginBottom: "0.35rem", fontSize: "13px", color: "#374151" }}>
-        {gatewayTaskType === "vendor_return" ? "Rental Income Amount (₹)" : "Amount Collected (₹)"} <span style={{ color: "#ef4444" }}>*</span>
-      </label>
-            <input
-              type="number"
-              className="modal-input"
-              placeholder="e.g. 15000"
-              min="0"
-              autoFocus
-              value={gatewayAmount}
-              onChange={(e) => setGatewayAmount(e.target.value)}
-              style={{ width: "100%", boxSizing: "border-box" }}
-            />
-          </div>
-
-          <div style={{ marginBottom: "1rem" }}>
-            <label style={{ display: "block", fontWeight: 700, marginBottom: "0.35rem", fontSize: "13px", color: "#374151" }}>
-              Payment Method <span style={{ color: "#ef4444" }}>*</span>
-            </label>
-            <select
-              className="modal-input"
-              defaultValue="cash"
-              autoFocus
-              style={{ width: "100%", boxSizing: "border-box" }}
-            >
-              <option value="cash">Cash</option>
-              <option value="upi">UPI</option>
-              <option value="card">Card</option>
-            </select>
-          </div>
-
-          <div style={{ marginBottom: "1rem" }}>
-            <label style={{ display: "block", fontWeight: 700, marginBottom: "0.35rem", fontSize: "13px", color: "#374151" }}>
-              Payment / Transaction ID <span style={{ color: "#9ca3af", fontWeight: 600 }}>(optional)</span>
-            </label>
-            <input
-              type="text"
-              className="modal-input"
-              placeholder="e.g. UPI TXN123456…"
-              value={gatewayPayId}
-              onChange={(e) => setGatewayPayId(e.target.value)}
-              style={{ width: "100%", boxSizing: "border-box" }}
-            />
-          </div>
-
-          <div style={{ marginBottom: "1rem" }}>
-<label style={{ display: "block", fontWeight: 700, marginBottom: "0.35rem", fontSize: "13px", color: "#374151" }}>
-        {gatewayTaskType === "vendor_return" ? "OTP from Vendor" : "OTP from Customer"} <span style={{ color: "#ef4444" }}>*</span>
-      </label>
-            <input
-              type="number"
-              className="modal-input"
-              placeholder={gatewayTaskType === "vendor_return" ? "6-digit OTP given by the vendor" : "6-digit OTP given by the customer"}
-              min="0"
-              value={gatewayOtp}
-              onChange={(e) => setGatewayOtp(e.target.value)}
-              style={{ width: "100%", boxSizing: "border-box" }}
-            />
-          </div>
-
-<div className="gateway-actions">
-      <button className="gateway-btn gateway-btn-yes" onClick={confirmGatewayYes}>
-        {gatewayTaskType === "vendor_return"
-          ? "✅ YES — Record Vendor OTP & Complete Return"
-          : "✅ YES — Record Payment &amp; Complete Delivery"}
-      </button>
-      <button className="gateway-btn gateway-btn-no" onClick={confirmGatewayNo}>
-        {gatewayTaskType === "vendor_return"
-          ? "❌ NO — Block Return"
-          : "❌ NO — Block Delivery"}
-      </button>
-    </div>
         </div>
       </Modal>
 

@@ -625,6 +625,13 @@ router.post("/cancel", requireAuth, async (req, res) => {
     await order.save();
     await order.populate("items.productId");
 
+    /* Unassign and cancel any pending delivery tasks for this order
+       so they disappear from the agent's "Available Tasks" pool. */
+    await DeliveryTask.updateMany(
+      { orderId: orderId, status: { $nin: ["Delivered", "Returned to Lender", "Returned to Vendor", "Completed", "Cancelled", "Rejected"] } },
+      { $set: { status: "Cancelled", agentId: null } }
+    );
+
     res.json(order);
   } catch (err) {
     res.status(500).json({ message: "Cancel failed" });

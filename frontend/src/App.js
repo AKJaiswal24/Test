@@ -186,6 +186,7 @@ function App() {
 
         {/* Agent Wallet */}
         <Route path="/agent/wallet" element={<AgentRoute><Wallet /></AgentRoute>} />
+        <Route path="/admin/wallet" element={<AdminRoute><Wallet /></AdminRoute>} />
       </Routes>
     </Router>
   );

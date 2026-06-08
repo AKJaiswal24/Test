@@ -180,7 +180,7 @@
   border-radius: 10px;
   font-size: 15px;
   transition: all 0.2s ease;
-  background: #f9fafb;
+  background: var(--bg);
 }
 
 .form-group input:focus,
@@ -234,7 +234,7 @@
   border-radius: 10px;
   font-size: 14px;
   transition: all 0.2s ease;
-  background: #f9fafb;
+  background: var(--bg);
 }
 
 .image-input-group input:focus {
@@ -258,7 +258,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f9fafb;
+  background: var(--bg);
 }
 
 .image-preview img {
@@ -312,7 +312,7 @@
   font-size: 15px;
   font-weight: 600;
   transition: all 0.2s ease;
-  background: #f9fafb;
+  background: var(--bg);
 }
 
 .price-input-wrapper input:focus {

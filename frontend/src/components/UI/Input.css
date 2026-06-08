@@ -21,7 +21,7 @@
   border-radius: 10px;
   font-size: 14px;
   font-family: inherit;
-  color: #111827;
+  color: var(--text);
   background: #fff;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -30,12 +30,12 @@
 }
 
 .input-ui:focus {
-  border-color: #3b82f6;
+  border-color: var(--secondary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 }
 
 .input-ui:disabled {
-  background: #f9fafb;
+  background: var(--bg);
   color: #9ca3af;
   cursor: not-allowed;
 }
@@ -60,3 +60,4 @@
   color: #dc2626;
   font-weight: 500;
 }
+

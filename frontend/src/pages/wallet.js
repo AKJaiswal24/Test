@@ -29,7 +29,9 @@ function Wallet() {
   const [wallets, setWallets] = useState([]);
   const [settlements, setSettlements] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [analytics, setAnalytics] = useState(null);
+  const [pointsBalance, setPointsBalance] = useState(0);
+  const [myClaims, setMyClaims] = useState([]);
+  const [allClaims, setAllClaims] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(
     isAgentView ? "my-wallet" : "wallets"
@@ -55,20 +57,24 @@ function Wallet() {
       setIsLoading(true);
 
       if (isAdminView) {
-        const [walletsRes, settlementsRes, analyticsRes] = await Promise.all([
-          api.get("/api/wallet/admin/wallets"),
-          api.get("/api/wallet/admin/settlements?status=submitted"),
-          api.get("/api/wallet/admin/analytics"),
-        ]);
+        const [walletsRes, settlementsRes, allClaimsRes] =
+          await Promise.all([
+            api.get("/api/wallet/admin/wallets"),
+            api.get("/api/wallet/admin/settlements?status=submitted"),
+            api.get("/api/wallet/admin/wallet/points/claims"),
+          ]);
 
         setWallets(walletsRes.data.wallets || []);
         setSettlements(settlementsRes.data.settlements || []);
-        setAnalytics(analyticsRes.data.analytics);
+        setAllClaims(allClaimsRes.data.claims || []);
       } else {
-        const [walletRes, txRes] = await Promise.all([
-          api.get("/api/wallet/wallet"),
-          api.get("/api/wallet/transactions"),
-        ]);
+        const [walletRes, txRes, pointsRes, myClaimsRes] =
+          await Promise.all([
+            api.get("/api/wallet/wallet"),
+            api.get("/api/wallet/transactions"),
+            api.get("/api/wallet/wallet/points/balance"),
+            api.get("/api/wallet/wallet/points/claims"),
+          ]);
 
         const w = walletRes.data.wallet;
         setWallets(
@@ -85,9 +91,9 @@ function Wallet() {
             : []
         );
         setTransactions(txRes.data.transactions || []);
-        setSettlements(
-          walletRes.data.pendingSettlements || []
-        );
+        setSettlements(walletRes.data.pendingSettlements || []);
+        setPointsBalance(pointsRes.data.pointsBalance || 0);
+        setMyClaims(myClaimsRes.data.claims || []);
       }
     } catch (err) {
       console.log(err);
@@ -113,9 +119,11 @@ function Wallet() {
       (wallets[0]?.totalCollected || 0) -
       (wallets[0]?.settledAmount || 0);
 
-    if (!window.confirm(
-      `Submit ₹${pendingAmount.toLocaleString("en-IN")} to admin?`
-    )) {
+    if (
+      !window.confirm(
+        `Submit ₹${pendingAmount.toLocaleString("en-IN")} to admin?`
+      )
+    ) {
       return;
     }
 
@@ -124,7 +132,10 @@ function Wallet() {
       addToast("Cash submitted to admin successfully ✅", "success");
       fetchData();
     } catch (err) {
-      addToast(err?.response?.data?.message || "Settlement failed ❌", "error");
+      addToast(
+        err?.response?.data?.message || "Settlement failed ❌",
+        "error"
+      );
     }
   };
 
@@ -134,21 +145,61 @@ function Wallet() {
       await api.put("/api/wallet/admin/settlement/accept", {
         settlementId,
       });
-      addToast("Amount received ✅ — Agent wallet reset to zero", "success");
+      addToast(
+        "Amount received ✅ — Agent wallet reset to zero",
+        "success"
+      );
       fetchData();
     } catch (err) {
-      addToast(err?.response?.data?.message || "Failed to accept settlement", "error");
+      addToast(
+        err?.response?.data?.message || "Failed to accept settlement",
+        "error"
+      );
     }
   };
 
-  // Parse notification-style CSS classes for settlement badges
+  // ── Agent points claim submit ──
+  const handleClaimSubmit = async (amount) => {
+    try {
+      await api.post("/api/wallet/wallet/points/claim", {
+        requestedPoints: amount,
+      });
+      addToast("Claim submitted. Please confirm.", "success");
+      fetchData();
+    } catch (err) {
+      addToast(
+        err?.response?.data?.message || "Failed to submit claim",
+        "error"
+      );
+    }
+  };
+
+  // ── Badge helper ──
   const statusBadgeClass = (status) => {
     switch (status) {
-      case "submitted": return "badge-yellow";
-      case "completed": return "badge-green";
-      case "verified":  return "badge-blue";
-      case "rejected":  return "badge-red";
-      default:          return "badge-gray";
+      case "submitted":
+        return "badge-yellow";
+      case "completed":
+        return "badge-green";
+      case "verified":
+        return "badge-blue";
+      case "rejected":
+        return "badge-red";
+      default:
+        return "badge-gray";
+    }
+  };
+
+  const pointsClaimBadgeClass = (status) => {
+    switch (status) {
+      case "awaiting_agent_confirm":
+        return "badge-yellow";
+      case "pending_admin":
+        return "badge-blue";
+      case "resolved":
+        return "badge-green";
+      default:
+        return "badge-gray";
     }
   };
 
@@ -159,40 +210,45 @@ function Wallet() {
       <button
         className="btn-home"
         onClick={() => navigate("/")}
+        aria-label="Back to home"
       >
         ← Back to Home
       </button>
 
-      <div className="admin-header">
+      <header className="admin-header">
         <div>
           <h2 className="section-title">
-            {isAgentView
-              ? "💳 My Wallet"
-              : "💰 Admin Finance Dashboard"}
+            {isAgentView ? "💳 My Wallet" : "💰 Admin Finance Dashboard"}
           </h2>
           <p className="admin-subtitle">
             {isAgentView
-              ? "View your balance and transactions"
+              ? "View your balance, points and claims"
               : "Manage agent wallets and settlements"}
           </p>
         </div>
-      </div>
+      </header>
 
       {/* ══════════════ TABS ══════════════ */}
-      <div className="tabs-nav">
+      <nav className="tabs-nav" role="tablist" aria-label="Wallet sections">
         {isAgentView && (
           <>
             <button
+              role="tab"
+              aria-selected={activeTab === "my-wallet"}
+              aria-label="My Wallet"
               className={`tab-btn ${activeTab === "my-wallet" ? "tab-active" : ""}`}
               onClick={() => setActiveTab("my-wallet")}
             >
               💳 My Wallet
             </button>
             <button
-              className={`tab-btn ${activeTab === "transactions" ? "tab-active" : ""}`}
-              onClick={() => setActiveTab("transactions")}
+              role="tab"
+              aria-selected={activeTab === "points"}
+              aria-label="Points"
+              className={`tab-btn ${activeTab === "points" ? "tab-active" : ""}`}
+              onClick={() => setActiveTab("points")}
             >
-              📋 Transactions
+              ⭐ Points
             </button>
           </>
         )}
@@ -200,111 +256,99 @@ function Wallet() {
         {isAdminView && (
           <>
             <button
+              role="tab"
+              aria-selected={activeTab === "wallets"}
+              aria-label="Agent Wallets"
               className={`tab-btn ${activeTab === "wallets" ? "tab-active" : ""}`}
               onClick={() => setActiveTab("wallets")}
             >
               👥 Wallets
             </button>
             <button
+              role="tab"
+              aria-selected={activeTab === "settlements"}
+              aria-label="Settlements"
               className={`tab-btn ${activeTab === "settlements" ? "tab-active" : ""}`}
               onClick={() => setActiveTab("settlements")}
             >
               💰 Settlements
             </button>
             <button
-              className={`tab-btn ${activeTab === "analytics" ? "tab-active" : ""}`}
-              onClick={() => setActiveTab("analytics")}
+              role="tab"
+              aria-selected={activeTab === "points"}
+              aria-label="Points"
+              className={`tab-btn ${activeTab === "points" ? "tab-active" : ""}`}
+              onClick={() => setActiveTab("points")}
             >
-              📊 Analytics
+              ⭐ Points
             </button>
           </>
         )}
-      </div>
+      </nav>
 
       {/* ══════════════ CONTENT ══════════════ */}
       {isLoading ? (
-        <div className="loading-container">
+        <div className="loading-container" role="status" aria-live="polite">
           <p>Loading...</p>
         </div>
       ) : (
         <div className="tab-content">
-
           {/* ─── AGENT MY WALLET ─── */}
           {activeTab === "my-wallet" && isAgentView && (
-            <div>
-              {/* Total Collected */}
-              <div className="delivery-card">
-                <h3
-                  style={{
-                    fontSize: "18px",
-                    marginBottom: "12px",
-                    color: "#111827",
-                  }}
-                >
+            <section aria-labelledby="wallet-hero-heading">
+              <div className="wallet-hero">
+                <p id="wallet-hero-heading" className="wallet-hero-title">
                   Total Customer Cash Collected
-                </h3>
-                <h1
-                  style={{
-                    fontSize: "52px",
-                    fontWeight: "800",
-                    marginBottom: "24px",
-                    color: "#111827",
-                  }}
+                </p>
+                <p
+                  className="wallet-amount-xl"
+                  aria-label={`Total collected ${(wallets[0]?.totalCollected || 0).toLocaleString("en-IN")} rupees`}
                 >
                   ₹
                   {(
                     wallets[0]?.totalCollected || 0
                   ).toLocaleString("en-IN")}
-                </h1>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "16px",
-                  }}
-                >
-                  <div
-                    className="wallet-stat-box"
-                    style={{
-                      background: "#fef2f2",
-                      padding: "20px",
-                      borderRadius: "16px",
-                    }}
-                  >
-                    <p
-                      style={{
-                        color: "#6b7280",
-                        marginBottom: "8px",
-                        fontSize: "14px",
-                      }}
-                    >
+                </p>
+                <div className="wallet-metrics">
+                  <div className="wallet-metric-card">
+                    <p className="wallet-metric-label">
                       Pending Submission To Admin
                     </p>
-                    <strong
-                      style={{
-                        color: "#dc2626",
-                        fontSize: "28px",
-                      }}
-                    >
+                    <p className="wallet-metric-value">
                       ₹
                       {(
                         (wallets[0]?.totalCollected || 0) -
                         (wallets[0]?.settledAmount || 0)
                       ).toLocaleString("en-IN")}
-                    </strong>
+                    </p>
+                  </div>
+                  <div className="wallet-metric-card">
+                    <p className="wallet-metric-label">
+                      Settled Amount
+                    </p>
+                    <p className="wallet-metric-value">
+                      ₹
+                      {(
+                        wallets[0]?.settledAmount || 0
+                      ).toLocaleString("en-IN")}
+                    </p>
+                  </div>
+                  <div className="wallet-metric-card">
+                    <p className="wallet-metric-label">
+                      Shortage
+                    </p>
+                    <p className="wallet-metric-value">
+                      ₹
+                      {(
+                        wallets[0]?.shortBalance || 0
+                      ).toLocaleString("en-IN")}
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* Submit To Admin */}
-              <div
-                className="delivery-card"
-                style={{
-                  marginTop: "24px",
-                  border: "2px solid #dbeafe",
-                }}
-              >
-                <h3 style={{ fontSize: "24px", marginBottom: "12px" }}>
+              <div className="wallet-card">
+                <h3 className="wallet-section-title">
                   🏢 Submit Cash To Admin
                 </h3>
                 <p
@@ -317,25 +361,19 @@ function Wallet() {
                   cash to the admin/owner.
                 </p>
                 <div
+                  className="wallet-metric-card"
                   style={{
                     background: "#eff6ff",
-                    padding: "20px",
-                    borderRadius: "16px",
                     marginBottom: "20px",
                   }}
                 >
-                  <p
-                    style={{
-                      color: "#6b7280",
-                      marginBottom: "8px",
-                    }}
-                  >
+                  <p className="wallet-metric-label">
                     Amount Being Submitted
                   </p>
-                  <h1
+                  <p
+                    className="wallet-amount-xl"
                     style={{
-                      fontSize: "42px",
-                      fontWeight: "800",
+                      fontSize: "40px",
                       color: "#1d4ed8",
                     }}
                   >
@@ -344,294 +382,480 @@ function Wallet() {
                       (wallets[0]?.totalCollected || 0) -
                       (wallets[0]?.settledAmount || 0)
                     ).toLocaleString("en-IN")}
-                  </h1>
+                  </p>
                 </div>
                 <button
-                  className="btn-settle-enhanced"
-                  style={{
-                    width: "100%",
-                    padding: "16px",
-                    borderRadius: "14px",
-                    fontSize: "18px",
-                    fontWeight: "700",
-                    background:
-                      "linear-gradient(90deg,#2563eb,#1d4ed8)",
-                  }}
+                  className="wallet-action-btn primary"
+                  style={{ width: "100%" }}
                   onClick={handleSubmitSettlement}
                 >
                   Submit To Admin
                 </button>
               </div>
-            </div>
+            </section>
           )}
 
-          {/* ─── AGENT TRANSACTIONS ─── */}
-          {activeTab === "transactions" && isAgentView && (
-            <div className="delivery-card">
-              <h3>Transactions</h3>
-              {transactions.length === 0 ? (
-                <div className="empty-state">
-                  <span>📭</span>
-                  <p>No transactions yet</p>
-                </div>
-              ) : (
-                transactions.map((tx) => (
-                  <div
-                    key={tx._id}
-                    className="transaction-row"
-                  >
-                    <span>{tx.description}</span>
-                    <strong>
-                      ₹{tx.amount}
-                    </strong>
+          {/* ─── POINTS & CLAIMS ─── */}
+          {activeTab === "points" && (
+            <section aria-labelledby="points-heading">
+              <div className="wallet-hero">
+                <p id="points-heading" className="wallet-hero-title">
+                  {isAgentView ? "Available Points" : "Points Overview"}
+                </p>
+                <p
+                  className="wallet-amount-xl"
+                  aria-label={`Available points ${pointsBalance}`}
+                >
+                  {pointsBalance.toLocaleString("en-IN")}
+                </p>
+                <div className="wallet-metrics">
+                  <div className="wallet-metric-card">
+                    <p className="wallet-metric-label">Total Earned</p>
+                    <p className="wallet-metric-value">
+                      {(wallets[0]?.totalPointsEarned || 0).toLocaleString(
+                        "en-IN"
+                      )}
+                    </p>
                   </div>
-                ))
+                  <div className="wallet-metric-card">
+                    <p className="wallet-metric-label">Paid Out</p>
+                    <p className="wallet-metric-value">
+                      {(wallets[0]?.totalPointsPaidOut || 0).toLocaleString(
+                        "en-IN"
+                      )}
+                    </p>
+                  </div>
+                  <div className="wallet-metric-card">
+                    <p className="wallet-metric-label">Reserved</p>
+                    <p className="wallet-metric-value">
+                      {(wallets[0]?.pointsReserved || 0).toLocaleString(
+                        "en-IN"
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {isAgentView && (
+                <div className="wallet-card">
+                  <h3 className="wallet-section-title">
+                    New Claim
+                  </h3>
+                  <p
+                    style={{
+                      color: "#6b7280",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    Enter the points you want to claim. Your claim must be
+                    confirmed by you and approved by the admin before
+                    payout.
+                  </p>
+                  <div className="claim-form">
+                    <input
+                      id="claimAmountInput"
+                      type="number"
+                      className="claim-input"
+                      min="1"
+                      max={pointsBalance}
+                      placeholder="Amount to claim"
+                      aria-label="Claim amount"
+                    />
+                    <button
+                      className="claim-submit-btn"
+                      onClick={async () => {
+                        const input = document.getElementById(
+                          "claimAmountInput"
+                        );
+                        const amount = Number(input?.value);
+                        if (!amount || amount <= 0) {
+                          addToast("Enter a valid amount", "error");
+                          return;
+                        }
+                        if (amount > pointsBalance) {
+                          addToast(
+                            "Amount exceeds available points",
+                            "error"
+                          );
+                          return;
+                        }
+                        await handleClaimSubmit(amount);
+                      }}
+                    >
+                      Submit Claim
+                    </button>
+                  </div>
+                  <small className="claim-hint">
+                    Max claimable: {pointsBalance.toLocaleString("en-IN")}{" "}
+                    points
+                  </small>
+                </div>
               )}
-            </div>
-          )}
 
-          {/* ─── ADMIN WALLETS ─── */}
-          {activeTab === "wallets" && isAdminView && (
-            <div className="tasks-list">
-              {wallets.length === 0 ? (
-                <div className="delivery-card">
-                  <div className="empty-state">
+              <div className="wallet-card">
+                <h3 className="wallet-section-title">
+                  {isAgentView ? "My Claims" : "All Agent Claims"}
+                </h3>
+                {(isAgentView ? myClaims : allClaims).length === 0 ? (
+                  <div className="wallet-empty">
                     <span>📭</span>
-                    <p>No agent wallets found</p>
+                    <p>No claims yet</p>
                   </div>
-                </div>
-              ) : (
-                wallets.map((w) => (
-                  <div
-                    key={w._id}
-                    className="admin-wallet-card"
-                  >
-                    <div className="admin-wallet-header">
+                ) : (
+                  (isAgentView ? myClaims : allClaims).map((c) => (
+                    <div key={c._id} className="claim-row">
                       <div>
-                        <span className="admin-wallet-name">
-                          {w.agentId?.name || "Agent"}
-                        </span>
-                        <br />
-                        <small>{w.agentId?.email}</small>
-                        {w.agentId?.totalTasks && (
-                          <div
-                            style={{
-                              fontSize: "11px",
-                              color: "#6b7280",
-                              marginTop: "2px",
-                            }}
+                        <div className="claim-row-header">
+                          <strong>
+                            {isAgentView
+                              ? "Claim"
+                              : `Agent: ${c.agentId?.name || "Agent"}`}
+                          </strong>
+                          <span
+                            className={`claim-status-badge ${pointsClaimBadgeClass(c.status)}`}
                           >
-                            📦 {w.agentId.totalTasks} tasks &nbsp;
-                            ({w.agentId.completedTasks} completed)
+                            {c.status
+                              .replace(/_/g, " ")
+                              .replace(/\b\w/g, (l) => l.toUpperCase())}
+                          </span>
+                        </div>
+                        <div className="claim-meta">
+                          {new Date(c.submittedAt).toLocaleString(
+                            "en-IN"
+                          )}
+                        </div>
+                        <div className="claim-amount">
+                          {c.requestedPoints?.toLocaleString?.() ||
+                            c.requestedPoints}{" "}
+                          pts
+                        </div>
+                        {c.note && (
+                          <div className="claim-meta">
+                            Note: {c.note}
                           </div>
                         )}
                       </div>
                       <div>
-                        <div className="admin-balance">
-                          ₹{(w.withdrawableBalance || 0).toLocaleString()}
-                        </div>
-                        <small style={{ color: "#6b7280" }}>
-                          Withdrawable
-                        </small>
+                        {isAgentView &&
+                          c.status === "awaiting_agent_confirm" && (
+                            <button
+                              className="wallet-action-btn info"
+                              style={{ width: "auto" }}
+                              onClick={async () => {
+                                try {
+                                  await api.post(
+                                    "/api/wallet/wallet/points/confirm",
+                                    { claimId: c._id }
+                                  );
+                                  addToast(
+                                    "Claim confirmed and sent to admin",
+                                    "success"
+                                  );
+                                  fetchData();
+                                } catch (err) {
+                                  addToast(
+                                    err?.response?.data?.message ||
+                                      "Failed to confirm claim",
+                                    "error"
+                                  );
+                                }
+                              }}
+                            >
+                              Confirm & Send to Admin
+                            </button>
+                          )}
+                        {!isAgentView &&
+                          c.status === "pending_admin" && (
+                            <button
+                              className="wallet-action-btn success"
+                              style={{ width: "auto" }}
+                              onClick={async () => {
+                                try {
+                                  await api.put(
+                                    `/api/wallet/admin/wallet/points/approve/${c._id}`
+                                  );
+                                  addToast(
+                                    "Claim approved and points deducted",
+                                    "success"
+                                  );
+                                  fetchData();
+                                } catch (err) {
+                                  addToast(
+                                    err?.response?.data?.message ||
+                                      "Failed to approve claim",
+                                    "error"
+                                  );
+                                }
+                              }}
+                            >
+                              Approve & Pay
+                            </button>
+                          )}
                       </div>
                     </div>
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr 1fr",
-                        gap: "8px",
-                        fontSize: "13px",
-                      }}
-                    >
-                      <div>
-                        <strong>Total Collected:</strong>{" "}
-                        ₹{(w.totalCollected || 0).toLocaleString()}
-                      </div>
-                      <div>
-                        <strong>Pending Settlement:</strong>{" "}
-                        ₹{(w.pendingSettlement || 0).toLocaleString()}
-                      </div>
-                      <div>
-                        <strong>Settled:</strong>{" "}
-                        ₹{(w.settledAmount || 0).toLocaleString()}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+                  ))
+                )}
+              </div>
+            </section>
           )}
 
-          {/* ─── ADMIN SETTLEMENTS — Pending Agent Submissions ─── */}
-          {activeTab === "settlements" && isAdminView && (
-            <div style={{ padding: "16px" }}>
-              <h3 style={{ marginBottom: "16px" }}>
-                Pending Agent Submissions
+          {/* ─── ADMIN WALLETS ─── */}
+          {activeTab === "wallets" && isAdminView && (
+            <section aria-labelledby="wallets-heading">
+              <h3
+                id="wallets-heading"
+                className="wallet-section-title"
+              >
+                Agent Wallets
               </h3>
-
-              {settlements.length === 0 ? (
-                <div className="delivery-card">
-                  <div className="empty-state">
-                    <span>📭</span>
-                    <p>No settlement submissions</p>
-                    <small>
-                      Agent-submitted cash handovers will appear here
-                    </small>
-                  </div>
+              {wallets.length === 0 ? (
+                <div className="wallet-empty">
+                  <span>📭</span>
+                  <p>No agent wallets found</p>
                 </div>
               ) : (
-                settlements.map((s) => (
-                  <div
-                    key={s._id}
-                    className="settlement-card-enhanced"
-                  >
-                    <div className="settlement-header-enhanced">
-                      <span>
-                        <strong>Agent:</strong> {s.agentId?.name}
-                        <br />
-                        <small>
-                          Order:{" "}
-                          {s.orderId?.orderId || "—"}
-                        </small>
-                      </span>
-                      <span
-                        className={`settlement-status-badge ${statusBadgeClass(s.status)}`}
+                <div>
+                  {wallets.map((w) => (
+                    <div
+                      key={w._id}
+                      className="wallet-card"
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: "12px",
+                          flexWrap: "wrap",
+                          gap: "8px",
+                        }}
                       >
-                        {s.status === "submitted"
-                          ? "Submitted"
-                          : s.status.charAt(0).toUpperCase() +
-                            s.status.slice(1)}
-                      </span>
-                    </div>
-
-                    <div className="settlement-amounts">
-                      <div className="settlement-amount-row">
-                        <span className="settlement-amount-label">
-                          Customer Payment
-                        </span>
-                        <span className="settlement-amount-value">
-                          ₹{s.customerPayment?.toLocaleString() ?? "—"}
-                        </span>
-                      </div>
-                      {s.agentCommission > 0 && (
-                        <>
-                          <div className="settlement-amount-row">
-                            <span className="settlement-amount-label">
-                              Agent Fee
-                            </span>
-                            <span className="settlement-amount-value">
-                              ₹{s.agentCommission?.toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="settlement-amount-row">
-                            <span className="settlement-amount-label">
-                              Admin Share
-                            </span>
-                            <span className="settlement-amount-value">
-                              ₹{(
-                                (s.customerPayment ?? 0) -
-                                (s.agentCommission ?? 0)
-                              ).toLocaleString()}
-                            </span>
-                          </div>
-                        </>
-                      )}
-                      {(!s.agentCommission || s.agentCommission === 0) && (
-                        <div className="settlement-amount-row">
-                          <span className="settlement-amount-label">
-                            Admin Share
-                          </span>
-                          <span className="settlement-amount-value">
-                            ₹{(s.customerPayment ?? 0).toLocaleString()}
-                          </span>
+                        <div>
+                          <strong
+                            style={{
+                              fontSize: "15px",
+                              color: "var(--text)",
+                            }}
+                          >
+                            {w.agentId?.name || "Agent"}
+                          </strong>
+                          <br />
+                          <small style={{ color: "#6b7280" }}>
+                            {w.agentId?.email}
+                          </small>
                         </div>
-                      )}
-                      <div className="settlement-amount-row">
-                        <span className="settlement-amount-label">
-                          Submitted On
-                        </span>
-                        <span className="settlement-amount-value">
-                          {s.submittedAt
-                            ? new Date(
-                                s.submittedAt
-                              ).toLocaleDateString("en-IN")
-                            : new Date(
-                                s.createdAt
-                              ).toLocaleDateString("en-IN")}
-                        </span>
+                        <div
+                          style={{
+                            textAlign: "right",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "24px",
+                              fontWeight: "900",
+                              color: "var(--primary)",
+                            }}
+                          >
+                            ₹
+                            {(
+                              w.withdrawableBalance || 0
+                            ).toLocaleString("en-IN")}
+                          </div>
+                          <small style={{ color: "#6b7280" }}>
+                            Withdrawable
+                          </small>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(3, 1fr)",
+                          gap: "8px",
+                          fontSize: "13px",
+                          color: "#6b7280",
+                        }}
+                      >
+                        <div>
+                          <strong>Total Collected:</strong>{" "}
+                          ₹
+                          {(
+                            w.totalCollected || 0
+                          ).toLocaleString("en-IN")}
+                        </div>
+                        <div>
+                          <strong>Pending Settlement:</strong>{" "}
+                          ₹
+                          {(
+                            w.pendingSettlement || 0
+                          ).toLocaleString("en-IN")}
+                        </div>
+                        <div>
+                          <strong>Settled:</strong>{" "}
+                          ₹
+                          {(
+                            w.settledAmount || 0
+                          ).toLocaleString("en-IN")}
+                        </div>
                       </div>
                     </div>
-
-                    {s.status === "submitted" && (
-                      <div className="settlement-actions-enhanced">
-                        <button
-                          className="btn-settle-enhanced"
-                          style={{ background: "#10b981" }}
-                          onClick={() =>
-                            handleAcceptSettlement(s._id)
-                          }
-                        >
-                          ✅ Amount Received
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
-            </div>
+            </section>
           )}
 
-          {/* ─── ADMIN ANALYTICS ─── */}
-          {activeTab === "analytics" &&
-            analytics &&
-            isAdminView && (
-              <div className="analytics-grid">
-                <div className="analytics-card">
-                  <h3>
-                    ₹
-                    {analytics.totalPlatformRevenue?.toLocaleString()}
-                  </h3>
-                  <p>Platform Revenue</p>
+          {/* ─── ADMIN SETTLEMENTS ─── */}
+          {activeTab === "settlements" && isAdminView && (
+            <section aria-labelledby="settlements-heading">
+              <h3
+                id="settlements-heading"
+                className="wallet-section-title"
+              >
+                Pending Agent Submissions
+              </h3>
+              {settlements.length === 0 ? (
+                <div className="wallet-empty">
+                  <span>📭</span>
+                  <p>No settlement submissions</p>
+                  <small>
+                    Agent-submitted cash handovers will appear here
+                  </small>
                 </div>
-                <div className="analytics-card">
-                  <h3>
-                    ₹
-                    {analytics.pendingSettlements?.toLocaleString()}
-                  </h3>
-                  <p>Pending Settlements Value</p>
+              ) : (
+                <div>
+                  {settlements.map((s) => (
+                    <div
+                      key={s._id}
+                      className="wallet-card"
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: "12px",
+                          flexWrap: "wrap",
+                          gap: "8px",
+                        }}
+                      >
+                        <div>
+                          <strong>Agent:</strong> {s.agentId?.name}
+                          <br />
+                          <small style={{ color: "#6b7280" }}>
+                            Order: {s.orderId?.orderId || "—"}
+                          </small>
+                        </div>
+                        <span
+                          className={`claim-status-badge ${statusBadgeClass(s.status)}`}
+                        >
+                          {s.status === "submitted"
+                            ? "Submitted"
+                            : s.status.charAt(0).toUpperCase() +
+                              s.status.slice(1)}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(2, 1fr)",
+                          gap: "10px",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <div>
+                          <span
+                            style={{
+                              color: "#6b7280",
+                              fontSize: "12px",
+                              fontWeight: "700",
+                            }}
+                          >
+                            Customer Payment
+                          </span>
+                          <div style={{ fontWeight: "900" }}>
+                            ₹
+                            {s.customerPayment?.toLocaleString() ?? "—"}
+                          </div>
+                        </div>
+                        <div>
+                          <span
+                            style={{
+                              color: "#6b7280",
+                              fontSize: "12px",
+                              fontWeight: "700",
+                            }}
+                          >
+                            Admin Share
+                          </span>
+                          <div style={{ fontWeight: "900" }}>
+                            ₹
+                            {(
+                              (s.customerPayment ?? 0) -
+                              (s.agentCommission ?? 0)
+                            ).toLocaleString()}
+                          </div>
+                        </div>
+                        <div>
+                          <span
+                            style={{
+                              color: "#6b7280",
+                              fontSize: "12px",
+                              fontWeight: "700",
+                            }}
+                          >
+                            Agent Fee
+                          </span>
+                          <div style={{ fontWeight: "900" }}>
+                            ₹
+                            {(
+                              s.agentCommission || 0
+                            ).toLocaleString()}
+                          </div>
+                        </div>
+                        <div>
+                          <span
+                            style={{
+                              color: "#6b7280",
+                              fontSize: "12px",
+                              fontWeight: "700",
+                            }}
+                          >
+                            Submitted On
+                          </span>
+                          <div>
+                            {s.submittedAt
+                              ? new Date(
+                                  s.submittedAt
+                                ).toLocaleDateString("en-IN")
+                              : new Date(
+                                  s.createdAt
+                                ).toLocaleDateString("en-IN")}
+                          </div>
+                        </div>
+                      </div>
+                      {s.status === "submitted" && (
+                        <div
+                          style={{
+                            marginTop: "16px",
+                          }}
+                        >
+                          <button
+                            className="wallet-action-btn success"
+                            style={{ width: "100%" }}
+                            onClick={() =>
+                              handleAcceptSettlement(s._id)
+                            }
+                          >
+                            ✅ Amount Received
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                <div className="analytics-card">
-                  <h3>
-                    {analytics.pendingSettlementsCount || 0}
-                  </h3>
-                  <p>Pending Settlements Count</p>
-                </div>
-                <div className="analytics-card">
-                  <h3>
-                    {analytics.completedSettlements || 0}
-                  </h3>
-                  <p>Completed Settlements</p>
-                </div>
-                <div className="analytics-card">
-                  <h3>
-                    {analytics.totalAgents || 0}
-                  </h3>
-                  <p>Total Agents</p>
-                </div>
-                <div className="analytics-card">
-                  <h3>
-                    {analytics.recentCollections || 0}
-                  </h3>
-                  <p>Recent Collections (7 d)</p>
-                </div>
-                <div className="analytics-card">
-                  <h3>
-                    {analytics.recentSettlements || 0}
-                  </h3>
-                  <p>Recent Settlements (7 d)</p>
-                </div>
-              </div>
-            )}
+              )}
+            </section>
+          )}
         </div>
       )}
     </div>

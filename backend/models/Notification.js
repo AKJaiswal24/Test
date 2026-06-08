@@ -17,6 +17,7 @@ const notificationSchema = new Schema({
       "pickup_completed",
       "return_in_transit",
       "returned_to_lender",
+      "pickup_return_due",
       "payment_collected",
       "rental_extended",
       "agent_approved",

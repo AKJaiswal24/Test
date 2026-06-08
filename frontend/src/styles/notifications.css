@@ -69,13 +69,13 @@
   margin: 0;
   font-size: 15px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
 }
 
 .mark-all-read-btn {
   background: none;
   border: none;
-  color: #3b82f6;
+  color: var(--secondary);
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
@@ -104,14 +104,14 @@
   display: flex;
   gap: 12px;
   padding: 14px 18px;
-  border-bottom: 1px solid #f9fafb;
+  border-bottom: 1px solid var(--bg);
   cursor: pointer;
   transition: background 0.15s;
   align-items: flex-start;
 }
 
 .notification-item:hover {
-  background: #f9fafb;
+  background: var(--bg);
 }
 
 .notification-item.unread {
@@ -132,7 +132,7 @@
 .notif-title {
   font-size: 13px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
   margin-bottom: 2px;
 }
 
@@ -154,7 +154,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: var(--secondary);
   flex-shrink: 0;
   margin-top: 6px;
 }

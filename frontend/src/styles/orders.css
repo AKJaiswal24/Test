@@ -45,7 +45,7 @@
   margin: 0;
   font-size: 16px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
 }
 
 .order-sub {
@@ -65,7 +65,7 @@
 
 .status.ongoing {
   background: #dbeafe;
-  color: #1e3a8a;
+  color: var(--primary);
 }
 
 .status.delivered {
@@ -84,7 +84,7 @@
 .order-delivery {
   padding: 12px 14px;
   border-radius: 14px;
-  background: #f9fafb;
+  background: var(--bg);
   border: 1px solid #eef2f7;
 }
 
@@ -97,7 +97,7 @@
 .order-total-value,
 .order-delivery-value {
   margin-top: 4px;
-  color: #111827;
+  color: var(--text);
   font-size: 18px;
   font-weight: 1000;
 }
@@ -139,7 +139,7 @@
 .order-item-title {
   font-size: 15px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
 }
 
 .order-item-meta {
@@ -147,7 +147,7 @@
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  color: #111827;
+  color: var(--text);
   font-weight: 800;
   font-size: 12px;
 }
@@ -161,7 +161,7 @@
   display: inline-flex;
   padding: 4px 8px;
   border-radius: 999px;
-  color: #1e3a8a;
+  color: var(--primary);
   background: rgba(59, 130, 246, 0.12);
   font-weight: 900;
 }
@@ -227,13 +227,13 @@
 
 .plan-duration {
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   font-size: 12px;
 }
 
 .plan-price {
   font-weight: 1000;
-  color: #1e3a8a;
+  color: var(--primary);
   font-size: 12px;
 }
 
@@ -264,7 +264,7 @@
 
 .otp-info strong {
   font-weight: 900;
-  color: #1e3a8a;
+  color: var(--primary);
 }
 
 .cancel-btn {
@@ -287,3 +287,4 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+

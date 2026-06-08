@@ -21,7 +21,9 @@ const deliveryTaskSchema = new Schema({
       'Return In Transit',
       'Returned to Lender',
       'Returned to Vendor',
-      'Completed'
+      'Completed',
+      'Cancelled',
+      'Rejected'
     ],
     default: 'Waiting for Agent'
   },

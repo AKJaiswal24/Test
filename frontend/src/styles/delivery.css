@@ -10,7 +10,7 @@
   margin: 0 0 20px;
   font-size: 28px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
 }
 
 /* Card base */
@@ -42,7 +42,7 @@
 .delivery-header-section h1 {
   font-size: 24px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   margin: 0 0 8px;
 }
 
@@ -80,12 +80,12 @@
 }
 
 .form-input:focus {
-  border-color: #3b82f6;
+  border-color: var(--secondary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .form-input.disabled {
-  background: #f9fafb;
+  background: var(--bg);
   color: #6b7280;
   cursor: not-allowed;
 }
@@ -133,7 +133,7 @@ select.form-input {
 .benefits-section h3 {
   font-size: 18px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   margin: 0 0 16px;
 }
 
@@ -192,7 +192,7 @@ select.form-input {
 .stat-info h3 {
   font-size: 24px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   margin: 0;
   line-height: 1;
 }
@@ -204,7 +204,7 @@ select.form-input {
   color: #6b7280;
 }
 
-.stat-blue .stat-icon { color: #3b82f6; }
+.stat-blue .stat-icon { color: var(--secondary); }
 .stat-orange .stat-icon { color: #f97316; }
 .stat-green .stat-icon { color: #22c55e; }
 .stat-purple .stat-icon { color: #8b5cf6; }
@@ -259,7 +259,7 @@ select.form-input {
 
 .tab-btn.tab-active {
   background: #fff;
-  color: #111827;
+  color: var(--text);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
@@ -331,7 +331,7 @@ select.form-input {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 800;
-  color: #1e3a8a;
+  color: var(--primary);
 }
 
 .approved-pill {
@@ -396,7 +396,7 @@ select.form-input {
 .agent-detail-item span {
   font-size: 14px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
 }
 
 .agent-app-actions {
@@ -478,14 +478,14 @@ select.form-input {
   justify-content: space-between;
   align-items: center;
   padding: 14px 18px;
-  background: #f9fafb;
+  background: var(--bg);
   border-bottom: 1px solid #eef2f7;
 }
 
 .task-type-badge {
   font-size: 12px;
   font-weight: 900;
-  color: #1e3a8a;
+  color: var(--primary);
 }
 
 .task-card-body {
@@ -507,7 +507,7 @@ select.form-input {
 .task-info h4 {
   font-size: 15px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   margin: 0 0 8px;
 }
 
@@ -544,7 +544,7 @@ select.form-input {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: var(--secondary);
   flex-shrink: 0;
 }
 
@@ -604,7 +604,7 @@ select.form-input {
 
 .btn-view {
   padding: 10px 20px;
-  background: #3b82f6;
+  background: var(--secondary);
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -621,7 +621,7 @@ select.form-input {
   align-items: flex-end;
   padding: 14px 18px;
   border-top: 1px solid #eef2f7;
-  background: #f9fafb;
+  background: var(--bg);
 }
 
 .inline-payment-form .payment-field {
@@ -644,13 +644,13 @@ select.form-input {
   border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 14px;
-  color: #111827;
+  color: var(--text);
   background: #fff;
   outline: none;
 }
 
 .inline-payment-form .payment-input:focus {
-  border-color: #3b82f6;
+  border-color: var(--secondary);
   box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
 }
 
@@ -701,7 +701,7 @@ select.form-input {
 }
 
 .badge-yellow { background: #fef3c7; color: #92400e; }
-.badge-blue { background: #dbeafe; color: #1e3a8a; }
+.badge-blue { background: #dbeafe; color: var(--primary); }
 .badge-orange { background: #ffedd5; color: #9a3412; }
 .badge-purple { background: #ede9fe; color: #5b21b6; }
 .badge-green { background: #dcfce7; color: #166534; }
@@ -712,7 +712,7 @@ select.form-input {
 .badge-red { background: #fee2e2; color: #991b1b; }
 .badge-approved { background: #dcfce7; color: #166534; }
 .badge-pending { background: #fef3c7; color: #92400e; }
-.badge-delivery { background: #dbeafe; color: #1e3a8a; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+.badge-delivery { background: #dbeafe; color: var(--primary); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; }
 .badge-paid { background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; }
 .badge-pending-earn { background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; }
 
@@ -756,7 +756,7 @@ select.form-input {
   font-size: 16px;
   font-weight: 900;
   margin: 20px 0 12px;
-  color: #111827;
+  color: var(--text);
 }
 
 .earnings-table {
@@ -798,7 +798,7 @@ select.form-input {
 .profile-section h3, .quick-actions h3 {
   font-size: 18px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   margin: 0 0 14px;
 }
 
@@ -823,7 +823,7 @@ select.form-input {
 .profile-item span {
   font-size: 14px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
 }
 
 .quick-actions { margin-top: 20px; }
@@ -863,13 +863,13 @@ select.form-input {
 .tracking-header h2 {
   font-size: 20px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   margin: 0;
 }
 
 /* Tracking Summary */
 .tracking-summary-card {
-  background: #f9fafb;
+  background: var(--bg);
   border-radius: 14px;
   padding: 18px;
   margin-bottom: 20px;
@@ -904,7 +904,7 @@ select.form-input {
   display: inline-block;
   padding: 2px 10px;
   background: #dbeafe;
-  color: #1e3a8a;
+  color: var(--primary);
   border-radius: 999px;
   font-size: 12px;
   font-weight: 800;
@@ -915,7 +915,7 @@ select.form-input {
 .timeline-container h3 {
   font-size: 16px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   margin: 0 0 16px;
 }
 
@@ -957,7 +957,7 @@ select.form-input {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: var(--secondary);
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
 }
 
@@ -977,7 +977,7 @@ select.form-input {
 
 .timeline-step.active .step-label,
 .timeline-step.completed .step-label {
-  color: #111827;
+  color: var(--text);
 }
 
 .step-line {
@@ -1026,7 +1026,7 @@ select.form-input {
   margin: 0 0 14px;
   font-size: 16px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
 }
 
 .location-row {
@@ -1056,7 +1056,7 @@ select.form-input {
   margin: 2px 0 0;
   font-size: 13px;
   font-weight: 700;
-  color: #111827;
+  color: var(--text);
 }
 
 /* OTP Card */
@@ -1119,7 +1119,7 @@ select.form-input {
 .tracking-log-status {
   font-size: 13px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
 }
 
 .tracking-log-notes {
@@ -1148,7 +1148,7 @@ select.form-input {
 .order-id {
   font-size: 15px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
 }
 
 .order-tracking-items {
@@ -1163,7 +1163,7 @@ select.form-input {
 .item-name {
   font-size: 14px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
   display: block;
 }
 
@@ -1191,7 +1191,7 @@ select.form-input {
 .earnings-tab h3 {
   font-size: 20px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   margin-bottom: 16px;
 }
 
@@ -1224,7 +1224,7 @@ select.form-input {
 }
 .order-total-value {
   margin-top: 4px;
-  color: #111827;
+  color: var(--text);
   font-size: 18px;
   font-weight: 1000;
 }
@@ -1367,7 +1367,7 @@ select.form-input {
   border-radius: 12px;
   font-size: 14px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
   background: #fff;
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   border: 1px solid #e5e7eb;
@@ -1380,7 +1380,7 @@ select.form-input {
 }
 .toast-success { border-left: 4px solid #22c55e; }
 .toast-error   { border-left: 4px solid #ef4444; }
-.toast-info    { border-left: 4px solid #3b82f6; }
+.toast-info    { border-left: 4px solid var(--secondary); }
 .toast-icon { font-size: 16px; }
 .toast-msg  { flex: 1; }
 
@@ -1420,7 +1420,7 @@ select.form-input {
   padding: 18px 20px;
   border-bottom: 1px solid #f3f4f6;
 }
-.modal-header h3 { margin: 0; font-size: 16px; font-weight: 900; color: #111827; }
+.modal-header h3 { margin: 0; font-size: 16px; font-weight: 900; color: var(--text); }
 .modal-icon { font-size: 22px; }
 .modal-close {
   margin-left: auto;
@@ -1453,7 +1453,7 @@ select.form-input {
   transition: border-color 0.2s;
   min-height: 70px;
 }
-.modal-textarea:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+.modal-textarea:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -1462,7 +1462,7 @@ select.form-input {
 }
 .modal-btn-primary {
   padding: 10px 20px;
-  background: #3b82f6;
+  background: var(--secondary);
   border: none;
   border-radius: 10px;
   font-weight: 800;
@@ -1520,7 +1520,7 @@ select.form-input {
 .condition-btn {
   padding: 8px 16px;
   border: 2px solid #e5e7eb;
-  background: #f9fafb;
+  background: var(--bg);
   border-radius: 10px;
   font-weight: 800;
   font-size: 13px;
@@ -1528,7 +1528,7 @@ select.form-input {
   cursor: pointer;
   transition: all 0.15s;
 }
-.condition-btn:hover   { border-color: #3b82f6; background: #eff6ff; }
+.condition-btn:hover   { border-color: var(--secondary); background: #eff6ff; }
 .condition-yes { border-color: #22c55e; background: #dcfce7; color: #166534; }
 .condition-no  { border-color: #f97316; background: #ffedd5; color: #9a3412; }
 
@@ -1689,7 +1689,7 @@ select.form-input {
 .btn-action:hover { background: #ea580c; transform: translateY(-1px); }
 .btn-view {
   padding: 10px 18px;
-  background: #3b82f6;
+  background: var(--secondary);
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -1719,7 +1719,7 @@ select.form-input {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, var(--secondary), #8b5cf6);
   color: #fff;
   font-size: 22px;
   font-weight: 900;
@@ -1732,7 +1732,7 @@ select.form-input {
   margin: 0;
   font-size: 18px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   line-height: 1.3;
 }
 .verification-badge {
@@ -1757,7 +1757,7 @@ select.form-input {
   flex-direction: column;
   gap: 2px;
   padding: 10px 14px;
-  background: #f9fafb;
+  background: var(--bg);
   border-radius: 10px;
   border: 1px solid #eef2f7;
 }
@@ -1784,7 +1784,7 @@ select.form-input {
   align-items: center;
   gap: 10px;
   padding: 14px;
-  background: #f9fafb;
+  background: var(--bg);
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   font-size: 13px;
@@ -1837,7 +1837,7 @@ select.form-input {
 .tasks-tab h3 {
   font-size: 16px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
   margin: 0 0 16px;
 }
 
@@ -1866,12 +1866,12 @@ select.form-input {
   font-size: 16px;
   font-weight: 900;
   margin: 20px 0 14px;
-  color: #111827;
+  color: var(--text);
 }
 .earnings-amount-cell {
   font-family: monospace;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
 }
 
 /* ── Responsive tweaks ── */
@@ -1890,74 +1890,6 @@ select.form-input {
 @media (max-width: 480px) {
   .earnings-summary-grid { grid-template-columns: 1fr 1fr; }
 }
-/* ----------------------------------------------------------------
- * STEP 3 � Mandatory Payment Gateway (YES / NO)
- * ---------------------------------------------------------------- */
-.gateway-card {
-  display: flex;
-  gap: 16px;
-  padding: 18px 20px;
-  background: linear-gradient(135deg, #fff7ed, #fef2f2);
-  border: 2px solid #fed7aa;
-  border-radius: 14px;
-  margin: 0 0 14px;
-  animation: gatewayPulse 2s ease infinite;
-}
-@keyframes gatewayPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.15); }
-  50%       { box-shadow: 0 0 0 6px rgba(234, 88, 12, 0); }
-}
-.gateway-icon {
-  font-size: 28px;
-  flex-shrink: 0;
-  line-height: 1;
-}
-.gateway-content { flex: 1; min-width: 0; }
-.gateway-content h4 {
-  margin: 0 0 4px;
-  font-size: 15px;
-  font-weight: 900;
-  color: #9a3412;
-}
-.gateway-content p {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #b45309;
-}
-.gateway-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.gateway-btn {
-  flex: 1;
-  min-width: 150px;
-  padding: 12px 18px;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  font-weight: 900;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-.gateway-btn-yes {
-  background: #22c55e;
-  color: #fff;
-  border-color: #22c55e;
-}
-.gateway-btn-yes:hover { background: #16a34a; border-color: #16a34a; transform: translateY(-1px); }
-.gateway-btn-no {
-  background: #fee2e2;
-  color: #991b1b;
-  border-color: #fecaca;
-}
-.gateway-btn-no:hover { background: #fecaca; }
-.gateway-inner { padding: 4px; }
 
 /* -- Commission card (COD cash submission) -- */
 .commission-card {
@@ -1979,7 +1911,7 @@ select.form-input {
   margin: 0 0 4px;
   font-size: 14px;
   font-weight: 900;
-  color: #111827;
+  color: var(--text);
 }
 .commission-meta {
   font-size: 12px;
@@ -2071,14 +2003,261 @@ select.form-input {
 }
 
 @media (max-width: 768px) {
-  .gateway-actions { flex-direction: column; }
-  .gateway-btn { min-width: auto; }
   .commission-header { flex-direction: column; }
   .earnings-table-header, .earnings-table-row {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
 @media (max-width: 480px) {
-  .gateway-btn { width: 100%; }
   .stats-grid { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   WALLET PAGE
+   ============================================================ */
+
+/* Hero */
+.wallet-hero {
+  background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+  color: var(--bg);
+  border-radius: 18px;
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.wallet-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background: radial-gradient(circle at 80% 20%, #fff, transparent 40%),
+              radial-gradient(circle at 20% 80%, #fff, transparent 40%);
+  pointer-events: none;
+}
+.wallet-hero-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  opacity: 0.9;
+  margin: 0 0 6px;
+}
+.wallet-amount-xl {
+  font-size: 54px;
+  font-weight: 900;
+  line-height: 1;
+  margin: 0 0 14px;
+  letter-spacing: -1px;
+}
+.wallet-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.wallet-metric-card {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+  padding: 14px;
+  backdrop-filter: blur(4px);
+}
+.wallet-metric-label {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.9;
+  margin: 0 0 6px;
+}
+.wallet-metric-value {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* Cards */
+.wallet-card {
+  background: #fff;
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+.wallet-card + .wallet-card {
+  margin-top: 16px;
+}
+
+/* Section title */
+.wallet-section-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+
+/* Form */
+.claim-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.claim-input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  width: 180px;
+  background: #fff;
+  color: var(--text);
+}
+.claim-input:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+.claim-submit-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  background: linear-gradient(90deg, #3B82F6, #1E3A8A);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.claim-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(30, 58, 138, 0.25);
+}
+.claim-hint {
+  display: block;
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Rows */
+.claim-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.claim-row:last-child {
+  border-bottom: none;
+}
+.claim-row-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.claim-meta {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 2px;
+}
+.claim-amount {
+  font-weight: 900;
+  color: var(--text);
+  font-size: 15px;
+}
+
+/* Badges */
+.claim-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  text-transform: capitalize;
+}
+.claim-status-badge.badge-yellow {
+  background: #fef3c7;
+  color: #92400e;
+}
+.claim-status-badge.badge-blue {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.claim-status-badge.badge-green {
+  background: #d1fae5;
+  color: #065f46;
+}
+.claim-status-badge.badge-red {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.claim-status-badge.badge-gray {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+/* Buttons */
+.wallet-action-btn {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+}
+.wallet-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+.wallet-action-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+.wallet-action-btn.primary {
+  background: linear-gradient(135deg, #2563eb, #1E3A8A);
+}
+.wallet-action-btn.success {
+  background: linear-gradient(135deg, #059669, #047857);
+}
+.wallet-action-btn.info {
+  background: linear-gradient(135deg, #3B82F6, #2563eb);
+}
+
+/* Empty */
+.wallet-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+}
+.wallet-empty span {
+  font-size: 44px;
+  display: block;
+  margin-bottom: 10px;
+}
+.wallet-empty p {
+  margin: 4px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .wallet-hero {
+    padding: 22px 18px;
+  }
+  .wallet-amount-xl {
+    font-size: 40px;
+  }
+  .wallet-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -19,6 +19,7 @@ const {
   getDeliveryAgentApplications,
   getDeliveryStatusForOrder,
   collectCOD,
+  rejectPickupAndCancelOrder
 } = require("../controllers/deliveryController");
 const requireAuth = require("../middleware/requireAuth");
 const { authorize } = require("../middleware/authorize");
@@ -47,6 +48,9 @@ router.post("/accept-task/:taskId", requireAuth, authorize("deliveryAgent"), acc
 
 // Reject a delivery task
 router.post("/reject-task/:taskId", requireAuth, authorize("deliveryAgent"), rejectDeliveryTask);
+
+// Reject pickup task and cancel entire order (product not working)
+router.post("/reject-pickup/:taskId/cancel-order", requireAuth, authorize("deliveryAgent"), rejectPickupAndCancelOrder);
 
 // View my assigned delivery tasks
 router.get("/my-tasks", requireAuth, authorize("deliveryAgent"), getAgentDeliveryTasks);

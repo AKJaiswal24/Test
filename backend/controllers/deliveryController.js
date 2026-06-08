@@ -17,6 +17,7 @@ const {
   notifyRentalExtended,
   notifyAgentApplication,
 } = require("../utils/notifications");
+const AgentWallet = require("../models/AgentWallet");
 
 const DELIVERY_FEE = 75;
 const PICKUP_FEE = 75;
@@ -171,17 +172,23 @@ const getAvailableDeliveryTasks = async (req, res) => {
       status: "Waiting for Agent",
       agentId: null,
     })
-      .populate("orderId", "orderId grandTotal items deliveryAddress returnDate")
+      .populate("orderId", "orderId grandTotal items deliveryAddress returnDate status")
       .populate("productId", "name image images monthlyRent pricing")
       .populate("lenderId", "name phone")
       .populate("renterId", "name phone")
       .sort({ createdAt: -1 })
       .limit(50);
 
+    /* Exclude tasks whose parent order has been cancelled */
+    const availableTasks = tasks.filter((t) => {
+      const orderStatus = t.orderId?.status;
+      return orderStatus !== "Cancelled";
+    });
+
     // Deduplicate by productId (one task per product)
     const seenProductIds = new Set();
     const uniqueTasks = [];
-    for (const task of tasks) {
+    for (const task of availableTasks) {
       if (!seenProductIds.has(String(task.productId))) {
         seenProductIds.add(String(task.productId));
         uniqueTasks.push(task);
@@ -427,7 +434,7 @@ const rejectDeliveryTask = async (req, res) => {
   try {
     const { taskId } = req.params;
     const agentId = req.user?.id;
-    const { reason } = req.body;
+    const { reason } = req.body || {};
 
     if (!taskId) {
       return res.status(400).json({ message: "Missing taskId" });
@@ -457,6 +464,59 @@ const rejectDeliveryTask = async (req, res) => {
     });
   } catch (err) {
     console.error("Reject task error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+/* ==============================
+ * AGENT REJECTS PICKUP + CANCELS ORDER
+ * ============================== */
+const rejectPickupAndCancelOrder = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { reason = "Product not working — rejected by agent at pickup" } = req.body;
+    const agentId = req.user?.id;
+
+    if (!taskId) return res.status(400).json({ message: "Missing taskId" });
+
+    const task = await DeliveryTask.findById(taskId);
+    if (!task) return res.status(404).json({ message: "Task not found" });
+    if (String(task.agentId) !== String(agentId)) {
+      return res.status(403).json({ message: "Not your task" });
+    }
+
+    // Step 1 — reject the task
+    task.status = "Cancelled";
+    task.agentId = null;
+    task.rejectedBy = agentId;
+    task.rejectionReason = reason;
+    await task.save();
+
+    await addTrackingLog(task._id, task.orderId, "Rejected", reason, agentId, "agent");
+
+    // Step 2 — cancel the order
+    if (task.orderId) {
+      const order = await Order.findById(task.orderId);
+      if (order) {
+        order.status = "Cancelled";
+        order.cancelledAt = new Date();
+        order.cancellationReason = reason;
+        order.cancelledBy = agentId;
+        await order.save();
+      }
+    }
+
+    // Step 3 — put any other pending tasks for this order on hold
+    if (task.orderId) {
+      await DeliveryTask.updateMany(
+        { orderId: task.orderId, _id: { $ne: task._id }, status: { $nin: ["Delivered", "Returned to Lender", "Returned to Vendor", "Completed", "Cancelled", "Rejected"] } },
+        { $set: { status: "Waiting for Agent", agentId: null } }
+      );
+    }
+
+    res.json({ message: "Pickup rejected and order cancelled", taskId, orderId: task.orderId });
+  } catch (err) {
+    console.error("Reject pickup / cancel order error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -660,6 +720,19 @@ const updateDeliveryTaskStatus = async (req, res) => {
     }
 
     await task.save();
+
+    // ── Points: award 75 points on terminal delivery completion ─────────────
+    if (["Delivered", "Returned to Lender", "Returned to Vendor"].includes(status) && task.agentId) {
+      try {
+        const pay = require("../pay");
+        const award = await pay.addPointsForDelivery(task._id);
+        if (award.pointsAwarded > 0) {
+          console.log(`[points] Awarded ${award.pointsAwarded} pts to agent ${task.agentId}. New balance: ${award.newBalance}`);
+        }
+      } catch (ptsErr) {
+        console.error("[points] Failed to award points:", ptsErr.message);
+      }
+    }
 
     // Start OTP expiry timer when agent goes "In Transit"
     if (status === "In Transit" || status === "Return In Transit") {
@@ -1560,4 +1633,5 @@ module.exports = {
   generateTasksForExpiredDeliveries,
   markCommissionPaid,
   collectCOD,
+  rejectPickupAndCancelOrder,
 };

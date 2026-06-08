@@ -184,35 +184,6 @@ function LandingPage() {
     }
   };
 
-  // Category to icon mapping (Flaticon 256px PNG style for consistent rendering)
-  const CATEGORY_ICONS = {
-    "All": "1046857",
-    "Cleaning": "2913166",
-    "Power Tools": "5202868",
-    "Kitchen Machines": "2913275",
-    "Construction": "1158869",
-    "Electronics": "2582771",
-    "Vehicles": "8607349",
-    "Lighting": "2914471",
-    "Machinery": "2914477",
-    "Equipment": "2914479",
-    "Audio Visual": "2914480",
-    "Medical Equipment": "2914481",
-    "Sports & Fitness": "2914482",
-    "Garden & Outdoor": "2914483",
-    "Party Supplies": "2914484",
-    "Baby & Kids": "2914485",
-    "Office Equipment": "2914486",
-    "Tools & Hardware": "2914487",
-    "Photography": "2914488",
-    "Musical Instruments": "2914489",
-  };
-
-  // Pre-compute icon URLs once at module load
-  const ICON_URLS = Object.fromEntries(
-    Object.entries(CATEGORY_ICONS).map(([k, v]) => [k, `https://cdn-icons-png.flaticon.com/256/${v}/${v}.png`])
-  );
-
   // CATEGORY CLICK HANDLER
   const handleCategoryClick = (cat) => {
     setSelectedCategory(cat);
@@ -385,15 +356,8 @@ function LandingPage() {
                 }`}
                 key={cat}
                 onClick={() => handleCategoryClick(cat)}
-              >
-<img
-                  src={ICON_URLS[cat] || ICON_URLS["All"]}
-                  alt={cat}
-                  onError={(e) => {
-                    e.target.src = ICON_URLS["All"];
-                  }}
-                />
-                <p>{cat}</p>
+                >
+                  <p>{cat}</p>
               </div>
             ))}
           </div>

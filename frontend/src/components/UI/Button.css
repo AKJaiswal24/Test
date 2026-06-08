@@ -14,7 +14,7 @@
 }
 
 .btn-ui:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--secondary);
   outline-offset: 2px;
 }
 
@@ -30,7 +30,7 @@
 
 /* Variants */
 .btn-ui-primary {
-  background: #1e3a8a;
+  background: var(--primary);
   color: #fff;
 }
 .btn-ui-primary:hover:not(.btn-ui-disabled) {
@@ -38,7 +38,7 @@
 }
 
 .btn-ui-secondary {
-  background: #3b82f6;
+  background: var(--secondary);
   color: #fff;
 }
 .btn-ui-secondary:hover:not(.btn-ui-disabled) {
@@ -63,8 +63,8 @@
 
 .btn-ui-outline {
   background: transparent;
-  border: 2px solid #1e3a8a;
-  color: #1e3a8a;
+  border: 2px solid var(--primary);
+  color: var(--primary);
 }
 .btn-ui-outline:hover:not(.btn-ui-disabled) {
   background: #eff6ff;
@@ -112,3 +112,4 @@
 @keyframes btn-ui-spin {
   to { transform: rotate(360deg); }
 }
+
